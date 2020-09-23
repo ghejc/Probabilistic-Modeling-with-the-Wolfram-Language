@@ -1,0 +1,733 @@
+%
+\documentclass{tstextbook}
+
+\usepackage{mathematica}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.9]{DejaVuSansMono}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\begin{document}
+
+\tsbook{Probabilistic Modeling\\ with the\\ Wolfram Language}
+       {Gerhard Hejc}
+       {Cover Designer}
+       {2020}
+       {xxxxx}{xxx--xx--xxxx--xx--x}{0.0}
+       {Publisher}
+       {City}
+
+%---------------------------------------------------------------------------
+% Chapters
+%---------------------------------------------------------------------------
+%---------------------------------------------------------------------------
+\chapter{Preface}
+
+The book originally developed from talks and lecture notes given at the Fraunhofer institute in Nuremberg, Germany as an introduction to probabilistic modeling. The goal was primarily to provide the students with a minimal set of mathematical tools and concepts to do probabilistic computations by themselves and to apply it to real-world problems. This sounds easier than it actually is, because even conceptually easy problems can lead to results, which contradicts intuition like the famous Monty Hall problem.\\
+
+Since then, a lot of developments in this field took place. Most of the non-trivial calculations are almost impossible to be done without a computer, so the question quickly arises what is the appropriate software tool for doing this kind of calculations. Because of the availability of a large number of good software, it is merely an author's preference towards one or the other, but in this book the Wolfram language is chosen for several reasons.\\
+
+The Wolfram language has a clear and consistent design with a syntax close to the mathematical notation and has all the built-in knowledge to perform symbolic calculations where results in a closed-form are available and numerical evaluations in the case where this is not possible. Especially the Probability and Statistics part, which is used heavily in this book, has well-designed functions, which makes it easy to apply them to all kind of statistical problems. The visualization capabilities of the Wolfram language are outstanding and every figure in this book was generated with it.\\
+
+Nevertheless, this is not the first book about this topic, but builds on the work of others. There are many great books available, and these recommendations are definitely not exhaustive, but only a subjective subset:
+
+\begin{itemize}
+\item 
+David Barber's book \textbf{Bayesian Reasoning and Machine Learning} \cite{barber2011} is one of the best books, which covers extensively all topics in great detail and clarity.
+\item
+Simon Sirca's book \textbf{Probability for Physicists} \cite{sirca2016} is a good introduction with many examples from physics.
+\item
+Glen Cowan's book \textbf{Statistical Data Analysis} \cite{cowan1998} is a concise and well-written treatise targeting mainly readers of the particle physics community.   
+\end{itemize} 
+
+%---------------------------------------------------------------------------
+\chapter{Basic Concepts}
+
+\begin{summary}
+  This first chapter introduces the basic concepts. The starting point in other text books about this topic is typically the definition of probability based on the Kolmogorov axioms. This book chooses a different approach and puts the main focus on the probability density. Everything else including probability is derived from this quantity. The reason for this choice is mainly that the result of almost every non-trivial probabilistic calculation in physics or mathematics is always a probability density. It includes the complete information about a random process and plays a central role in the description of probabilistic systems. As we will see, it contains also deterministic systems as a special case and is therefore a generalization of a function for the case, when uncertainty comes into play.     
+\end{summary}
+
+%---------------------------------------------------------------------------
+\section{Probability Density}
+
+The probability density is a generalized function, which describes the distribution of values of an random variable. Generalized means here that it can contain Dirac delta functions. It describes the outcome of an experiment or measurement, where the value of the random variable is determined. The exact value of an outcome is unpredictable, but the frequency of the occurrence of a value is described by the probability density. Even if the probability density is typically a function, the value at a specific point has no direct meaning, only the integral over a certain range of values can be interpreted as probability. The terms probability density function (pdf) or probability distribution is used synonymously for a probability density. So when we write $p(x)$ or $pdf(x)$, it means the probability density associated with the random variable $x$ or $x$ is distributed as $p(x)$. In the function $p(x)$ $x$ is only a placeholder and can be replaced by another symbol e.g. $u$. In this case we write $p(x=u)$, which means that in the functional form of the pdf associated with the random variable $x$, we use $u$ as an argument. 
+
+The definition of a probability density is given below:
+
+\begin{definition}[Probability Density]
+  \label{th:probabilitydensity}
+  \index{probability density}
+  A probability density $p(x)$ is a generalized non-negative function of a variable
+  $x$ with a domain of $[-\infty,+\infty]$ such that
+  \begin{equation}
+    \int_{-\infty}^{+\infty}p(x)dx=1
+  \end{equation}
+\end{definition}
+The dimension of a probability density $p(x)$ is the inverse of the dimension of the associated random variable $x$.
+
+A random variable is defined as
+\begin{definition}[Random Variable]
+  \label{th:randomvariable}
+  \index{random variable}
+  A real-valued continuous variable $x$ is called a random variable if $x$ is distributed as $p(x)$ (also written as $x\sim p(x)$). This means that the distribution of values of a random variable $x$ is completely described by the probability density $p(x)$.
+\end{definition}
+
+A random variable with a finite domain $[a,b]$ can be described by a probability density, which is zero outside of the interval $[a,b]$.
+
+A probability density of two or more random variables is called a joint probability density e.g. $p(x,y)$ in the case of two random variables $x$ and $y$. The normalization condition is given by 
+  \begin{equation}
+    \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(x,y)dxdy=1
+  \end{equation}
+Integrating only over one random variable e.g. $y$, the result is again a valid probability density $p(x)$. This operation is called marginalization. Therefore the simplest way to construct a joint (or multi-variate) probability density out of uni-variate probability densities is by multiplication e.g. $p(x,y)=p(x)p(y)$.
+
+\begin{remark}
+\textit{One word of caution: if we say that $x$ is distributed as $p(x)$ and $y$ is distributed as $p(y)$, that does not mean that the probability distributions have the same functional form, but it is kept open if they are identical or different. Whenever they are identical, we explicitly mention this and say that $x$ and $y$ are identically distributed.}
+\end{remark}
+
+For multi-variate probability densities we follow the notation of writing the argument in bold letters or with an index range subscript e.g. $p(\mathbf{x})$ or $p(x_{1:n})$ is the short form for the joint probability density $p(x_1,x_2,\ldots,x_n)$. 
+
+\begin{example}[The Univariate Normal Distribution]
+  The most important probability density is the Normal (or Gauss) distribution $\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)$, which has the functional form
+  \begin{equation}
+    \frac{1}{\sqrt{2\pi\sigma^2}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}
+  \end{equation}
+  The function has two free parameters $\mu$ and $\sigma$ and fulfills the normalization condition for any value of $\mu$ and $\sigma$.
+    \begin{equation}
+    \frac{1}{\sqrt{2\pi\sigma^2}}\int_{-\infty}^{+\infty}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}dx=
+    \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}\exp{-\frac{x^2}{2}}dx=1
+  \end{equation}
+  where the variable transformation $x\rightarrow\frac{x-\mu}{\sigma}$ was used.
+\end{example}
+
+\begin{example}[The Uniform Distribution]
+  The simplest probability density is the uniform distribution $\mathcal{U}(x\,\vert\,\alpha,\beta)$, which has the functional form
+  \begin{equation}
+    \frac{1}{\beta-\alpha}\Theta(\beta-x)\Theta(x-\alpha)
+  \end{equation}
+  with $\beta>\alpha$. $\Theta(x)$ is the Heaviside step function, which is defined as
+    \begin{equation}
+    \Theta(x)=\begin{cases}0 & x < 0 \\
+1 & x\geqq 0 \\
+\end{cases}
+  \end{equation}
+  The two $\Theta$-functions guarantee that the probability density is zero outside the interval $[a,b]$. The normalization condition can be easily verified by
+  \begin{equation}
+    \frac{1}{\beta-\alpha}\int_{-\infty}^{+\infty}\Theta(\beta-x)\Theta(x-\alpha)dx
+    =\frac{1}{\beta-\alpha}\int_{\alpha}^{\beta}dx=\frac{\beta-\alpha}{\beta-\alpha}=1
+  \end{equation}  
+\end{example}
+
+%---------------------------------------------------------------------------
+\section{Probability}
+
+Probability is defined in terms of the probability density in the following way.
+
+\begin{definition}[Probability]
+  \label{th:probability}
+  \index{probability}
+  The probability of $x$ taking a value between $x_1$ and $x_2$ is given by
+  \begin{equation}
+    P(x_1\leqq x\leqq x_2)=\int_{x_1}^{x_2}p(x)dx
+  \end{equation}
+  In the case of a joint probability density, the probability of $x$ taking a value between $x_1$ and $x_2$ and $y$ taking a value between $y_1$ and $y_2$ is given by
+  \begin{equation}
+    P(x_1\leqq x\leqq x_2\:\ \& \:y_1\leqq y\leqq y_2)=\int_{x_1}^{x_2}\int_{y_1}^{y_2}p(x,y)dxdy
+  \end{equation}
+  The generalization to the case of a multi-variate probability density with more than 2 random variables is self-explanatory. 
+\end{definition}
+The convention to write probabilities with a upper case $P$ and probability density with a lower case $p$ is adapted throughout the book.
+
+We will now show that all the properties of a probability (also known as Kolmogorov axioms) follow from this definition.
+
+\begin{theorem}[Probability Axioms]
+  \label{th:probabilityaxioms}
+  \index{probability axioms}
+  The probability satisfies the following 3 axioms: 
+  \begin{enumerate}
+\item 
+The probability is a non-negative real number.
+\item
+The probability of $x$ taking a value between $[-\infty,+\infty]$ is 1.
+\item
+A set of disjoint intervals $\mathcal{I}_i$ with $i=1,\ldots,n$ has the probability $\sum_{i=1}^n P(\mathcal{I}_i)$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+Based on the definition of the probability as integral over a probability density, the proof is rather trivial. The first axiom follows directly from the non-negativity of the probability density, the second axiom from the normalization condition and the third axiom from the additivity of integrals over disjoint integration intervals, which simply follows from the interpretation of an integral as an area under a curve.
+\end{proof}
+Because probability is related to the integral of a probability density, a cumulative probability density is defined as
+\begin{definition}[Cumulative Distribution Function]
+  \label{th:cumulativedistributionfunction}
+  \index{cumulative distribution function}
+  A cumulative distribution function (cdf) of a random variable $x$ is given by
+  \begin{equation}
+    \Phi(x)=\int_{-\infty}^{x}p(x=x')dx'
+  \end{equation}
+The probability of $x$ taking a value between $x_1$ and $x_2$ can then be written as the difference of two cumulative distribution functions evaluated at $x_2$ and $x_1$.
+  \begin{equation}
+    P(x_1\leqq x\leqq x_2)=\Phi(x_2)-\Phi(x_1)
+  \end{equation} 
+\end{definition}
+
+%---------------------------------------------------------------------------
+\section{Conditional Probability Density}
+
+Almost all probability densities are conditional probability densities, because they depend on various parameters and/or other random variables. We will treat parameters and random variables behind the condition symbol in the same way, which means that we assume that they have a fixed value, when the probability density is evaluated. The only difference is that a random variable can be in front of or behind the condition symbol, whereas parameters can only be placed behind it.
+
+A conditional probability density $p(x\,\vert\, y,\theta)$ means a probability density of $x$ given $y$ (a random variable) and $\theta$ (a parameter).
+
+\begin{definition}[Conditional Probability Density]
+  \label{th:conditionalprobabilitydensity}
+  \index{conditional probability density}
+  The conditional probability $p(x\,\vert\, y,\theta)$ is defined by
+  \begin{equation}
+    p(x\,\vert\,\ y,\theta)=\frac{p(x, y\,\vert\, \theta)}{p(y\,\vert\, \theta)}
+  \end{equation}
+  A similar equation holds for $p(y\,\vert\, x,\theta)$
+  \begin{equation}
+    p(y\,\vert\,\ x,\theta)=\frac{p(x, y\,\vert\, \theta)}{p(x\,\vert\, \theta)}
+  \end{equation}
+  Eliminating the joint probability density $p(x, y\,\vert\, \theta)$ leads to the Bayes rule
+  \begin{equation}
+    p(x\,\vert\,\ y,\theta)=\frac{p(y\,\vert\,\ x,\theta)p(x\,\vert\, \theta)}{p(y\,\vert\, \theta)}
+  \end{equation} 
+\end{definition}
+
+A joint probability density $p(\mathbf{x}\,\vert\, \mathbf{y},\boldsymbol{\theta})$ can be decomposed into univariate conditional probability densities by iteratively applying Bayes rule.
+  \begin{equation}
+    p(\mathbf{x}\,\vert\, \mathbf{y},\boldsymbol{\theta})=p(x_{1:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})=p(x_1\,\vert\, x_{2:n},\mathbf{y},\boldsymbol{\theta})
+\underbrace{p(x_{2}\,\vert\, x_{3:n},\mathbf{y},\boldsymbol{\theta})\overbrace{\ldots p(x_{n-1}\,\vert\, x_n,\mathbf{y},\boldsymbol{\theta})
+p(x_{n}\,\vert\, \mathbf{y},\boldsymbol{\theta})}^{p(x_{3:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})}
+}_{p(x_{2:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})}
+  \end{equation}
+This decomposition is not unique. Any permutations of $\mathbf{x}$ is possible here.\\
+
+\textit{The question is: what is the best choice for this decomposition?}\\
+
+There is no general answer here, but if you are able to exploit the conditional independence of random variables as often as possible by using
+  \begin{equation}
+    p(x\,\vert\, y,\theta)=p(x\,\vert\, \theta)
+  \end{equation}
+then the individual terms in the product will simplify significantly.
+The statement $x$ is conditionally independent from $y$ means that the functional form of the probability density of $x$ is the same regardless of the value of $y$.\\
+
+\begin{remark}
+Expressions with a product of probability densities will occur very often and are subject to numerical underflow. It is therefore recommended to perform numerical evaluations always with the logarithm of a probability density. It does not matter if it is the natural logarithm or the logarithm with base 10. The crucial point is that a product of pdf's is converted into a sum of logarithms of pdf's.
+\end{remark}
+
+%---------------------------------------------------------------------------
+\section{Deterministic Functions}
+We will now show that every function can be written as a conditional probability density. This will allow us to treat everything as probability density and mix deterministic and random behavior in our models.
+
+Let's study the Normal distribution in the limit $\sigma^2\rightarrow 0$, where the uncertainty of observing the value $\mu$ changes to certainty and the outcome of the random variable $x$ is always $\mu$.
+
+\begin{example}[The Normal Distribution with zero variance]
+  \begin{equation}
+    \lim_{\sigma^2\rightarrow 0}\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)= \lim_{\sigma^2\rightarrow 0}\frac{1}{\sqrt{2\pi\sigma^2}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}=
+\delta\left(x-\mu\right)
+  \end{equation}
+\end{example}
+
+As we can see from the example, the probability density becomes a Dirac delta function with the functional relation $x=\mu$ as argument.
+
+\begin{definition}[Deterministic Probability Density]
+  \label{th:deterministicprobabilitydensity}
+  \index{deterministic probability density}
+  Any function $y=f(x)$ can be written as conditional probability density in the following way.
+  \begin{equation}
+    p(y\,\vert\,x)=\delta\left(y-f(x)\right)
+  \end{equation} 
+\end{definition}
+
+A common use-case is that we have a conditional probability density, which will be become deterministic by including hidden (or latent) random variables. The random character of a quantity could be completely originate from a another random variable and as soon as this other random variable has been identified and included, the conditional probability density can be replaced by an expression of the form shown above if the functional dependency on the hidden variable is known.
+
+Another consequence is that an integration over $y$ can be carried out immediately using
+  \begin{equation}
+    \int_{-\infty}^{+\infty}\delta\left(y-f(x)\right)g(y)dy = g(f(x))
+  \end{equation} 
+
+Another use-case are variable transformations from a random variable $x$ with a known probability density $p(x)$ to another variable $y=f(x)$.\\
+
+\textit{The question is: what is the pdf of $y$?}\\
+
+The starting point for the case with two random variables $x$ and $y$ is always the joint probability density $p(x,y)$. Because we are only interested in the pdf of $y$, we marginalize over $x$.
+
+  \begin{equation}
+    p(y)=\int_{-\infty}^{+\infty}p(x,y)dx=
+    \int_{-\infty}^{+\infty}p(y\,\vert\, x)p(x)dx=\int_{-\infty}^{+\infty}\delta\left(y-f(x)\right)p(x)dx
+  \end{equation}
+Using the following identity for the Dirac delta function
+  \begin{equation}
+   \delta\left(y-f(x)\right)=\sum_{i=1}^{n}\frac{1}{\vert f'(x_i)\vert}\delta(x-x_i(y))
+  \end{equation}
+where $x_i(y)$ are all $n$ solutions of $y=f(x)$ and $f'(x_i)$ is the derivative of $f(x)$ with respect to $x$ evaluated at $x=x_i(y)$, one can carry out the integration over $x$ with the result
+  \begin{equation}
+    p(y)=\sum_{i=1}^{n}\frac{1}{\vert f'(x_i)\vert}p\left(x=x_i(y)\right)
+  \end{equation}
+
+\begin{example}[The Square of a Random Variable]
+What is the pdf of $y=x^2$ if $x\sim p(x)$? The equation $y=x^2$ has two solutions $x_1=+\sqrt{y},x_2=-\sqrt{y}$. The derivative of $x^2$ is $2x$.
+  \begin{equation}
+    p(y)=\sum_{i=1}^{2}\frac{1}{\vert 2x_i\vert}p\left(x=x_i(y)\right)=
+    \frac{1}{2\sqrt{y}}\left(p\left(x=+\sqrt{y}\right)+p\left(x=-\sqrt{y}\right)\right)
+  \end{equation}
+$y$ is only defined for values in the range $[0,\infty]$. Therefore we have to add $\Theta(y)$.
+  \begin{equation}
+    p(y)=\frac{1}{2\sqrt{y}}\left(p\left(x=+\sqrt{y}\right)+p\left(x=-\sqrt{y}\right)\right)\Theta(y)
+  \end{equation} 
+\end{example}
+
+\begin{example}[The Square of a Gaussian Zero-Mean Random Variable]
+What is the pdf of $y=x^2$ if $x\sim \mathcal{N}(x\,\vert\, 0,\sigma^2)$? The result from the previous example can be used to obtain
+  \begin{equation}
+    p(y)=\frac{1}{\sqrt{2\pi\sigma^2 y}}\exp\left(-\frac{y}{2\sigma^2}\right)\Theta(y)
+  \end{equation}
+  The probability density is infinite at $y=0$, but it is still a valid distribution, because the normalization condition is fulfilled and it is non-negative for all values of $y$. A probability density can be singular at some points, as long as the integral over it is finite.
+\end{example}  
+
+%---------------------------------------------------------------------------
+\section{Discrete Random Variables}
+So far, we have studied continuous random variables and their associated probability densities. Next, we look at discrete random variables, which only take values from a discrete countable set $x_1,x_2,\ldots,x_n$.
+
+How can we construct a probability density for discrete random variables?
+
+We assign a probability $P_i$ to each $x_i$ for $i=1,\ldots,n$ and the corresponding discrete probability density is given by
+
+\begin{definition}[Discrete Probability Density]
+  \label{th:discreteprobabilitydensity}
+  \index{discrete probability density}
+  \begin{equation}
+    p(x)=\sum_{i=1}^{n}P_i\delta\left(x-x_i\right)
+  \end{equation}
+  Note that $x$ is still a continuous variable, but due to the Dirac delta functions it is restricted to the discrete values $x_i$. We write here the coefficients with a capital $P$ to indicate that these numbers are indeed probabilities.
+The normalization condition simplifies to a sum over all probabilities.
+     \begin{equation}
+    \int_{-\infty}^{+\infty}p(x)dx=\sum_{i=1}^{n}P_i=1
+  \end{equation}
+\end{definition}
+The definition shows that in the case of discrete random variables, probability densities $p(x)$ reduce to probabilities $P(x)$ and integrals to sums over all the possible values of $x$.
+
+\begin{example}[The Binomial Distribution]
+The binomial distribution is one of the most important discrete probability densities. $x_k$ is e.g. the outcome of a sequence of $n$ coin flips with $k$ heads and $n-k$ tails. The probability of head in a coin flip is $p$, while the probability of tail is $1-p$.  
+  \begin{equation}
+    \mathcal{B}(x\,\vert\,\ n,p)=\sum_{k=0}^n\left(\begin{array}{c}
+n \\
+k \\
+\end{array}\right)p^k(1-p)^{n-k}\delta(x-x_k)
+  \end{equation}
+   Let' say that we flip a fair coin with $p=\frac{1}{2}$ $n=3$ times and we want to calculate the probability that we have $k=2$ heads and $n-k=1$ tails. All coin flip sequences of the form $hht,hth,thh$ contribute to it. Therefore the probability is $\frac{3}{8}$. The same probability is obtained in the case $k=1$ heads and $n-k=2$ tails. For the case $k=3$ heads and $0$ tails there is only one possibility: $hhh$. Same for $k=0$ heads and $n-k=3$ tails. Therefore the probability in these cases is $\frac{1}{8}$. The sum of all probabilities is $\frac{1+3+3+1}{8}=1$. 
+\end{example}
+
+\begin{example}[The Poisson Distribution]
+In the limit $n\rightarrow\infty$ and $\lambda=np$ remains finite, the binomial distribution becomes the Poisson distribution given by
+  \begin{equation}
+    \mathcal{P}(x\,\vert\,\lambda)=\sum_{k=0}^{\infty}\frac{\lambda^k}{k!}\exp(-\lambda)\delta(x-x_k)
+  \end{equation}
+ This distribution describes the probability of observing $k$ events given a mean event count of $\lambda$.  
+\end{example}
+
+\begin{theorem}[Sum of two Poisson distributions]
+  \label{th:sumofpoissondistributions}
+  \index{sum of two Poisson distributions}
+  Show that $z=x+y$ is distributed as a Poisson-distribution $P(z\,\vert\,\lambda_1+\lambda_2)$ if $y\sim \mathcal{P}(x\,\vert \,\lambda_1)$ and $y\sim \mathcal{P}(y\,\vert \,\lambda_2)$.\\
+\end{theorem}
+\begin{proof}
+  \begin{equation}
+    p(z)=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z,x,y)dx dy=
+    \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z\,\vert\, x,y)\mathcal{P}(x\,\vert\,\lambda_1)\mathcal{P}(y\,\vert\,\lambda_2)dx dy
+  \end{equation}
+  Bayes rule was used in last step. $p(z\,\vert\, x,y)$ is a deterministic function $z=x+y$ and is given by $\delta\left(z-x-y\right)$. The $y$-integration can be carried out and gives the following result.
+  \begin{equation}
+    p(z)=\int_{-\infty}^{+\infty}P(x\,\vert\,\lambda_1)P(z-x\,\vert\,\lambda_2)dx
+  \end{equation}
+  Inserting the expressions for the Poisson distribution and carrying out the $x$-integration leads to
+  \begin{equation}
+    p(z)=\exp(-\lambda_1-\lambda_2)\sum_{k=0}^{\infty}\frac{\lambda_{1}^k}{k!}\sum_{l=0}^{\infty}\frac{\lambda_{2}^l}{l!}\delta(z-x_k-y_l)
+  \end{equation}
+  We set now $z_n=x_k+y_l$ with $n=k+l$ by introducing a third sum $\sum_{n=0}^{\infty}\delta_{n,k+l}=1$ and carrying out the summation over $l$   
+  \begin{equation}
+    p(z)=\exp(-\lambda_1-\lambda_2)\sum_{n=0}^{\infty}\frac{1}{n!}\underbrace{\sum_{k=0}^{n}n!\frac{\lambda_{1}^k}{k!}\frac{\lambda_{2}^{n-k}}{(n-k)!}}_{(\lambda_{1}+\lambda_{2})^n}\delta(z-z_n)
+  \end{equation}
+  We used here $\delta_{n,k+l}=\delta_{n-k,l}$, which replaces $l$ by $n-k$ and limits the sum over $k$ to $n$, because $l$ is positive and $n-k$ is negative for $k>n$ and the Kronecker delta is therefore always zero.
+\end{proof}
+
+\begin{exercise}
+   Show that $z_n=\sum_{i=1}^{n}x_i$ is distributed as a Poisson-distribution $P\left(z_n\,\vert\,\sum_{i=0}^n\lambda_i\right)$ if $x_i\sim \mathcal{P}(x_i\,\vert \,\lambda_i)$. Proof this statement by induction using $z_n=z_{n-1}+x_n$. 
+\end{exercise}
+
+\begin{exercise}
+  Show that the probability density of $z=x+y$ can be written as the convolution of the probability densities of $x$ and $y$.
+  \begin{equation}
+    p(z)=\int_{-\infty}^{+\infty}p\left(x\right)
+    p\left(y=z-x\right)dx
+  \end{equation}
+  
+\end{exercise}
+
+\begin{exercise}
+  Show that $z=x+y$ is distributed as 
+  $\mathcal{N}\left(z\,\vert\,\mu_1+\mu_2,\sigma_1^2+\sigma_2^2\right)$ if $y\sim \mathcal{N}(x\,\vert \,\mu_1,\sigma_1^2)$ and $y\sim \mathcal{N}(y\,\vert \,\mu_2,\sigma_2^2)$. The first part of the derivation is similar to the one for the Poisson distribution with the result
+  \begin{equation}
+    p(z)=\int_{-\infty}^{+\infty}\mathcal{N}\left(x\,\vert\,\mu_1,\sigma_1^2\right)
+    \mathcal{N}\left(z-x\,\vert\,\mu_2,\sigma_2^2\right)dx
+  \end{equation}
+  The $x$ integration can be simplified using the variable transformation $x\rightarrow \frac{x-\mu_1-\mu_2}{\sqrt{\sigma_1^2+\sigma_2^2}}$.
+\end{exercise}
+
+\section{Expectation and Variance}
+While the probability density contains all the information needed to perform calculations, it is often useful to characterize its shape by two values: expectation and variance.
+
+\begin{definition}[Expectation]
+  \label{th:expectation}
+  \index{expectation}
+  \begin{equation}
+    \mu = E[x]=\int_{-\infty}^{+\infty}x p(x)dx
+  \end{equation}
+\end{definition}
+
+\begin{definition}[Variance]
+  \label{th:variance}
+  \index{variance}
+  \begin{equation}
+    \sigma^2=V[x]=E[(x-\mu)^2]=\int_{-\infty}^{+\infty}(x-\mu)^2 p(x)dx
+  \end{equation}
+\end{definition}
+
+The normal distribution $\mathcal{N}\left(x\,\vert\, \mu,\sigma^2\right)$ is completely characterized by these values, while other distributions have non-zero expectation value of higher powers of $x-\mu$.
+
+\begin{exercise}
+ Show that the expectation and variance of a random variable $x$ distributed as a Poisson distribution $\mathcal{P}\left(x\,\vert\,\lambda\right)$ is given by $E[x]=\lambda$ and $V[x]=\lambda$ if the possible values $x$ can take are $x_k=k$. 
+\end{exercise}
+
+\begin{exercise}
+ Show that the expectation and variance of a random variable $x$ distributed as a uniform distribution $\mathcal{U}\left(x\,\vert\,\alpha,\beta\right)$ is given by $E[x]=\frac{\alpha+\beta}{2}$ and $V[x]=\frac{(\beta-\alpha)^2}{12}$.
+\end{exercise}
+
+\section{Examples}
+
+\begin{example}[The Monty Hall Problem]
+
+This is a famous and non-trivial example of a probabilistic problem, where intuition will give you the wrong result. The problem statement is as follows:\\
+
+Monty Hall, after which the problem is named, was a moderator of a game show and a participant has to choose between 3 doors. Behind one door a prize is hidden. After the choice has been made e.g. door 2, the moderator opens a door with no prize e.g. door 1, and asks the participant if he wants to choose the remaining door (in this case door 3) or if he wants to stay with his decision (door 2).
+\\
+\\
+\textit{The question is now: What is the probability to win if the participant stays with his first decision or if he chooses the remaining door?}\\
+
+The difficult part is to cast the problem into a manageable form, which means, selecting proper random variables to make the computation as easy as possible. 
+A discrete random variable $x_1$ can be associated with the action that the participant chooses a door randomly at the beginning and the choice is either a door with a prize behind it $x_1=p$ or a door with no prize $x_1=n$ (\textit{note that this is not known, when the choice happens, but the crucial point is that the probability for its occurrence can be calculated easily with the result $P(x_1=p)=\frac{1}{3}$ and $P(x_1=n)=\frac{2}{3}$, because there are only 3 doors and one contains a prize and the two others not}).\\ 
+
+Another discrete random variable $x_2$ will be associated with the outcome of the game (participant wins $x_2=w$ or looses $x_2=l$). This is the random variable, which is needed to answer the question above.\\
+ 
+Furthermore we introduce a parameter $\theta$, which describes the two possible ways: participant stays with his first decision ($\theta=0$) or participant chooses the remaining door ($\theta=1$).\\
+
+After the random variables and parameters have been defined, the starting point is always the joint probability $P(x_2,x_1\,\vert\,\theta)$. Because we are only interested in the probability of winning the game, we can marginalize over $x_1$ and use Bayes rule to separate $P(x_1)$, which is known.
+  \begin{equation}
+    P(x_2=w\,\vert\,\theta)=\sum_{x_1=p,n}P(x_2=w,x_1\,\vert\,\theta)=
+    \sum_{x_1=p,n}P(x_2=w\,\vert\,x_1,\theta)P(x_1)
+  \end{equation}    
+We only need to calculate the conditional probability $P(x_2\,\vert\,x_1,\theta)$. We will see that this quantity is completely deterministic. 
+\\
+\\
+\textit{Let's study first the case $\theta=0$.}\\
+
+In this case if $x_1$ was already the right door with the prize, the participant will win, and if $x_1$ was the wrong door, he will loose regardless if the moderator opens another door without a prize.
+  \begin{equation}
+   P(x_2\,\vert\,x_1,\theta=0)=
+\begin{cases}
+1 & x_2=w\:\ \&\:\ x_1=p \\
+0 & x_2=l\:\ \&\:\ x_1=p \\
+1 & x_2=l\:\ \&\:\ x_1=n \\
+0 & x_2=w\:\ \&\:\ x_1=n \\
+\end{cases}
+  \end{equation}
+\\
+\\  
+\textit{Next we handle the case $\theta=1$.}\\
+
+In this case if $x_1$ was already the right door with the prize, the participant will loose when changing to the remaining door and if $x_1$ was the wrong door, he will win, because the moderator has opened the door without no prize, so the remaining door must contain the prize.
+  \begin{equation}
+   P(x_2\,\vert\,x_1,\theta=1)=
+\begin{cases}
+0 & x_2=w\:\ \&\:\ x_1=p \\
+1 & x_2=l\:\ \&\:\ x_1=p \\
+0 & x_2=l\:\ \&\:\ x_1=n \\
+1 & x_2=w\:\ \&\:\ x_1=n \\
+\end{cases}                    
+  \end{equation}
+So the final result is
+  \begin{equation}
+   P(x_2=w\,\vert\,\theta)=
+\begin{cases}
+1\cdot\frac{1}{3}+0\cdot\frac{2}{3}=\frac{1}{3} & \theta=0 \\
+0\cdot\frac{1}{3}+1\cdot\frac{2}{3}=\frac{2}{3} & \theta=1 \\
+\end{cases}
+  \end{equation}  
+The remarkable result is that making a new choice increases your chances to win considerably. Naively one would have thought that the probability in this case is $\frac{1}{2}$, because after the moderator has opened a door without the prize, two doors are remaining and there is an equal chance to get the right door with the prize. But unfortunately this intuitively convincing argument is wrong.\\
+
+The following code shows a Monte Carlo simulation with the following variables and functions:\\
+\texttt{doorsWithPrize} is a randomly generated list of door numbers, which contain a prize,\\
+\texttt{firstChoice} is a randomly generated list of door numbers from the participant's first choice (this variable will be used to evaluate the case participant stays with his first choice),\\
+\texttt{doorsWithoutPrize} is a randomly generated list of the doors opened by the moderator after the first choice was made,\\
+\texttt{secondChoice} is a list of door numbers from the participant's second choice (this variable will be used to evaluate the case participant chooses the remaining door),\\
+\texttt{ProbabilityWinningPrize} is a function to calculate the probability to win a prize for a given choice (it simply counts the number of elements in the choice list, which agree with the corresponding item in the \texttt{doorsWithPrize} list). 
+\\   
+
+\begin{mathematica}
+doorsWithPrize = RandomChoice[{1, 2, 3}, 1000];
+firstChoice = RandomChoice[{1, 2, 3}, Length[doorsWithPrize]];
+doorsWithoutPrize = MapThread[
+                        RandomChoice[Complement[{1, 2, 3}, {#1, #2}]] &,
+                        {doorsWithPrize, firstChoice}];
+secondChoice = MapThread[
+                        RandomChoice[Complement[{1, 2, 3}, {#1, #2}]] &,
+                        {doorsWithoutPrize, firstChoice}];
+ProbabilityWinningPrize[choice_] := Apply[Plus, 
+                                          MapThread[Boole[#1 == #2] &,
+                                          {doorsWithPrize, choice}]
+                                          ] / Length[doorsWithPrize] // N;
+Print["Probability of winning by staying with your first choice = ", 
+      ProbabilityWinningPrize[firstChoice]];
+Print["Probability of winning by choosing the remaining door = ", 
+      ProbabilityWinningPrize[secondChoice]];
+\end{mathematica} 
+The probability of winning with 1000 samples is \texttt{0.32} in the case of staying with the first choice and \texttt{0.68} in the case of choosing the remaining door. Using 1000000 samples the values are \texttt{0.333} and \texttt{0.667}, respectively. 
+\end{example}
+
+
+%---------------------------------------------------------------------------
+\chapter{Density Estimation}
+
+\begin{summary}
+  This chapter deals with the problem how a probability density can be estimated from data.
+\end{summary}
+
+\section{Histograms}
+A histogram divides the domain of a random variable $x$ into disjunct bins and counts the number of outcomes of $x$ in each bin. If $x\sim p(x)$, the normalized count in bin $[x_i,x_{i+1}]$ is given by
+  \begin{equation}
+    P_i=P\left(x_i\leqq x\leqq x_{i+1}\right)=\int_{x_i}^{x_{i+1}}p(x)dx=\lim_{N\rightarrow\infty}\frac{N_i}{N}
+  \end{equation}
+The count $N_i$ can only take integer values, therefore $N_i = [P_i N]$, where the symbol $[x]$ means nearest integer of $x$ and $N$ is the total number of outcomes.
+
+Let's assume that we have collected data about the random variable $x$ as $\mathcal{D}=\{x_{1:N}\}$. We assign each data point $x_k$ to a bin and count the number of data points in each bin. If the bins do not cover the whole range of $x$, there will be data points, which can not be assigned to a bin. These data points are called outliers.  
+
+If we represent the bins in terms of a center point $\tilde{x}_i=\frac{x_i + x_{i+1}}{2}$ and the width $w_i=\frac{x_{i+1}-x_i}{2}$, we can write the bin $b_i$ as $[\tilde{x}_i-\frac{w_i}{2},\tilde{x}_i+\frac{w_i}{2}]$.
+
+Then the $N_i$ can be expressed as
+  \begin{equation}
+    N_i=\sum_{k=1}^{N}\mathcal{I}\left(x_k-\tilde{x}_i;w_i\right)
+  \end{equation}
+where $\mathcal{I}$ is the indicator function defined as
+  \begin{equation}
+    \mathcal{I}(x;w)=\begin{cases}1 & x\in [-\frac{w}{2},+\frac{w}{2}] \\
+0 & otherwise \\
+\end{cases}
+  \end{equation}
+Then the probability density estimate $\hat{p}(x)$ can be written as
+  \begin{equation}
+    \hat{p}(x)=\frac{1}{N}\sum_{i=1}^{b}\frac{N_i}{w_i}\mathcal{I}\left(x_k-\tilde{x}_i;w_i\right)
+  \end{equation}
+  where $b$ is the number of bins.
+  
+There are some best practice rules for choosing the number of bins $b$ and the bin width $w$:
+
+  \begin{equation}
+        b = [1 + \log_{2}(N)]
+  \end{equation}
+  \begin{equation}
+        w = 3.5 s N^{-\frac{1}{3}}
+  \end{equation}
+where $s$ is the standard deviation of the data sample.
+
+\section{Maximum Likelihood}
+If the physical process how data is generated is understood, the functional form of the probability density $p(\mathbf{x}\vert \boldsymbol{\theta})$ is typically known. In these cases the goal is to estimate the parameters $\boldsymbol{\theta}$ of a probability density from data.
+
+\begin{definition}[Likelihood]
+  \label{th:likelihood}
+  \index{likelihood}
+  The likelihood is defined by
+  \begin{equation}
+    \mathcal{L}(\boldsymbol{\theta}) = \prod_{i=1}^N p\left(x_i\,\vert\, \boldsymbol{\theta}\right)
+  \end{equation}
+where $x_i \in \mathcal{D}=\{x_{1:N}\}$. It is a function of the parameter of the probability density, not a distribution.
+\end{definition}
+Using the logarithm of the likelihood is better from the view point of numerical stability. 
+\begin{definition}[Loglikelihood]
+  \label{th:loglikelihood}
+  \index{loglikelihood}
+  The loglikelihood is defined by
+  \begin{equation}
+    \log(\mathcal{L}(\boldsymbol{\theta})) = \sum_{i=1}^N \log\left(p\left(x_i\,\vert\, \boldsymbol{\theta}\right)\right)
+  \end{equation}
+\end{definition}
+An optimal estimate of the parameters $\hat{\boldsymbol{\theta}}$ can be found by solving 
+$\frac{ \partial\log\left(\mathcal{L}(\boldsymbol{\theta})\right)}{\partial\boldsymbol{\theta}}=0$.   
+
+\section{Sampling}
+In the previous sections we studied the reconstruction of a probability density from data. Here we investigate the inverse problem: the generation of data from a given probability density. This process is called sampling.
+
+It is usually quite easy to generate random numbers $r$ from a uniform distribution $\mathcal{U}(r\,\vert\,\alpha=0,\beta=1)$. Almost every programming language has a function for it. The goal is now to transform the sequence $r_{1:N}$ to a sequence $x_{1:}$ so that $x$ is distributed as $p(x)$.
+
+One way to do this is to find a transformation function $x(r)$ for $0\leqq r \leqq 1$.
+
+\begin{equation}
+  \Phi(x(r))=\int_{-\infty}^{x(r)}p(x)dx = \int_{-\infty}^{r}\mathcal{U}(r=r'\,\vert\,\alpha=0,\beta=1)dr'=r
+\end{equation}
+The lhs is the cdf evaluated at $x(r)$. Therefore the function $x(r)$ is the inverse of the cdf evaluated at $r$.
+\begin{equation}
+  x(r) = \Phi^{-1}(r)
+\end{equation}
+
+\begin{example}[Sampling from a Discrete Distribution]
+Let's assume that we have an array of probabilities $P_{1:N}$ with $\sum_{i=1}^{N}P_i=1$ and we want to sample an index variable $j\in [1,2,\ldots,N]$ from this distribution.
+
+In this case the cumulative distribution is given by $\Phi(j)=\sum_{i=1}^{j}P_i$.
+We iterate the index $j$ from $N$ down to $1$ and stop as as soon as the condition $\Phi(j)\leqq r$ is fulfilled. This procedure generates an index sequence with the desired distribution.\\
+
+The Wolfram Language provides the function \texttt{EmpiricalDistribution} to construct a pdf from a list of weights, which need not to be normalized. Using \texttt{RandomVariate} 1000 samples are drawn from this pdf and are used to fill a histogram.
+ 
+\begin{mathematica}
+weights = {200, 300, 200, 100, 200};
+categories = Range[1, Length[weights]];
+dist = EmpiricalDistribution[weights -> categories];
+data = RandomVariate[dist, 1000];
+Histogram[data,
+          LabelingFunction -> Center,
+          ChartElementFunction -> "GlassRectangle",
+          ChartStyle -> LightBlue, 
+          AxesLabel -> {"Category", "Count"}]
+\end{mathematica}
+
+The histogram shows the counts of the data samples generated from an empirical distribution for each category. The counts are indeed numerically close to the given weights.\\
+
+ \includegraphics[scale=1.15] {images/sampling_from_discrete_distribution.png}   
+\end{example}
+ 
+
+
+\begin{example}[Normal-Distributed Random Numbers]
+The trick here is to perform the transformation on the joint pdf of $x$ and $y$, where both random variables are identically distributed according to $\mathcal{N}(\_\,\vert\,\mu=0,\sigma^2=1)$.
+\begin{equation}
+  \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}\mathcal{N}(x\,\vert\,\mu=0,\sigma^2=1)\mathcal{N}(y\,\vert\,\mu=0,\sigma^2=1)dxdy=1
+ \end{equation}
+ Using the transformation $x=\rho\cos(\phi)$ and $y=\rho\sin(\phi)$, the double integral can written as
+\begin{equation}
+   \frac{1}{2\pi}\int_{0}^{2\pi}d\phi\int_{0}^{+\infty}\exp\left(-\frac{\rho^2}{2}\right)\rho d\rho=
+   \int_{0}^{1}d\phi'\int_{0}^{+\infty}\exp\left(-\rho'\right)d\rho'=1
+ \end{equation}
+ where the new variables $\rho'$ and $\phi'$ are given by $\rho'=\frac{\rho^2}{2}$ and $\phi'=\frac{\phi}{2\pi}$. So $\phi'$ is uniformly distributed in the range $[0,1]$ and $\rho'$ is exponentially distributed with $\xi=1$.\\
+
+We leave it as an exercise to show that $\rho'(r)=\ln\left(r\right)$ and therefore $\rho(r)=\sqrt{-2\ln\left(r\right)}$.\\
+
+The transformation function for $\phi$ is given by $\phi(r)=2\pi r$. Because $\phi$ and $\rho$ are independent random variables, we must also use independent random number sequences $r$ and $s$ to evaluate them.\\
+
+Therefore the transformation for $x$ is given by
+\begin{equation}
+x(r,s)=\sqrt{-2\ln(r)}\cos(2\pi s)
+ \end{equation}
+ and for $y$ by
+ \begin{equation}
+y(r,s)=\sqrt{-2\ln(r)}\sin(2\pi s)
+ \end{equation}
+The algorithm is called Box-Muller method \cite{box1958}.
+\end{example}
+
+\begin{exercise}
+  Show that the function $x(r)$ for the exponential distribution 
+  $p(x)=\frac{1}{\xi}\exp\left(-\frac{x}{\xi}\right)$ is given by $x(r)=-\xi\ln\left(1-r\right)$ or $x(r)=-\xi\ln\left(r\right)$.   
+\end{exercise}
+
+\begin{exercise}
+  Show that how the method above has to be extended to generate random numbers distributed as $\mathcal{N}(\_\,\vert\,\mu,\sigma^2)$.   
+\end{exercise}
+
+Finding a function $x(r)$ analytically is not always possible. Another approach, which is applicable to a wider range of distributions, is rejection sampling \cite{neumann1951}. 
+\begin{definition}[Rejection Sampling]
+  \label{th:rejectionsampling}
+  \index{rejection sampling}
+The algorithm works in the following way:
+\begin{itemize}
+\item
+Choose a number $M$ and a distribution $p(y)$ in such a way that the condition $p(x=u)\leqq M p(y=u)$ holds everywhere on the domain of $x$ and drawing samples from $p(y)$ is known. 
+\item 
+Draw samples $y_k$ from a distribution $p(y)$ and $r_k$ from a uniform distribution $\mathcal{U}(r\,\vert\,\alpha=0,\beta=1)$ for $k=1:N$.
+\item
+Check for all $k$ the condition $r_k < \frac{p(x=y_k)}{M p(y=y_k)}$. If it is true, accept $y_k$ as a sample from $p(x)$, otherwise reject the sample.
+\end{itemize}
+\end{definition}
+If $p(x)$ is bounded to a finite interval $[a,b]$, the algorithm can be simplified:
+\begin{itemize}
+\item
+Choose $p_{max}$ as the maximum value of $p(x)$ for $x\in [a,b]$
+\item 
+Draw samples $x_k=(b-a)s_k+a$ from a uniform distribution $\mathcal{U}(s\,\vert\,\alpha=0,\beta=1)$ and $r_k$ from a uniform distribution $\mathcal{U}(r\,\vert\,\alpha=0,\beta=1)$ for $k=1:N$.
+\item
+Check for all $k$ the condition $r_k < \frac{p(x=x_k)}{p_{max}}$. If it is true, accept $x_k$ as a sample from $p(x)$, otherwise reject the sample.
+\end{itemize}
+The rejection rate determines the efficiency of the algorithm.\\ 
+
+Finding a pdf, which is easy to sample from and has a similar functional form as the distribution of interest, can be achieved with the help of a Gaussian Mixture Model.
+
+\begin{definition}[Gaussian Mixture Model]
+  \label{th:gaussianmixturemodel}
+  \index{gaussian mixture model}
+  The Gaussian Mixture Model (GMM) is defined by
+  \begin{equation}
+    p_{GMM}(x\,\vert\,\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}) = \sum_{i=1}^N \alpha_i \mathcal{N}\left(x\,\vert\,\mu_i,\sigma_i^2\right)
+  \end{equation}
+  with $\sum_{i=1}^N \alpha_i=1$
+\end{definition}
+The parameters $,\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}$ determines the shape of the distribution and can be chosen to approximate a given pdf $p(x)$ as closely as possible.\\
+
+Sampling from an Gaussian Mixture Model is straightforward:
+\begin{itemize}
+\item
+Sample an index $j$ from the empirical distribution of $\alpha_{1:N}$ 
+\item 
+Sample $x$ from the normal distribution $\mathcal{N}\left(x\,\vert\,\mu_j,\sigma_j^2\right)$
+\end{itemize}
+
+
+
+%---------------------------------------------------------------------------
+\chapter{Probabilistic Models}
+
+\begin{summary}
+  This chapter covers the whole range of probabilistic models from simple to complex ones. We show that the simple models can be used as building blocks for simulating real-world systems.
+\end{summary}
+
+\section{Poisson Clock}
+A very simplified model of a clock is the Poisson clock, where the tick counts $x$ are Poisson-distributed.
+
+\begin{definition}[Poisson Clock]
+  \label{th:poissonclock}
+  \index{poisson clock}
+  \begin{equation}
+    \mathcal{P}(x\,\vert\, \lambda\rightarrow\nu t)=\sum_{k=0}^{\infty}\frac{\nu^k t^k}{k!}\exp(-\nu t)\delta(x-k)
+  \end{equation}
+  $\nu$ is the clock rate (number of ticks in a certain time interval) and $t$ is the elapsed time. Because the expectation value is $\mu=\lambda t$, the tick count is a measure of time.
+\end{definition}
+However, this is not a good model of a real clock, because there is only one parameter $\nu$, which controls the clock rate, and the clock noise is completely determined by this choice. In a real clock model you can control the rate and the noise independently.
+
+Nevertheless, the Poisson clock is used very often for e.g. simulating the arrival of costumers in a shop or the number of decays of a radioactive material. It is also a building block of the Ptolemy II simulation framework \cite{ptolemy2003}. 
+\section{Gaussian Lattice Model}
+The Gaussian Lattice Model is a variant of the famous Ising Model \cite{mussardo2010}. We want to study this model in the one-dimensional case, where it can be solved exactly.
+
+\section{Random Matrices}
+A random matrix $m$ is $N\times N$ matrix with its elements $m_{ij}\sim p(x)$ \cite{livan2017}.
+
+%---------------------------------------------------------------------------
+% Bibliography
+%---------------------------------------------------------------------------
+
+\addcontentsline{toc}{chapter}{\textcolor{tssteelblue}{Literature}}
+\printbibliography{}
+
+%---------------------------------------------------------------------------
+% Index
+%---------------------------------------------------------------------------
+
+\printindex
+
+\end{document}

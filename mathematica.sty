@@ -1,0 +1,70 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mathematica} [2020/09/07 mathematica code highlighting]
+
+
+\RequirePackage{listings}
+\RequirePackage{xcolor}
+
+\renewcommand*{\lstlistlistingname}{Code Listings}
+\renewcommand*{\lstlistingname}{Code Listing}
+\definecolor{gray}{gray}{0.5}
+\colorlet{commentcolour}{green!50!black}
+
+\colorlet{stringcolour}{orange!80!black}
+\colorlet{keywordcolour}{teal!90!black}
+\colorlet{optioncolour}{teal!90!black}
+\colorlet{attributecolour}{violet!90!black}
+\colorlet{literatecolour}{teal!70!black}
+\colorlet{myfunctioncolour}{teal!10!black}
+
+\newcommand*{\framemargin}{3ex}
+
+\newcommand*{\literatecolour}{\textcolor{literatecolour}}
+
+\lstdefinestyle{mymathematica}{
+language=Mathematica,
+showtabs=true,
+tab=,
+tabsize=2,
+basicstyle=\ttfamily\footnotesize,%\setstretch{.5},
+stringstyle=\color{stringcolour},
+showstringspaces=false,
+alsoletter={1234567890},
+otherkeywords={\%, \}, \{, \&, \|},
+keywordstyle=\color{keywordcolour}\bfseries,
+morecomment=[s]{"""}{"""},
+commentstyle=\color{commentcolour}\slshape,
+emph={EmpiricalDistribution, RandomVariate, RandomChoice, Histogram, Boole},
+emphstyle=\color{keywordcolour}\bfseries,
+emph={[2]ChartElementFunction, ChartStyle, AxesLabel, LabelingFunction},
+emphstyle=[2]\color{optioncolour},
+emph={[3]LightBlue, Above},
+emphstyle=[3]\color{attributecolour},
+emph={[4]ProbabilityWinningPrize},
+emphstyle=[4]\color{myfunctioncolour}\bfseries,
+literate=*%
+{:}{{\literatecolour:}}{1}%
+{=}{{\literatecolour=}}{1}%
+{-}{{\literatecolour-}}{1}%
+{+}{{\literatecolour+}}{1}%
+{*}{{\literatecolour*}}{1}%
+{**}{{\literatecolour{**}}}2%
+{/}{{\literatecolour/}}{1}%
+{//}{{\literatecolour{//}}}2%
+{!}{{\literatecolour!}}{1}%
+%{(}{{\literatecolour(}}{1}%
+%{)}{{\literatecolour)}}{1}%
+{[}{{\literatecolour[}}{1}%
+{]}{{\literatecolour]}}{1}%
+{<}{{\literatecolour<}}{1}%
+{>}{{\literatecolour>}}{1}%
+,%
+frame=trbl,
+rulecolor=\color{gray!10},
+backgroundcolor=\color{gray!10},
+breakindent=.5\textwidth,
+frame=single,
+breaklines=true%
+}
+
+\lstnewenvironment{mathematica}[1][]{\lstset{style=mymathematica}}{}
