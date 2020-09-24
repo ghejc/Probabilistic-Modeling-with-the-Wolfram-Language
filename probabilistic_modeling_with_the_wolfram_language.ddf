@@ -1,0 +1,4 @@
+[Settings]
+PostProcessors=BIBER;MKIDX
+[MakeIndex]
+.idx=.ind
