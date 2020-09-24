@@ -2,3 +2,6 @@
 PostProcessors=BIBER;MKIDX
 [MakeIndex]
 .idx=.ind
+[Info]
+InputEncoding=CP1252
+Source=probabilistic_modeling_with_the_wolfram_language.tex
