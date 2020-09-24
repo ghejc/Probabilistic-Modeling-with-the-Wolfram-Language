@@ -112,16 +112,35 @@ For multi-variate probability densities we follow the notation of writing the ar
   \begin{equation}
     \frac{1}{\sqrt{2\pi \det(\boldsymbol{\Sigma})}}\exp{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
   \end{equation}
-with $\mathbf{x}=x_{1:n}$,$\boldsymbol{\mu}=\mu_{1:n}$ and $\boldsymbol{\Sigma}=\Sigma_{1:n,1:n}$. $\boldsymbol{\Sigma}$ is called the covariance matrix and is symmetric $\boldsymbol{\Sigma}^T=\boldsymbol{\Sigma}$, so it has only $\frac{n(n+1)}{2}$ independent parameters. Therefore the multi-variate Normal distribution has $\frac{n(n+3)}{2}$ parameters.\\
+with $\mathbf{x}=x_{1:n}$,$\boldsymbol{\mu}=\mu_{1:n}$ and $\boldsymbol{\Sigma}=\Sigma_{1:n,1:n}$. $\boldsymbol{\Sigma}$ is called the covariance matrix and is symmetric $\boldsymbol{\Sigma}^T=\boldsymbol{\Sigma}$, so it has only $\frac{n(n+1)}{2}$ independent parameters. Therefore the multi-variate Normal distribution has $\frac{n(n+3)}{2}$ parameters.
+\end{example}
 
+\begin{theorem}[Multivariate Normal Distribution under Linear Transformation]
+  \label{th:multivariatenormaldistributionunderlineartransformation}
+  \index{linear transformation}
 An important property of the multi-variate Normal distribution is that the result of a linear transformation $\mathbf{x}'=\mathrm{M}\mathbf{x}+\mathbf{b}$ with a $n\times n$ matrix $\mathrm{M}$ and a $n\times 1$ vector $\mathbf{b}$ is again a multi-variate Normal distribution   
   \begin{equation}
-  \mathcal{N}\left(\mathbf{x}'\,\vert\,\boldsymbol{\mu},\boldsymbol{\Sigma}\right)=
-  \vert\det(M)\vert\,\mathcal{N}\left(\mathbf{x}\,\vert\,\mathrm{M}\boldsymbol{\mu}+\mathbf{b},\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)
+  \mathcal{N}\left(\mathbf{x}\,\vert\,\boldsymbol{\mu},\boldsymbol{\Sigma}\right)=
+  \vert\det(M)\vert\,\mathcal{N}\left(\mathbf{x}'\,\vert\,\mathrm{M}\boldsymbol{\mu}+\mathbf{b},\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)
   \end{equation}
-  
-using $\det(\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T)=\det(\mathrm{M}^T\mathrm{M}\boldsymbol{\Sigma})=\det(\mathrm{M})^2\det(\boldsymbol{\Sigma})$.
-\end{example}
+\end{theorem}
+\begin{proof}
+  \begin{equation}
+\mathcal{N}\left(\mathbf{x}'\,\vert\,\mathrm{M}\boldsymbol{\mu}+\mathbf{b},\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)=
+ \frac{1}{\sqrt{2\pi \det\left(\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)}}\exp{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\mathrm{M}^T\left(\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)^{-1}\mathrm{M}(\mathbf{x}-\boldsymbol{\mu})}
+ \end{equation}
+ Using $\det\left(\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)=\det(\mathrm{M})^2 \det(\boldsymbol{\Sigma})$ and $\mathrm{M}^T\left(\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)^{-1}\mathrm{M} = \mathrm{M}^T(\mathrm{M}^T)^{-1}\boldsymbol{\Sigma}^{-1}\mathrm{M}^{-1}\mathrm{M}=\boldsymbol{\Sigma}^{-1}$, the right hand side of the expression simplifies to
+  \begin{equation}
+\mathcal{N}\left(\mathbf{x}'\,\vert\,\mathrm{M}\boldsymbol{\mu}+\mathbf{b},\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)=
+ \frac{1}{\vert\det(M)\vert\sqrt{2\pi \det\left(\boldsymbol{\Sigma}\right)}}\exp{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}(\mathbf{x}-\boldsymbol{\mu})}
+ \end{equation}
+ The normalization condition is also fulfilled.
+   \begin{equation}
+\int_{-\infty}^{+\infty}d\mathbf{x}'\mathcal{N}\left(\mathbf{x}'\,\vert\,\mathrm{M}\boldsymbol{\mu}+\mathbf{b},\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)=
+ \frac{\vert\det(M)\vert}{\vert\det(M)\vert}\int_{-\infty}^{+\infty}d\mathbf{x}\mathcal{N}\left(\mathbf{x}\,\vert\,\boldsymbol{\mu},\boldsymbol{\Sigma}\right)=1
+ \end{equation}
+ The short-hand notation $\int_{-\infty}^{+\infty}d\mathbf{x}$ is used for the $n$-dimensional integral $\prod_{i=1}^n\int_{-\infty}^{+\infty}dx_i$.
+ \end{proof}
 
 \begin{example}[The Uniform Distribution]
   The simplest probability density is the uniform distribution $\mathcal{U}(x\,\vert\,\alpha,\beta)$, which has the functional form
@@ -701,7 +720,7 @@ Finding a pdf, which is easy to sample from and has a similar functional form as
   \end{equation}
   with $\sum_{i=1}^N \alpha_i=1$
 \end{definition}
-The parameters $,\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}$ determines the shape of the distribution and can be chosen to approximate a given pdf $p(x)$ as closely as possible.\\
+The parameters $\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}$ determines the shape of the distribution and can be chosen to approximate a given pdf $p(x)$ as closely as possible.\\
 
 Sampling from an Gaussian Mixture Model is straightforward:
 \begin{itemize}
