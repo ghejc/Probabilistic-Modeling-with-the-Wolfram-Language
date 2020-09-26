@@ -36,6 +36,8 @@ This is not the first book about this topic, but builds on the work of others. T
 \item 
 David Barber's book \textbf{Bayesian Reasoning and Machine Learning} \cite{barber2011} is one of the best books, which covers extensively all topics in great detail and clarity.
 \item
+Bendat and Piersol's \textbf{Random Data: Analysis and Measurement Procedures} \cite{bendat2010} is a classic book published first 1971, but still a clear and well-written reference about the analysis of random data, especially time series data.
+\item
 Simon Sirca's book \textbf{Probability for Physicists} \cite{sirca2016} is a good introduction with many examples from physics.
 \item
 Glen Cowan's book \textbf{Statistical Data Analysis} \cite{cowan1998} is a concise and well-written treatise targeting mainly readers of the particle physics community.   
@@ -45,7 +47,7 @@ Some knowledge in Linear Algebra and Calculus is also required e.g. see Murray S
 
 There is already a very good book \textbf{Introduction to Probability with Mathematica} by Kevin J. Hastings \cite{hastings2001} with a similar intention than this one. The second edition is based on Mathematica 7.0 and it is highly recommended as a complementary reading.\\
 
-Nevertheless the goal of this book is a bit different. We want to cover only the relevant topics and concepts, which are necessary for building and analyzing probabilistic models and applying them to all kind of problems. Therefore it does not claim to be a complete treatise of the subject, but a rather concise introduction to bring the reader as fast as possible into a state to perform computations and the ability to understand its results.    
+Nevertheless the goal of this book is a bit different. We want to cover only the relevant topics and concepts, which are necessary for building and analyzing probabilistic models and applying them to all kind of problems. Therefore it does not claim to be a complete treatise of the subject, but a rather concise introduction to bring the reader as fast as possible into a state to perform computations and to understand its results.    
 
 %---------------------------------------------------------------------------
 \chapter{Basic Concepts}
@@ -255,7 +257,7 @@ then the individual terms in the product will simplify significantly.
 The statement $x$ is conditionally independent from $y$ means that the functional form of the probability density of $x$ is the same regardless of the value of $y$.\\
 
 \begin{remark}
-Expressions with a product of probability densities will occur very often and are subject to numerical underflow. It is therefore recommended to perform numerical evaluations always with the logarithm of a probability density. It does not matter if it is the natural logarithm or the logarithm with base 10. The crucial point is that a product of pdf's is converted into a sum of logarithms of pdf's.
+Expressions with a product of probability densities will occur very often and are subject to numerical underflow. It is therefore recommended to perform numerical evaluations always with the logarithm of a probability density. It does not matter if it is the natural logarithm (we use $\ln$ or $\log$ interchangeably) or the logarithm with base 2 or 10 (in this case we write explicitely $\log_2$ or $\log_10$. The crucial point is that a product of pdf's is converted into a sum of logarithms of pdf's.
 \end{remark}
 
 %---------------------------------------------------------------------------
@@ -359,6 +361,14 @@ k \\
 \end{array}\right)p^k(1-p)^{n-k}\delta(x-x_k)
   \end{equation}
    Let' say that we flip a fair coin with $p=\frac{1}{2}$ $n=3$ times and we want to calculate the probability that we have $k=2$ heads and $n-k=1$ tails. All coin flip sequences of the form $hht,hth,thh$ contribute to it. Therefore the probability is $\frac{3}{8}$. The same probability is obtained in the case $k=1$ heads and $n-k=2$ tails. For the case $k=3$ heads and $0$ tails there is only one possibility: $hhh$. Same for $k=0$ heads and $n-k=3$ tails. Therefore the probability in these cases is $\frac{1}{8}$. The sum of all probabilities is $\frac{1+3+3+1}{8}=1$. 
+\end{example}
+
+\begin{example}[The Multinomial Distribution]
+The multinomial distribution $ \mathcal{M}(\mathbf{x}\,\vert\, n,\mathbf{p})$ is a generalization of the binomial distribution, where the number of possible outcomes is also a variable $m$.  
+  \begin{equation}
+    \mathcal{M}(x_{1:m}\,\vert\, n,p_{1:m})=\sum_{n_1=0}^n\sum_{n_2=0}^n\ldots \sum_{n_m=0}^n \frac{n!}{n_1!n_2!\ldots n_m!}p_1^{n_1}p_2^{n_2}\ldots p_m^{n_m}\prod_{i=1}^m\delta(x_i-x_{n_i})
+  \end{equation}
+with the constraints $\sum_{i=1}^{m}n_i=n$ and $\sum_{i=1}^{m}p_i=1$. An application of the multinomial distribution in the context of histograms will be discussed in ~\ref{Histograms}. 
 \end{example}
 
 \begin{example}[The Poisson Distribution]
@@ -539,13 +549,15 @@ The probability of winning with 1000 samples is \texttt{0.32} in the case of sta
 
 
 %---------------------------------------------------------------------------
-\chapter{Density Estimation}
+\chapter{Density Estimation and Random Data}
 
 \begin{summary}
-  This chapter deals with the problem how a probability density can be estimated from data.
+  This chapter deals with the problem how a probability density can be estimated from data and how data can be generated from a distribution.
 \end{summary}
 
 \section{Histograms}
+\label{Histograms}
+
 A histogram divides the domain of a random variable $x$ into disjunct bins and counts the number of outcomes of $x$ in each bin. If $x\sim p(x)$, the normalized count in bin $[x_i,x_{i+1}]$ is given by
   \begin{equation}
     P_i=P\left(x_i\leqq x\leqq x_{i+1}\right)=\int_{x_i}^{x_{i+1}}p(x)dx=\lim_{N\rightarrow\infty}\frac{N_i}{N}
@@ -580,8 +592,15 @@ There are some best practice rules for choosing the number of bins $b$ and the b
   \begin{equation}
         w = 3.5 s N^{-\frac{1}{3}}
   \end{equation}
-where $s$ is the standard deviation of the data sample.
+where $s$ is the standard deviation of the data sample.\\
 
+If we create $n$ histograms from datasets $\mathcal{D}_{1:n}$ sampled from the same distribution $p(x)$ and with the same size $N$, then the bin entries $N_1,N_2,\ldots,N_m$ would be distributed according to a multinomial distribution
+
+  \begin{equation}
+    P(N_{1:m}\,\vert\, N,P_{1:m})=\frac{N!}{N_1!N_2!\ldots N_m!}P_1^{N_1}P_2^{N_2}\ldots P_m^{N_m}
+  \end{equation}
+with $\sum_{i=1}^m N_i=N$ and $P_i$ are the probabilities of $x$ to be assigned to bin $[x_i,x_{i+1}]$.
+  
 \section{Maximum Likelihood}
 If the physical process how data is generated is understood, the functional form of the probability density $p(\mathbf{x}\vert \boldsymbol{\theta})$ is typically known. In these cases the goal is to estimate the parameters $\boldsymbol{\theta}$ of a probability density from data.
 
@@ -604,7 +623,30 @@ Using the logarithm of the likelihood is better from the view point of numerical
   \end{equation}
 \end{definition}
 An optimal estimate of the parameters $\hat{\boldsymbol{\theta}}$ can be found by solving 
-$\frac{ \partial\log\left(\mathcal{L}(\boldsymbol{\theta})\right)}{\partial\boldsymbol{\theta}}=0$.   
+$\frac{ \partial\log\left(\mathcal{L}(\boldsymbol{\theta})\right)}{\partial\boldsymbol{\theta}}=0$. 
+
+\begin{example}[Parameter Estimation of Normal Distribution]
+The loglikelihood function for the Normal distribution is given by
+  \begin{equation}
+    \log(\mathcal{L}(\mu,\sigma^2) = \sum_{i=1}^N \log\left(\mathcal{N}\left(x_i\,\vert\, \mu,\sigma^2\right)\right)
+  \end{equation}
+Inserting the function form of $\mathcal{N}\left(x\,\vert\, \mu,\sigma^2\right)$ gives the following expression
+  \begin{equation}
+    \log(\mathcal{L}(\mu,\sigma^2) = \frac{1}{2\sigma^2}\sum_{i=1}^N \left(x_i-\mu\right)^2+\frac{N}{2}\log\left(2\pi\sigma^2\right)
+  \end{equation}   
+The derivative with respect to $\mu$ gives
+  \begin{equation}
+    \frac{\partial\log(\mathcal{L}(\mu,\sigma^2)}{\partial\mu} = -\frac{1}{\sigma^2}\sum_{i=1}^N \left(x_i-\mu\right)= -\frac{1}{\sigma^2}\left(\sum_{i=1}^N x_i - N\mu\right)=0
+  \end{equation}
+and has the solution $\hat{\mu}=\frac{1}{N}\sum_{i=1}^N x_i$ (sample mean).\\
+
+The derivative with respect to $\sigma^2$ gives
+  \begin{equation}
+    \frac{\partial\log(\mathcal{L}(\mu,\sigma^2)}{\partial\sigma^2} = -\frac{1}{2\sigma^4}\sum_{i=1}^N \left(x_i-\mu\right)^2 + \frac{N}{2\sigma^2}=-\frac{1}{2\sigma^4}\left(\sum_{i=1}^N \left(x_i-\mu\right)^2 - N\sigma^2\right)=0
+  \end{equation}
+and has the solution $\hat{\sigma}^2=\frac{1}{N}\sum_{i=1}^N \left(x_i-\hat{\mu}\right)^2$ (biased sample variance). An unbiased sample variance is given by $s^2=\frac{1}{N-1}\sum_{i=1}^N \left(x_i-\hat{\mu}\right)^2$. If you evaluate your statistics with data, where this distinction is relevant, your sample size is very likely too small.
+ 
+\end{example} 
 
 \section{Sampling}
 In the previous sections we studied the reconstruction of a probability density from data. Here we investigate the inverse problem: the generation of data from a given probability density. This process is called sampling.
@@ -660,7 +702,8 @@ The trick here is to perform the transformation on the joint pdf of $x$ and $y$,
  \end{equation}
  where the new variables $\rho'$ and $\phi'$ are given by $\rho'=\frac{\rho^2}{2}$ and $\phi'=\frac{\phi}{2\pi}$. So $\phi'$ is uniformly distributed in the range $[0,1]$ and $\rho'$ is exponentially distributed with $\xi=1$.\\
 
-We leave it as an exercise to show that $\rho'(r)=\ln\left(r\right)$ and therefore $\rho(r)=\sqrt{-2\ln\left(r\right)}$.\\
+We leave it as an exercise to show that $\rho'(r)=-\log
+\left(r\right)$ and therefore $\rho(r)=\sqrt{-2\ln\left(r\right)}$.\\
 
 The transformation function for $\phi$ is given by $\phi(r)=2\pi r$. Because $\phi$ and $\rho$ are independent random variables, we must also use independent random number sequences $r$ and $s$ to evaluate them.\\
 
@@ -730,7 +773,7 @@ Sample an index $j$ from the empirical distribution of $\alpha_{1:N}$
 Sample $x$ from the normal distribution $\mathcal{N}\left(x\,\vert\,\mu_j,\sigma_j^2\right)$
 \end{itemize}
 
-
+\section{Time Series Data}
 
 %---------------------------------------------------------------------------
 \chapter{Probabilistic Models}
