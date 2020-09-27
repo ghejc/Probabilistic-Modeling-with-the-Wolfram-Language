@@ -7,6 +7,7 @@
 
 \usepackage{amssymb}
 \usepackage{amsmath}
+\usepackage{graphicx}
 
 \begin{document}
 
@@ -110,7 +111,7 @@ For multi-variate probability densities we follow the notation of writing the ar
 
 \begin{example}[The Multivariate Normal Distribution]
   The multi-variate Normal (or Gauss) distribution
-  $\mathcal{N}\left(\mathbf{x}\,\vert\,\boldsymbol{\mu},\boldsymbol{\Sigma}\right)$, has the functional form
+  $\mathcal{N}\left(\mathbf{x}\,\vert\,\boldsymbol{\mu},\boldsymbol{\Sigma}\right)$ has the functional form
   \begin{equation}
     \frac{1}{\sqrt{2\pi \det(\boldsymbol{\Sigma})}}\exp{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
   \end{equation}
@@ -134,7 +135,7 @@ An important property of the multi-variate Normal distribution is that the resul
  Using $\det\left(\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)=\det(\mathrm{M})^2 \det(\boldsymbol{\Sigma})$ and $\mathrm{M}^T\left(\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)^{-1}\mathrm{M} = \mathrm{M}^T(\mathrm{M}^T)^{-1}\boldsymbol{\Sigma}^{-1}\mathrm{M}^{-1}\mathrm{M}=\boldsymbol{\Sigma}^{-1}$, the right hand side of the expression simplifies to
   \begin{equation}
 \mathcal{N}\left(\mathbf{x}'\,\vert\,\mathrm{M}\boldsymbol{\mu}+\mathbf{b},\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)=
- \frac{1}{\vert\det(M)\vert\sqrt{2\pi \det\left(\boldsymbol{\Sigma}\right)}}\exp{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}(\mathbf{x}-\boldsymbol{\mu})}
+ \frac{1}{\vert\det(M)\vert\sqrt{2\pi \det\left(\boldsymbol{\Sigma}\right)}}\exp{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
  \end{equation}
  The normalization condition is also fulfilled.
    \begin{equation}
@@ -257,7 +258,7 @@ then the individual terms in the product will simplify significantly.
 The statement $x$ is conditionally independent from $y$ means that the functional form of the probability density of $x$ is the same regardless of the value of $y$.\\
 
 \begin{remark}
-Expressions with a product of probability densities will occur very often and are subject to numerical underflow. It is therefore recommended to perform numerical evaluations always with the logarithm of a probability density. It does not matter if it is the natural logarithm (we use $\ln$ or $\log$ interchangeably) or the logarithm with base 2 or 10 (in this case we write explicitely $\log_2$ or $\log_10$. The crucial point is that a product of pdf's is converted into a sum of logarithms of pdf's.
+Expressions with a product of probability densities will occur very often and are subject to numerical underflow. It is therefore recommended to perform numerical evaluations always with the logarithm of a probability density. It does not matter if it is the natural logarithm (we use $\ln$ or $\log$ interchangeably) or the logarithm with base 2 or 10 (in this case we write explicitely $\log_2$ or $\log_{10})$. The crucial point is that a product of pdf's is converted into a sum of logarithms of pdf's.
 \end{remark}
 
 %---------------------------------------------------------------------------
@@ -327,7 +328,14 @@ What is the pdf of $y=x^2$ if $x\sim \mathcal{N}(x\,\vert\, 0,\sigma^2)$? The re
   \begin{equation}
     p(y)=\frac{1}{\sqrt{2\pi\sigma^2 y}}\exp\left(-\frac{y}{2\sigma^2}\right)\Theta(y)
   \end{equation}
-  The probability density is infinite at $y=0$, but it is still a valid distribution, because the normalization condition is fulfilled and it is non-negative for all values of $y$. A probability density can be singular at some points, as long as the integral over it is finite.
+  The probability density is infinite at $y=0$, but it is still a valid distribution, because the normalization condition is fulfilled and it is non-negative for all values of $y$. A probability density can be singular at some points, as long as the integral over it is finite.\\
+
+In the Wolfram Language the same result can be obtained with
+\begin{mathematica}
+dist = TransformedDistribution[x^2, x \[Distributed] NormalDistribution[0,\[Sigma]]];
+PDF[dist, y]
+\end{mathematica}
+Note that the second argument to \texttt{NormalDistribution} is the standard deviation $\sigma$, not the variance $\sigma^2$. The singular value at $y=0$ will be shown as \texttt{Indeterminate}.
 \end{example}  
 
 %---------------------------------------------------------------------------
@@ -403,6 +411,13 @@ In the limit $n\rightarrow\infty$ and $\lambda=np$ remains finite, the binomial 
   \end{equation}
   We used here $\delta_{n,k+l}=\delta_{n-k,l}$, which replaces $l$ by $n-k$ and limits the sum over $k$ to $n$, because $l$ is positive and $n-k$ is negative for $k>n$ and the Kronecker delta is therefore always zero.
 \end{proof}
+
+In the Wolfram Language the proof is rather simple.
+\begin{mathematica}
+TransformedDistribution[u + v, 
+                        {u \[Distributed] PoissonDistribution[\[Lambda]1],
+                         v \[Distributed] PoissonDistribution[\[Lambda]2]}]
+\end{mathematica}
 
 \begin{exercise}
    Show that $z_n=\sum_{i=1}^{n}x_i$ is distributed as a Poisson-distribution $P\left(z_n\,\vert\,\sum_{i=0}^n\lambda_i\right)$ if $x_i\sim \mathcal{P}(x_i\,\vert \,\lambda_i)$. Proof this statement by induction using $z_n=z_{n-1}+x_n$. 
@@ -599,7 +614,23 @@ If we create $n$ histograms from datasets $\mathcal{D}_{1:n}$ sampled from the s
   \begin{equation}
     P(N_{1:m}\,\vert\, N,P_{1:m})=\frac{N!}{N_1!N_2!\ldots N_m!}P_1^{N_1}P_2^{N_2}\ldots P_m^{N_m}
   \end{equation}
-with $\sum_{i=1}^m N_i=N$ and $P_i$ are the probabilities of $x$ to be assigned to bin $[x_i,x_{i+1}]$.
+with $\sum_{i=1}^m N_i=N$ and $P_i$ are the probabilities of $x$ to be assigned to bin $[x_i,x_{i+1}]$.\\
+
+The Wolfram Language provides the function \texttt{Histogram} e.g. \texttt{Histogram[data, \{\{1,2,3,4\}\}]} creates a histogram with 3 bins $[1,2]$, $[2,3]$ and $[3,4]$ or \texttt{Histogram[data, \{-10,10,1\}, "Probability"]} creates a histogram of normalized counts $\frac{N_i}{N}$ from $-10$ to $10$ with a bin width of $1$. Using the option \texttt{"PDF"}, a probability density estimate $\hat{p}(x)$ can be plotted.\\
+
+In addition, \texttt{Histogram3D} and \texttt{DensityHistogram} are available for bi-variate random data. In the following examples the bi-variate data samples are generated with the \texttt{BinormalDistribution}, which is a special case of the multinormal distribution for $n=2$.
+
+\begin{mathematica}
+Histogram3D[RandomVariate[BinormalDistribution[0], 10000]]
+\end{mathematica}
+
+ \includegraphics{images/histogram_3d.pdf}
+ 
+ \begin{mathematica}
+DensityHistogram[RandomVariate[BinormalDistribution[0], 10000]]
+\end{mathematica}
+
+ \includegraphics{images/density_histogram.pdf}     
   
 \section{Maximum Likelihood}
 If the physical process how data is generated is understood, the functional form of the probability density $p(\mathbf{x}\vert \boldsymbol{\theta})$ is typically known. In these cases the goal is to estimate the parameters $\boldsymbol{\theta}$ of a probability density from data.
@@ -651,7 +682,7 @@ and has the solution $\hat{\sigma}^2=\frac{1}{N}\sum_{i=1}^N \left(x_i-\hat{\mu}
 \section{Sampling}
 In the previous sections we studied the reconstruction of a probability density from data. Here we investigate the inverse problem: the generation of data from a given probability density. This process is called sampling.
 
-It is usually quite easy to generate random numbers $r$ from a uniform distribution $\mathcal{U}(r\,\vert\,\alpha=0,\beta=1)$. Almost every programming language has a function for it. The goal is now to transform the sequence $r_{1:N}$ to a sequence $x_{1:}$ so that $x$ is distributed as $p(x)$.
+It is usually quite easy to generate random numbers $r$ from a uniform distribution $\mathcal{U}(r\,\vert\,\alpha=0,\beta=1)$. Almost every programming language has a function for it (in the Wolfram Language the function is called \texttt{RandomReal}) . The goal is now to transform the sequence $r_{1:N}$ to a sequence $x_{1:}$ so that $x$ is distributed as $p(x)$.
 
 One way to do this is to find a transformation function $x(r)$ for $0\leqq r \leqq 1$.
 
@@ -678,17 +709,13 @@ dist = EmpiricalDistribution[weights -> categories];
 data = RandomVariate[dist, 1000];
 Histogram[data,
           LabelingFunction -> Center,
-          ChartElementFunction -> "GlassRectangle",
-          ChartStyle -> LightBlue, 
           AxesLabel -> {"Category", "Count"}]
 \end{mathematica}
 
 The histogram shows the counts of the data samples generated from an empirical distribution for each category. The counts are indeed numerically close to the given weights.\\
 
- \includegraphics[scale=1.15] {images/sampling_from_discrete_distribution.png}   
+ \includegraphics{images/sampling_from_discrete_distribution.pdf}   
 \end{example}
- 
-
 
 \begin{example}[Normal-Distributed Random Numbers]
 The trick here is to perform the transformation on the joint pdf of $x$ and $y$, where both random variables are identically distributed according to $\mathcal{N}(\_\,\vert\,\mu=0,\sigma^2=1)$.
@@ -718,13 +745,23 @@ y(r,s)=\sqrt{-2\ln(r)}\sin(2\pi s)
 The algorithm is called Box-Muller method \cite{box1958}.
 \end{example}
 
+Random numbers can be generated with the Wolfram Language using \texttt{RandomVariate} for any built-in distribution e.g.
+
+\begin{mathematica}
+data1 = RandomVariate[NormalDistribution[0, 1], 1000];
+data2 = RandomVariate[NormalDistribution[2, 0.5], 1000];
+Histogram[{data1, data2}]
+\end{mathematica}
+
+ \includegraphics{images/normal_distributions_from_data.pdf}
+   
 \begin{exercise}
   Show that the function $x(r)$ for the exponential distribution 
   $p(x)=\frac{1}{\xi}\exp\left(-\frac{x}{\xi}\right)$ is given by $x(r)=-\xi\ln\left(1-r\right)$ or $x(r)=-\xi\ln\left(r\right)$.   
 \end{exercise}
 
 \begin{exercise}
-  Show that how the method above has to be extended to generate random numbers distributed as $\mathcal{N}(\_\,\vert\,\mu,\sigma^2)$.   
+  Show how the method above can be extended to generate random numbers distributed as $\mathcal{N}(\_\,\vert\,\mu,\sigma^2)$.   
 \end{exercise}
 
 Finding a function $x(r)$ analytically is not always possible. Another approach, which is applicable to a wider range of distributions, is rejection sampling \cite{neumann1951}. 
