@@ -116,7 +116,8 @@ The distribution instance can then be used for plotting.
 \begin{mathematica}
 Plot[{PDF[dist, x] //. {\[Alpha] -> 1},
       PDF[dist, x] //. {\[Alpha] -> 2}},
-      {x, -4, 4}, Filling -> Axis]
+      {x, -4, 4}, Filling -> Axis,
+      PlotLegends -> Placed[{"\[Alpha]=1", "\[Alpha]=2"}, Right]]
 \end{mathematica}
 
 \includegraphics[scale=0.9]{images/probability_distribution.pdf}
@@ -152,10 +153,10 @@ The Wolfram Language implements the Normal distribution as \texttt{NormalDistrib
 Plot[Table[PDF[NormalDistribution[0, \[Sigma]], x],
            {\[Sigma], {.75, 1, 2}}] // Evaluate,
      {x, -6, 6}, Filling -> Axis, 
-     PlotLegends -> Placed[{"\[Sigma]=0.75", "\[Sigma]=1", "\[Sigma]=2"},Bottom]]
+     PlotLegends -> Placed[{"\[Sigma]=0.75","\[Sigma]=1","\[Sigma]=2"}, Right]]
 \end{mathematica}
 
-\includegraphics{images/normal_distribution.pdf}
+\includegraphics[scale=0.9]{images/normal_distribution.pdf}
 \end{example}
 
 \begin{example}[The Multivariate Normal Distribution]
@@ -215,7 +216,17 @@ An important property of the multi-variate Normal distribution is that the resul
   \begin{equation}
     \frac{1}{\beta-\alpha}\int_{-\infty}^{+\infty}\Theta(\beta-x)\Theta(x-\alpha)dx
     =\frac{1}{\beta-\alpha}\int_{\alpha}^{\beta}dx=\frac{\beta-\alpha}{\beta-\alpha}=1
-  \end{equation}  
+  \end{equation}
+  
+Wolfram Language has a function \texttt{UniformDistribution} with a list argument $\{\alpha,\beta\}$.
+
+\begin{mathematica}
+Plot[Table[PDF[UniformDistribution[{0, \[Beta]}], x], 
+           {\[Beta], {1, 2, 4}}] // Evaluate, 
+     {x, -1, 5}, Filling -> Axis, 
+     PlotLegends -> Placed[{"\[Beta]=1", "\[Beta]=2", "\[Beta]=4"}, Right]]
+\end{mathematica}
+\includegraphics{images/uniform_distribution.pdf}  
 \end{example}
 
 %---------------------------------------------------------------------------
