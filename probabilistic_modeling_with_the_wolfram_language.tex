@@ -27,9 +27,11 @@
 
 The book originally developed from talks and lecture notes given at the Fraunhofer institute in Nuremberg, Germany as an introduction to probabilistic modeling. The goal was primarily to provide the students with a minimal set of mathematical tools and concepts to do probabilistic computations by themselves and to apply it to real-world problems. This sounds easier than it actually is, because even conceptually easy problems can lead to results, which contradicts intuition like the famous Monty Hall problem.\\
 
-Since then, a lot of developments in this field took place. Most of the non-trivial calculations are almost impossible to be done without a computer, so the question quickly arises what is the appropriate software tool for doing this kind of calculations. Because of the availability of a large number of good software, it is merely an author's preference towards one or the other, but in this book the Wolfram language is chosen for several reasons.\\
+There are basically two main branches of probabilistic modeling: simulation and inference. The first uses a probabilistic model based on a theory to make predictions or simulate the outcome of an experiment or a measurement, while the second one uses collected data to create a probabilistic model. The term probabilistic means the ability to include uncertainty into the model. Uncertainty in the first case is entering through only imprecisely known parameters,  hidden variables and approximations, while in the second case it depends on the degree of knowledge about the noise which is inherently present in the data or the process how the data was generated or how many parameters are necessary to describe the data. Including uncertainty is not an option, but a necessity to make precise statements about the reliability of our results.  \\    
 
-The Wolfram language has a clear and consistent design with a syntax close to the mathematical notation and has all the built-in knowledge to perform symbolic calculations where results in a closed-form are available and numerical evaluations in the case where this is not possible. Especially the Probability and Statistics part, which is used heavily in this book, has well-designed functions, which makes it easy to apply them to all kind of statistical problems. The visualization capabilities of the Wolfram language are outstanding and every figure in this book was generated with it.\\
+A lot of exciting developments took place in this field in the last years. Most of the non-trivial calculations are almost impossible to be done without a computer, so the question quickly arises what is the appropriate software tool for doing this kind of calculations. Because of the availability of a large number of good software, it is merely somebody's preference towards one or the other, but in this book the Wolfram language is chosen for several reasons.\\
+
+The Wolfram language has a clear and consistent design with a syntax close to the mathematical notation and has all the built-in knowledge to perform symbolic calculations where results in a closed-form are available and numerical evaluations in the case where this is not possible. Especially the Probability and Statistics part, which is used heavily in this book, has been improved significantly in the newer version of the language and the available functions can be easily applied to all kind of statistical problems. The visualization capabilities of the Wolfram language are outstanding and every figure in this book was generated with it.\\
 
 This is not the first book about this topic, but builds on the work of others. There are many great books available, and these recommendations are definitely not exhaustive, but only a subjective subset:
 
@@ -60,7 +62,7 @@ Nevertheless the goal of this book is a bit different. We want to cover only the
 %---------------------------------------------------------------------------
 \section{Probability Density}
 
-The probability density is a generalized function, which describes the distribution of values of an random variable. Generalized means here that it can contain Dirac delta functions. It describes the outcome of an experiment or measurement, where the value of the random variable is determined. The exact value of an outcome is unpredictable, but the frequency of the occurrence of a value is described by the probability density. Even if the probability density is typically a function, the value at a specific point has no direct meaning, only the integral over a certain range of values can be interpreted as probability. The terms probability density function (pdf) or probability distribution is used synonymously for a probability density. So when we write $p(x)$ or $pdf(x)$, it means the probability density associated with the random variable $x$ or $x$ is distributed as $p(x)$. In the function $p(x)$ $x$ is only a placeholder and can be replaced by another symbol e.g. $u$. In this case we write $p(x=u)$, which means that in the functional form of the pdf associated with the random variable $x$, we use $u$ as an argument. 
+The probability density is a generalized function, which describes the distribution of values of an random variable. Generalized means here that it can contain Dirac delta functions. It describes the outcome of an experiment or measurement, where the value of the random variable is determined. The exact value of an outcome is unpredictable, but the frequency of the occurrence of a value is described by the probability density. Even if the probability density is typically a function, the value at a specific point has no direct meaning, only the integral over a certain range of values can be interpreted as probability. The terms probability density function (pdf) or probability distribution or simply distribution are used synonymously for a probability density. So when we write $p(x)$, it means the probability density associated with the random variable $x$ or $x$ is distributed as $p(x)$. In the function $p(x)$ $x$ is only a placeholder and can be replaced by another symbol e.g. $u$. In this case we write $p(x=u)$, which means that in the functional form of the pdf associated with the random variable $x$, we use $u$ as an argument. This notation is also used when we set the random variable to a fixed value e.g. $p(x=x_0)$.  
 
 The definition of a probability density is given below:
 
@@ -94,19 +96,66 @@ Integrating only over one random variable e.g. $y$, the result is again a valid 
 \textit{One word of caution: if we say that $x$ is distributed as $p(x)$ and $y$ is distributed as $p(y)$, that does not mean that the probability distributions have the same functional form, but it is kept open if they are identical or different. Whenever they are identical, we explicitly mention this and say that $x$ and $y$ are identically distributed.}
 \end{remark}
 
-For multi-variate probability densities we follow the notation of writing the argument in bold letters or with an index range subscript e.g. $p(\mathbf{x})$ or $p(x_{1:n})$ is the short form for the joint probability density $p(x_1,x_2,\ldots,x_n)$. 
+For multi-variate probability densities we follow the notation of writing the argument in bold letters or with an index range subscript e.g. $p(\mathbf{x})$ or $p(x_{1:n})$ is the short form for the joint probability density $p(x_1,x_2,\ldots,x_n)$. \\
+
+The Wolfram Language represents a probability density by the function \texttt{ProbabilityDistribution} e.g. the following code creates a pdf $\frac{\sqrt{2}}{\pi\alpha\left(1+\left(\frac{x}{\alpha}\right)^4\right)}$
+
+\begin{mathematica}
+dist = ProbabilityDistribution[Sqrt[2]/(Pi*\[Alpha])/(1 + (x/\[Alpha])^4),
+                               {x, -Infinity, Infinity}, 
+                               Assumptions -> {\[Alpha] > 0}];
+\end{mathematica} 
+The \texttt{Assumptions} option $\alpha > 0$ is necessary to guarantee the non-negativity of the pdf. The function, which is provided as the first argument, must be normalized to unity or if not, the option \texttt{ Method -> "Normalize"} must be explictely set. An equivalent definition would be
+\begin{mathematica}
+dist = ProbabilityDistribution[1/(1 + (x/\[Alpha])^4),
+                               {x, -Infinity, Infinity},
+                               Method -> "Normalize",
+                               Assumptions -> {\[Alpha] > 0];
+\end{mathematica} 
+The distribution instance can then be used for plotting.
+\begin{mathematica}
+Plot[{PDF[dist, x] //. {\[Alpha] -> 1},
+      PDF[dist, x] //. {\[Alpha] -> 2}},
+      {x, -4, 4}, Filling -> Axis]
+\end{mathematica}
+
+\includegraphics[scale=0.9]{images/probability_distribution.pdf}
+
+\texttt{ProbabilityDistribution} can be also used for the creation of joint probability densities. 
+\begin{mathematica}
+dist = ProbabilityDistribution[
+          Gamma[3/4]/(Gamma[5/4]*Sqrt[2 Pi^3])/(1 + x^4 + y^4),
+          {x, -Infinity, Infinity},
+          {y, -Infinity, Infinity}];
+Plot3D[PDF[dist, {x, y}], {x, -4, 4}, {y, -4, 4}, 
+       PlotRange -> {0, 0.2}, PlotPoints -> {50, 50}]
+\end{mathematica}
+
+\includegraphics[scale=0.9]{images/joint_probability_distribution.pdf}
 
 \begin{example}[The Univariate Normal Distribution]
   The most important probability density is the Normal (or Gauss) distribution $\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)$, which has the functional form
   \begin{equation}
     \frac{1}{\sqrt{2\pi\sigma^2}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}
   \end{equation}
-  The function has two free parameters $\mu$ and $\sigma$ and fulfills the normalization condition for any value of $\mu$ and $\sigma$.
+  The function has two free parameters $\mu$ (mean) and $\sigma$ (standard deviation) and fulfills the normalization condition for any value of $\mu$ and $\sigma$.
     \begin{equation}
     \frac{1}{\sqrt{2\pi\sigma^2}}\int_{-\infty}^{+\infty}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}dx=
     \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}\exp{-\frac{x^2}{2}}dx=1
   \end{equation}
-  where the variable transformation $x\rightarrow\frac{x-\mu}{\sigma}$ was used.
+  where the variable transformation $x\rightarrow\frac{x-\mu}{\sigma}$ was used.\\
+
+The notation $\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)$ instead of $\mathcal{N}\left(x\,\vert\,\mu,\sigma\right)$ is motivated by the fact that the functional form only depends on $\sigma^2$ and by the generalization to the multi-variate Normal distribution, which is discussed in the next example.\\
+
+The Wolfram Language implements the Normal distribution as \texttt{NormalDistribution}. Note that the second argument to \texttt{NormalDistribution} is the standard deviation $\sigma$, not the variance $\sigma^2$.
+\begin{mathematica}
+Plot[Table[PDF[NormalDistribution[0, \[Sigma]], x],
+           {\[Sigma], {.75, 1, 2}}] // Evaluate,
+     {x, -6, 6}, Filling -> Axis, 
+     PlotLegends -> Placed[{"\[Sigma]=0.75", "\[Sigma]=1", "\[Sigma]=2"},Bottom]]
+\end{mathematica}
+
+\includegraphics{images/normal_distribution.pdf}
 \end{example}
 
 \begin{example}[The Multivariate Normal Distribution]
@@ -115,7 +164,13 @@ For multi-variate probability densities we follow the notation of writing the ar
   \begin{equation}
     \frac{1}{\sqrt{2\pi \det(\boldsymbol{\Sigma})}}\exp{-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^T\boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})}
   \end{equation}
-with $\mathbf{x}=x_{1:n}$,$\boldsymbol{\mu}=\mu_{1:n}$ and $\boldsymbol{\Sigma}=\Sigma_{1:n,1:n}$. $\boldsymbol{\Sigma}$ is called the covariance matrix and is symmetric $\boldsymbol{\Sigma}^T=\boldsymbol{\Sigma}$, so it has only $\frac{n(n+1)}{2}$ independent parameters. Therefore the multi-variate Normal distribution has $\frac{n(n+3)}{2}$ parameters.
+with $\mathbf{x}=x_{1:n}$,$\boldsymbol{\mu}=\mu_{1:n}$ and $\boldsymbol{\Sigma}=\Sigma_{1:n,1:n}$. $\boldsymbol{\Sigma}$ is called the covariance matrix and is symmetric $\boldsymbol{\Sigma}^T=\boldsymbol{\Sigma}$, so it has only $\frac{n(n+1)}{2}$ independent parameters. Therefore the multi-variate Normal distribution has $\frac{n(n+3)}{2}$ parameters.\\
+
+The corresponding function in the Wolfram Language is \texttt{MultinormalDistribution}. \begin{mathematica}
+Plot3D[PDF[MultinormalDistribution[{0, 0}, {{2, 1}, {1, 2}}], {x, y}],
+       {x, -4, 4}, {y, -4, 4}, PlotPoints -> {50, 50}]
+\end{mathematica}
+\includegraphics{images/multi_normal_distribution.pdf}
 \end{example}
 
 \begin{theorem}[Multivariate Normal Distribution under Linear Transformation]
@@ -335,7 +390,9 @@ In the Wolfram Language the same result can be obtained with
 dist = TransformedDistribution[x^2, x \[Distributed] NormalDistribution[0,\[Sigma]]];
 PDF[dist, y]
 \end{mathematica}
-Note that the second argument to \texttt{NormalDistribution} is the standard deviation $\sigma$, not the variance $\sigma^2$. The singular value at $y=0$ will be shown as \texttt{Indeterminate}.
+
+The singular value at $y=0$ will be shown as \texttt{Indeterminate}.
+
 \end{example}  
 
 %---------------------------------------------------------------------------
