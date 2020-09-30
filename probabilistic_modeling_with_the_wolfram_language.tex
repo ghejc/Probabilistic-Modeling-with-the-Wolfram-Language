@@ -223,7 +223,7 @@ Wolfram Language has a function \texttt{UniformDistribution} with a list argumen
 \begin{mathematica}
 Plot[Table[PDF[UniformDistribution[{0, \[Beta]}], x], 
            {\[Beta], {1, 2, 4}}] // Evaluate, 
-     {x, -1, 5}, Filling -> Axis, 
+     {x, -1, 5}, Filling -> Axis, PlotRange -> {0, 1},
      PlotLegends -> Placed[{"\[Beta]=1", "\[Beta]=2", "\[Beta]=4"}, Right]]
 \end{mathematica}
 \includegraphics{images/uniform_distribution.pdf}  
