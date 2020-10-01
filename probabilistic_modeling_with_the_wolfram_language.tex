@@ -56,13 +56,14 @@ Nevertheless the goal of this book is a bit different. We want to cover only the
 \chapter{Basic Concepts}
 
 \begin{summary}
-  This first chapter introduces the basic concepts. The starting point in other text books about this topic is typically the definition of probability based on the Kolmogorov axioms. This book chooses a different approach and puts the main focus on the probability density. Everything else including probability is derived from this quantity. The reason for this choice is mainly that the result of almost every non-trivial probabilistic calculation in physics or mathematics is always a probability density. It includes the complete information about a random process and plays a central role in the description of probabilistic systems. As we will see, it contains also deterministic systems as a special case and is therefore a generalization of a function for the case, when uncertainty comes into play.     
+  This first chapter introduces the basic concepts. The starting point in other text books about this topic is typically the definition of probability based on the Kolmogorov axioms. This book chooses a different approach and puts the main focus on the probability density. Everything else including probability is derived from this quantity. The reason for this choice is mainly that the result of almost every non-trivial probabilistic calculation in physics or mathematics is always a (conditional) probability density. It includes the complete information about a random process and plays a central role in the description of probabilistic systems. As we will see, it contains also deterministic systems as a special case and is therefore a generalization of a function for the case, when uncertainty comes into play.     
 \end{summary}
 
 %---------------------------------------------------------------------------
 \section{Probability Density}
 
-The probability density is a generalized function, which describes the distribution of values of an random variable. Generalized means here that it can contain Dirac delta functions. It describes the outcome of an experiment or measurement, where the value of the random variable is determined. The exact value of an outcome is unpredictable, but the frequency of the occurrence of a value is described by the probability density. Even if the probability density is typically a function, the value at a specific point has no direct meaning, only the integral over a certain range of values can be interpreted as probability. The terms probability density function (pdf) or probability distribution or simply distribution are used synonymously for a probability density. So when we write $p(x)$, it means the probability density associated with the random variable $x$ or $x$ is distributed as $p(x)$. In the function $p(x)$ $x$ is only a placeholder and can be replaced by another symbol e.g. $u$. In this case we write $p(x=u)$, which means that in the functional form of the pdf associated with the random variable $x$, we use $u$ as an argument. This notation is also used when we set the random variable to a fixed value e.g. $p(x=x_0)$.  
+The probability density is a generalized function, which describes the distribution of values of an random variable. Generalized means here that it can contain Dirac delta functions. It describes the outcome of an experiment or measurement, where the value of the random variable is determined. The exact value of an outcome is unpredictable, but the frequency of the occurrence of a value is described by the probability density. Even if the probability density is typically a function, the value at a specific point has no direct meaning, only the integral over a certain range of values can be interpreted as probability. The terms probability density function (pdf) or probability distribution or simply distribution are used synonymously for a probability density. So when we write $p(x)$, it means the probability density associated with the random variable $x$ or $x$ is distributed as $p(x)$. In the function $p(x)$ $x$ is only a placeholder and can be replaced by another symbol e.g. $u$. In this case we write $p(x=u)$, which means that in the functional form of the pdf associated with the random variable $x$, we use $u$ as an argument. This notation is also used when we set the random variable to a fixed value e.g. $p(x=x_0)$. Any dependence of the probability density on a set of parameters $\theta_1,\theta_2,\ldots,\theta_n$ will be written as 
+$p(x\,\vert\,\theta_1,\theta_2,\ldots,\theta_n)$ or in short form $p(x\,\vert\,\boldsymbol{\theta})$.\\  
 
 The definition of a probability density is given below:
 
@@ -70,21 +71,21 @@ The definition of a probability density is given below:
   \label{th:probabilitydensity}
   \index{probability density}
   A probability density $p(x)$ is a generalized non-negative function of a variable
-  $x$ with a domain of $[-\infty,+\infty]$ such that
+  $x$ with a support of $[-\infty,+\infty]$ such that
   \begin{equation}
     \int_{-\infty}^{+\infty}p(x)dx=1
   \end{equation}
 \end{definition}
-The dimension of a probability density $p(x)$ is the inverse of the dimension of the associated random variable $x$.
+The dimension of a probability density $p(x)$ is the inverse of the dimension of the associated random variable $x$.\\
 
 A random variable is defined as
 \begin{definition}[Random Variable]
   \label{th:randomvariable}
   \index{random variable}
-  A real-valued continuous variable $x$ is called a random variable if $x$ is distributed as $p(x)$ (also written as $x\sim p(x)$). This means that the distribution of values of a random variable $x$ is completely described by the probability density $p(x)$.
+  A real-valued continuous variable $x$ is called a random variable if $x$ is distributed as $p(x)$ (also written as $x\sim p(x)$). This means that the distribution of values of the random variable $x$ is completely described by the probability density $p(x)$.
 \end{definition}
 
-A random variable with a finite domain $[a,b]$ can be described by a probability density, which is zero outside of the interval $[a,b]$.
+A random variable with a finite support $[a,b]$ can be described by a probability density, which is zero outside of the interval $[a,b]$.\\
 
 A probability density of two or more random variables is called a joint probability density e.g. $p(x,y)$ in the case of two random variables $x$ and $y$. The normalization condition is given by 
   \begin{equation}
@@ -120,7 +121,7 @@ Plot[{PDF[dist, x] //. {\[Alpha] -> 1},
       PlotLegends -> Placed[{"\[Alpha]=1", "\[Alpha]=2"}, Right]]
 \end{mathematica}
 
-\includegraphics[scale=0.9]{images/probability_distribution.pdf}
+\includegraphics[scale=0.7]{images/probability_distribution.pdf}
 
 \texttt{ProbabilityDistribution} can be also used for the creation of joint probability densities. 
 \begin{mathematica}
@@ -132,7 +133,7 @@ Plot3D[PDF[dist, {x, y}], {x, -4, 4}, {y, -4, 4},
        PlotRange -> {0, 0.2}, PlotPoints -> {50, 50}]
 \end{mathematica}
 
-\includegraphics[scale=0.9]{images/joint_probability_distribution.pdf}
+\includegraphics[scale=0.7]{images/joint_probability_distribution.pdf}
 
 \begin{example}[The Univariate Normal Distribution]
   The most important probability density is the Normal (or Gauss) distribution $\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)$, which has the functional form
@@ -156,7 +157,7 @@ Plot[Table[PDF[NormalDistribution[0, \[Sigma]], x],
      PlotLegends -> Placed[{"\[Sigma]=0.75","\[Sigma]=1","\[Sigma]=2"}, Right]]
 \end{mathematica}
 
-\includegraphics[scale=0.9]{images/normal_distribution.pdf}
+\includegraphics[scale=0.8]{images/normal_distribution.pdf}
 \end{example}
 
 \begin{example}[The Multivariate Normal Distribution]
@@ -171,7 +172,7 @@ The corresponding function in the Wolfram Language is \texttt{MultinormalDistrib
 Plot3D[PDF[MultinormalDistribution[{0, 0}, {{2, 1}, {1, 2}}], {x, y}],
        {x, -4, 4}, {y, -4, 4}, PlotPoints -> {50, 50}]
 \end{mathematica}
-\includegraphics{images/multi_normal_distribution.pdf}
+\includegraphics[scale=0.8]{images/multi_normal_distribution.pdf}
 \end{example}
 
 \begin{theorem}[Multivariate Normal Distribution under Linear Transformation]
@@ -228,6 +229,10 @@ Plot[Table[PDF[UniformDistribution[{0, \[Beta]}], x],
 \end{mathematica}
 \includegraphics{images/uniform_distribution.pdf}  
 \end{example}
+
+\begin{exercise}
+Show that the sum of two random variables distributed as $\mathcal{U}(x\,\vert\,\alpha,\beta)$ is given by a triangular distribution between the two end points $2\alpha$ and $2\beta$ and a peak at $\alpha+\beta$, which is built into the Wolfram Language as \texttt{TriangularDistribution}.
+\end{exercise}
 
 %---------------------------------------------------------------------------
 \section{Probability}
@@ -354,7 +359,8 @@ Integrate[PDF[cond, x], {x, -Infinity, Infinity},
                    Element[\[Sigma]2, NonNegativeReals], 
                    Element[\[Rho], NonNegativeReals]}]
 \end{mathematica}
-The result is a \texttt{ConditionalExpression} being $1$ under the constraints $\rho < 1$ and $\sigma_1 > 0$.
+The result is a \texttt{ConditionalExpression} being $1$ under the constraints $\rho < 1$ and $\sigma_1 > 0$. These conditions can be added as \texttt{Assumptions} to \texttt{ProbabilityDistribution}.
+
 %---------------------------------------------------------------------------
 \section{Deterministic Functions}
 We will now show that every function can be written as a conditional probability density. This will allow us to treat everything as probability density and mix deterministic and random behavior in our models.
@@ -705,7 +711,7 @@ The probability of winning with 1000 samples is \texttt{0.32} in the case of sta
 \section{Histograms}
 \label{Histograms}
 
-A histogram divides the domain of a random variable $x$ into disjunct bins and counts the number of outcomes of $x$ in each bin. If $x\sim p(x)$, the normalized count in bin $[x_i,x_{i+1}]$ is given by
+A histogram divides the support of a random variable $x$ into disjunct bins and counts the number of outcomes of $x$ in each bin. If $x\sim p(x)$, the normalized count in bin $[x_i,x_{i+1}]$ is given by
   \begin{equation}
     P_i=P\left(x_i\leqq x\leqq x_{i+1}\right)=\int_{x_i}^{x_{i+1}}p(x)dx=\lim_{N\rightarrow\infty}\frac{N_i}{N}
   \end{equation}
@@ -903,7 +909,7 @@ Finding a function $x(r)$ analytically is not always possible. Another approach,
 The algorithm works in the following way:
 \begin{itemize}
 \item
-Choose a number $M$ and a distribution $p(y)$ in such a way that the condition $p(x=u)\leqq M p(y=u)$ holds everywhere on the domain of $x$ and drawing samples from $p(y)$ is known. 
+Choose a number $M$ and a distribution $p(y)$ in such a way that the condition $p(x=u)\leqq M p(y=u)$ holds everywhere on the support of $x$ and drawing samples from $p(y)$ is known. 
 \item 
 Draw samples $y_k$ from a distribution $p(y)$ and $r_k$ from a uniform distribution $\mathcal{U}(r\,\vert\,\alpha=0,\beta=1)$ for $k=1:N$.
 \item
