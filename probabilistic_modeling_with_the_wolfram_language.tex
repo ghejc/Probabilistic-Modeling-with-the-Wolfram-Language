@@ -293,15 +293,15 @@ A conditional probability density $p(x\,\vert\, y,\theta)$ means a probability d
   \index{conditional probability density}
   The conditional probability $p(x\,\vert\, y,\theta)$ is defined by
   \begin{equation}
-    p(x\,\vert\,\ y,\theta)=\frac{p(x, y\,\vert\, \theta)}{p(y\,\vert\, \theta)}
+    p(x\,\vert\, y,\theta)=\frac{p(x, y\,\vert\, \theta)}{p(y\,\vert\, \theta)}=\frac{p(x, y\,\vert\, \theta)}{\int_{-\infty}^{+\infty}p(x,y\,\vert\, \theta)dx}
   \end{equation}
   A similar equation holds for $p(y\,\vert\, x,\theta)$
   \begin{equation}
-    p(y\,\vert\,\ x,\theta)=\frac{p(x, y\,\vert\, \theta)}{p(x\,\vert\, \theta)}
+    p(y\,\vert\, x,\theta)=\frac{p(x, y\,\vert\, \theta)}{p(x\,\vert\, \theta)}=\frac{p(x, y\,\vert\, \theta)}{\int_{-\infty}^{+\infty}p(x,y\,\vert\, \theta)dy}
   \end{equation}
   Eliminating the joint probability density $p(x, y\,\vert\, \theta)$ leads to the Bayes rule
   \begin{equation}
-    p(x\,\vert\,\ y,\theta)=\frac{p(y\,\vert\,\ x,\theta)p(x\,\vert\, \theta)}{p(y\,\vert\, \theta)}
+    p(x\,\vert\, y,\theta)=\frac{p(y\,\vert\, x,\theta)p(x\,\vert\, \theta)}{p(y\,\vert\, \theta)}
   \end{equation} 
 \end{definition}
 
@@ -327,6 +327,34 @@ The statement $x$ is conditionally independent from $y$ means that the functiona
 Expressions with a product of probability densities will occur very often and are subject to numerical underflow. It is therefore recommended to perform numerical evaluations always with the logarithm of a probability density. It does not matter if it is the natural logarithm (we use $\ln$ or $\log$ interchangeably) or the logarithm with base 2 or 10 (in this case we write explicitely $\log_2$ or $\log_{10})$. The crucial point is that a product of pdf's is converted into a sum of logarithms of pdf's.
 \end{remark}
 
+\begin{example}[A Normal Distribution with an Uncertain Parameter]
+Let's assume that a random variable $x$ is distributed as $\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)$, but we are uncertain about its mean $\mu$. We can only say that its value is between $\alpha$ and $\beta$. So this uncertainty turns the parameter $\mu$ into a random variable distributed as $\mathcal{U}\left(\mu\,\vert\,\alpha,\beta\right)$ and we can ask what is the joint probability density $p(x,\mu)$. 
+  \begin{equation}
+  p\left(x,\mu\,\vert\,\sigma^2,\alpha,\beta\right)=\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)\mathcal{U}\left(\mu\,\vert\,\alpha,\beta\right)
+  \end{equation}
+Even if $\mu$ is now an random variable, the functional form of $\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)$ is the same as before. This is the reason why no distinction is made between parameters and random variables behind the condition bar.
+\end{example}
+
+The Wolfram Language has no special function for conditional pdf's, because basically every probability density with parameters is a conditional pdf. Nevertheless it may be necessary to go from a joint pdf $p(x,y)$ to a conditional pdf $p(x\,\vert\, y)$.
+\begin{mathematica}
+joint = BinormalDistribution[{\[Mu]1, \[Mu]2}, {\[Sigma]1, \[Sigma]2}, \[Rho]];
+dist2 = MarginalDistribution[joint, 2];
+cond = ProbabilityDistribution[
+           PDF[joint, {x1, x2}]/PDF[dist2, x2],
+           {x1, -Infinity, Infinity}]
+\end{mathematica}
+The result is
+  \begin{equation}
+    p\left(x_1\,\vert\, x_2, \mu_1, \mu_2, \sigma_1, \sigma_2, \rho\right)=\frac{\exp \left(\frac{(x_2-\mu_2)^2}{2 \sigma_2^2}-\frac{\frac{(x_1-\mu _1)^2}{\sigma_1^2}-\frac{2 \rho  (x_1-\mu_1) (x_2-\mu_2)}{\sigma_1 \sigma_2}+\frac{(x_2-\mu_2)^2}{\sigma_2^2}}{2 \left(1-\rho ^2\right)}\right)}{\sqrt{2 \pi } \sqrt{1-\rho ^2} \sigma_1}
+  \end{equation}
+The normalization condition can be checked with
+\begin{mathematica}
+Integrate[PDF[cond, x], {x, -Infinity, Infinity}, 
+   Assumptions -> {Element[\[Sigma]1, NonNegativeReals], 
+                   Element[\[Sigma]2, NonNegativeReals], 
+                   Element[\[Rho], NonNegativeReals]}]
+\end{mathematica}
+The result is a \texttt{ConditionalExpression} being $1$ under the constraints $\rho < 1$ and $\sigma_1 > 0$.
 %---------------------------------------------------------------------------
 \section{Deterministic Functions}
 We will now show that every function can be written as a conditional probability density. This will allow us to treat everything as probability density and mix deterministic and random behavior in our models.
@@ -351,7 +379,7 @@ As we can see from the example, the probability density becomes a Dirac delta fu
   \end{equation} 
 \end{definition}
 
-A common use-case is that we have a conditional probability density, which will be become deterministic by including hidden (or latent) random variables. The random character of a quantity could be completely originate from a another random variable and as soon as this other random variable has been identified and included, the conditional probability density can be replaced by an expression of the form shown above if the functional dependency on the hidden variable is known.
+A common use-case is that we have a conditional probability density, which will be become deterministic by including hidden (or latent) random variables. The random character of a quantity could be completely originate from another random variable and as soon as this other random variable has been identified and included, the conditional probability density can be replaced by an expression of the form shown above if the functional dependency on the hidden variable is known.
 
 Another consequence is that an integration over $y$ can be carried out immediately using
   \begin{equation}
@@ -510,12 +538,22 @@ TransformedDistribution[u + v,
   The $x$ integration can be simplified using the variable transformation $x\rightarrow \frac{x-\mu_1-\mu_2}{\sqrt{\sigma_1^2+\sigma_2^2}}$.
 \end{exercise}
 
-\section{Expectation and Variance}
-While the probability density contains all the information needed to perform calculations, it is often useful to characterize its shape by two values: expectation and variance.
+\section{Expectation, Mean and Variance}
 
+The expectation value of a function $f(x)$ of a random variable $x$, which is distributed as $p(x)$, is defined as
 \begin{definition}[Expectation]
   \label{th:expectation}
   \index{expectation}
+  \begin{equation}
+    E[f(x)]=\int_{-\infty}^{+\infty}f(x) p(x)dx
+  \end{equation}
+\end{definition}
+
+While the probability density contains all the information needed to perform calculations, it is often useful to characterize its shape by two values: mean and variance.
+
+\begin{definition}[Mean]
+  \label{th:mean}
+  \index{mean}
   \begin{equation}
     \mu = E[x]=\int_{-\infty}^{+\infty}x p(x)dx
   \end{equation}
@@ -529,14 +567,40 @@ While the probability density contains all the information needed to perform cal
   \end{equation}
 \end{definition}
 
-The normal distribution $\mathcal{N}\left(x\,\vert\, \mu,\sigma^2\right)$ is completely characterized by these values, while other distributions have non-zero expectation value of higher powers of $x-\mu$.
+The normal distribution $\mathcal{N}\left(x\,\vert\, \mu,\sigma^2\right)$ is completely characterized by these values, while other distributions have non-zero expectation value of higher powers of $x-\mu$.\\
+
+Wolfram Language provides the three functions \texttt{Expectation}, \texttt{Mean} and \texttt{Variance}, which can be applied to a distribution e.g. the multi-variate Normal distribution
+
+\begin{mathematica}
+Expectation[{x1, x2}, {x1, x2} \[Distributed] 
+  MultinormalDistribution[{\[Mu]1, \[Mu]2}, 
+                          {{\[CapitalSigma]11, \[CapitalSigma]12},
+                           {\[CapitalSigma]12, \[CapitalSigma]22}}]]
+Mean[MultinormalDistribution[{\[Mu]1, \[Mu]2}, 
+                             {{\[CapitalSigma]11, \[CapitalSigma]12}, 
+                              {\[CapitalSigma]12, \[CapitalSigma]22}}]]
+Variance[MultinormalDistribution[{\[Mu]1, \[Mu]2}, 
+                                 {{\[CapitalSigma]11, \[CapitalSigma]12},
+                                  {\[CapitalSigma]12, \[CapitalSigma]22}}]]
+\end{mathematica}
+The results of these three commands is $\{\mu_1,\mu_2\}$, $\{\mu_1,\mu_2\}$ and $\{\Sigma_{11},\Sigma_{22}\}$.\\
+
+\texttt{Variance} returns only the diagonal elements of the covariance matrix. The function \texttt{Covariance} returns the full covariance matrix.
+\begin{mathematica}
+Covariance[MultinormalDistribution[{\[Mu]1, \[Mu]2}, 
+                                   {{\[CapitalSigma]11, \[CapitalSigma]12},
+                                    {\[CapitalSigma]12, \[CapitalSigma]22}}]]
+\end{mathematica}
+The result is $\begin{pmatrix}\Sigma_{11} & \Sigma_{12} \\
+\Sigma_{12} & \Sigma_{22} \\
+\end{pmatrix}$.
 
 \begin{exercise}
- Show that the expectation and variance of a random variable $x$ distributed as a Poisson distribution $\mathcal{P}\left(x\,\vert\,\lambda\right)$ is given by $E[x]=\lambda$ and $V[x]=\lambda$ if the possible values $x$ can take are $x_k=k$. 
+ Show that the mean and variance of a random variable $x$ distributed as a Poisson distribution $\mathcal{P}\left(x\,\vert\,\lambda\right)$ is given by $E[x]=\lambda$ and $V[x]=\lambda$ if the possible values $x$ can take are $x_k=k$. 
 \end{exercise}
 
 \begin{exercise}
- Show that the expectation and variance of a random variable $x$ distributed as a uniform distribution $\mathcal{U}\left(x\,\vert\,\alpha,\beta\right)$ is given by $E[x]=\frac{\alpha+\beta}{2}$ and $V[x]=\frac{(\beta-\alpha)^2}{12}$.
+ Show that the mean and variance of a random variable $x$ distributed as a uniform distribution $\mathcal{U}\left(x\,\vert\,\alpha,\beta\right)$ is given by $E[x]=\frac{\alpha+\beta}{2}$ and $V[x]=\frac{(\beta-\alpha)^2}{12}$.
 \end{exercise}
 
 \section{Examples}
