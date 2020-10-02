@@ -452,15 +452,22 @@ We assign a probability $P_i$ to each $x_i$ for $i=1,\ldots,n$ and the correspon
   \label{th:discreteprobabilitydensity}
   \index{discrete probability density}
   \begin{equation}
+  \label{eq:discreteprobabilitydensity}
     p(x)=\sum_{i=1}^{n}P_i\delta\left(x-x_i\right)
   \end{equation}
-  Note that $x$ is still a continuous variable, but due to the Dirac delta functions it is restricted to the discrete values $x_i$. We write here the coefficients with a capital $P$ to indicate that these numbers are indeed probabilities.
+  Note that $x$ is still a continuous variable, but due to the Dirac delta functions it is restricted to the discrete values $x_i=f(i)$, which can be an arbitrary function of the integer-valued index $i$. We write here the coefficients with a capital $P$ to indicate that these numbers are indeed probabilities.
 The normalization condition simplifies to a sum over all probabilities.
      \begin{equation}
     \int_{-\infty}^{+\infty}p(x)dx=\sum_{i=1}^{n}P_i=1
   \end{equation}
 \end{definition}
 The definition shows that in the case of discrete random variables, probability densities $p(x)$ reduce to probabilities $P(x)$ and integrals to sums over all the possible values of $x$.
+
+\begin{remark}
+While eq. \ref{eq:discreteprobabilitydensity} is useful to express continuous and discrete probability densities in the same way, it has its limitations e.g. the logarithm or powers of $p(x)$ don't make sense due to the presence of Dirac delta-functions and are ill-defined. Only convolution 
+$\int_{-\infty}^{+\infty}\delta\left(x-y\right)\delta\left(y-z\right)dy=\delta\left(x-z\right)$
+is a valid operation.
+\end{remark}
 
 \begin{example}[The Binomial Distribution]
 The binomial distribution is one of the most important discrete probability densities. $x_k$ is e.g. the outcome of a sequence of $n$ coin flips with $k$ heads and $n-k$ tails. The probability of head in a coin flip is $p$, while the probability of tail is $1-p$.  
@@ -470,7 +477,16 @@ n \\
 k \\
 \end{array}\right)p^k(1-p)^{n-k}\delta(x-x_k)
   \end{equation}
-   Let' say that we flip a fair coin with $p=\frac{1}{2}$ $n=3$ times and we want to calculate the probability that we have $k=2$ heads and $n-k=1$ tails. All coin flip sequences of the form $hht,hth,thh$ contribute to it. Therefore the probability is $\frac{3}{8}$. The same probability is obtained in the case $k=1$ heads and $n-k=2$ tails. For the case $k=3$ heads and $0$ tails there is only one possibility: $hhh$. Same for $k=0$ heads and $n-k=3$ tails. Therefore the probability in these cases is $\frac{1}{8}$. The sum of all probabilities is $\frac{1+3+3+1}{8}=1$. 
+   Let' say that we flip a fair coin with $p=\frac{1}{2}$ $n=3$ times and we want to calculate the probability that we have $k=2$ heads and $n-k=1$ tails. All coin flip sequences of the form $hht,hth,thh$ contribute to it. Therefore the probability is $\frac{3}{8}$. The same probability is obtained in the case $k=1$ heads and $n-k=2$ tails. For the case $k=3$ heads and $0$ tails there is only one possibility: $hhh$. Same for $k=0$ heads and $n-k=3$ tails. Therefore the probability in these cases is $\frac{1}{8}$. The sum of all probabilities is $\frac{1+3+3+1}{8}=1$.\\
+
+Wolfram Language has the built-in function \texttt{BinomialDistribution}.
+\begin{mathematica}
+DiscretePlot[Table[PDF[BinomialDistribution[100, p], k], 
+             {p, {0.1, 0.5, 0.8}}] // Evaluate, 
+             {k, 90}, PlotRange -> All, PlotMarkers -> Automatic, 
+             PlotLegends -> {"p=0.1", "p=0.5", "p=0.8"}]
+\end{mathematica}
+\includegraphics[scale=0.9]{images/binomial_distribution.pdf} 
 \end{example}
 
 \begin{example}[The Multinomial Distribution]
@@ -486,7 +502,16 @@ In the limit $n\rightarrow\infty$ and $\lambda=np$ remains finite, the binomial 
   \begin{equation}
     \mathcal{P}(x\,\vert\,\lambda)=\sum_{k=0}^{\infty}\frac{\lambda^k}{k!}\exp(-\lambda)\delta(x-x_k)
   \end{equation}
- This distribution describes the probability of observing $k$ events given a mean event count of $\lambda$.  
+ This distribution describes the probability of observing $k$ events given a mean event count of $\lambda$.\\
+
+Wolfram Language has the built-in function \texttt{PoissonDistribution}.
+\begin{mathematica}
+DiscretePlot[Table[PDF[PoissonDistribution[\[Lambda]], k],
+             {\[Lambda], {5, 10, 20}}] // Evaluate,
+             {k, 0, 30}, PlotRange -> All, PlotMarkers -> Automatic, 
+             PlotLegends -> {"\[Lambda]=5", "\[Lambda]=10", "\[Lambda]=20"}]
+\end{mathematica}
+\includegraphics[scale=0.9]{images/poisson_distribution.pdf}  
 \end{example}
 
 \begin{theorem}[Sum of two Poisson distributions]
