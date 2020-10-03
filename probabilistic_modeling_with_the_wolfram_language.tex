@@ -272,7 +272,7 @@ A set of disjoint intervals $\mathcal{I}_i$ with $i=1,\ldots,n$ has the probabil
 \begin{proof}
 Based on the definition of the probability as integral over a probability density, the proof is rather trivial. The first axiom follows directly from the non-negativity of the probability density, the second axiom from the normalization condition and the third axiom from the additivity of integrals over disjoint integration intervals, which simply follows from the interpretation of an integral as an area under a curve.
 \end{proof}
-Because probability is related to the integral of a probability density, a cumulative probability density is defined as
+Because probability is related to the integral of a probability density, a cumulative distribution function is defined as
 \begin{definition}[Cumulative Distribution Function]
   \label{th:cumulativedistributionfunction}
   \index{cumulative distribution function}
@@ -285,6 +285,35 @@ The probability of $x$ taking a value between $x_1$ and $x_2$ can then be writte
     P(x_1\leqq x\leqq x_2)=\Phi(x_2)-\Phi(x_1)
   \end{equation} 
 \end{definition}
+
+Wolfram Language has built in the functions \texttt{Probability} and \texttt{CDF}, which can be applied to any distribution e.g.
+\begin{mathematica}
+Probability[x <= 0, x \[Distributed] NormalDistribution[]]
+\end{mathematica}
+with the result $\frac{1}{2}$, which can be also obtained using
+\begin{mathematica}
+CDF[NormalDistribution[], 0]
+\end{mathematica}
+The cumulative distribution function of the Normal and the Uniform distribution is shown in the next figures
+\begin{mathematica}
+Plot[Table[CDF[NormalDistribution[0, \[Sigma]], x],
+     {\[Sigma], {0.5, 1, 2}}] // Evaluate,
+     {x, -4, 4}, AxesLabel -> {"x", "\[CapitalPhi](x)"}, 
+     Filling -> Axis, PlotLegends -> 
+     Placed[{"\[Sigma]=0.5", "\[Sigma]=1", "\[Sigma]=2"}, Right]]
+\end{mathematica}
+
+\includegraphics[scale=0.8]{images/cumulative_normal_distribution.pdf}
+
+\begin{mathematica}
+Plot[Table[CDF[UniformDistribution[{0, \[Beta]}], x],
+     {\[Beta], {1, 2, 3}}] // Evaluate,
+     {x, -1, 4}, AxesLabel -> {"x", "\[CapitalPhi](x)"}, 
+     Filling -> Axis, PlotLegends -> 
+  Placed[{"\[Beta]=1", "\[Beta]=2", "\[Beta]=3"}, Right]]
+\end{mathematica}
+
+\includegraphics[scale=0.8]{images/cumulative_uniform_distribution.pdf}
 
 %---------------------------------------------------------------------------
 \section{Conditional Probability Density}
@@ -494,7 +523,17 @@ The multinomial distribution $ \mathcal{M}(\mathbf{x}\,\vert\, n,\mathbf{p})$ is
   \begin{equation}
     \mathcal{M}(x_{1:m}\,\vert\, n,p_{1:m})=\sum_{n_1=0}^n\sum_{n_2=0}^n\ldots \sum_{n_m=0}^n \frac{n!}{n_1!n_2!\ldots n_m!}p_1^{n_1}p_2^{n_2}\ldots p_m^{n_m}\prod_{i=1}^m\delta(x_i-x_{n_i})
   \end{equation}
-with the constraints $\sum_{i=1}^{m}n_i=n$ and $\sum_{i=1}^{m}p_i=1$. An application of the multinomial distribution in the context of histograms will be discussed in ~\ref{Histograms}. 
+with the constraints $\sum_{i=1}^{m}n_i=n$ and $\sum_{i=1}^{m}p_i=1$. An application of the multinomial distribution in the context of histograms will be discussed in ~\ref{Histograms}.\\
+
+Wolfram language provides the function \texttt{MultinomialDistribution}
+
+\begin{mathematica}
+GraphicsRow[Table[DiscretePlot3D[
+   PDF[MultinomialDistribution[n, {0.6, 0.4}], {x, y}],
+   {y, 0, n}, {x,0, n}, PlotLabel -> Row[{"n = ", n}], 
+   ExtentSize -> 0.5], {n, {3, 6, 9}}], ImageSize -> Full]
+\end{mathematica}
+\includegraphics[scale=0.9]{images/multinomial_distribution.pdf}  
 \end{example}
 
 \begin{example}[The Poisson Distribution]
