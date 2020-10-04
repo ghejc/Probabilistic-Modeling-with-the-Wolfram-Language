@@ -469,6 +469,23 @@ The singular value at $y=0$ will be shown as \texttt{Indeterminate}.
 
 \end{example}  
 
+\begin{example}[A Deterministic Function with Additive Gaussian Noise]
+What is the pdf of a random variable $y = f(x) + \eta$ with 
+$\eta\sim \mathcal{N}\left(\eta\,\vert\,\mu,\sigma^2\right)$?
+A typical use-case is the measurement of the state $x$ of a system. The outcome of this measurement is $y$, where the function $f$ describes the measurement process, and $\eta$ is the measurement noise. As in the previous examples, the starting point is the joint probability density $p(y,\eta\,\vert\, x)$. Because we are only interested in $y$, we marginalize over $\eta$.   \begin{equation}
+    p(y\,\vert\,x)=\int_{-\infty}^{\infty}p(y,\eta\,\vert\,x)d\eta
+  \end{equation}
+In the next step, we apply Bayes rule.
+  \begin{equation}
+    p(y\,\vert\,x)=\int_{-\infty}^{\infty}p(y\,\vert\,x,\eta)\mathcal{N}\left(\eta\,\vert\,\mu,\sigma^2\right)d\eta
+  \end{equation}
+$p(\eta\,\vert\,x)=p(\eta)=\mathcal{N}\left(\eta\,\vert\,\mu,\sigma^2\right)$ was used here, because $\eta$ is independent of $x$.
+$p(y\,\vert\,x,\eta)$ is a deterministic function and can therefore be written as $\delta\left(y-f(x)-\eta\right)$. Carrying out the $\eta$ - integration gives the following result
+  \begin{equation}
+    p\left(y\,\vert\,x,\mu,\sigma^2\right)=\mathcal{N}\left(y-f(x)\,\vert\,\mu,\sigma^2\right)=\mathcal{N}\left(y\,\vert\,\mu+f(x),\sigma^2\right)
+  \end{equation}
+The probability density of $y$ is also a Normal distribution with $\mu\rightarrow\mu+f(x)$. 
+\end{example}
 %---------------------------------------------------------------------------
 \section{Discrete Random Variables}
 So far, we have studied continuous random variables and their associated probability densities. Next, we look at discrete random variables, which only take values from a discrete countable set $x_1,x_2,\ldots,x_n$.
