@@ -173,6 +173,12 @@ Plot3D[PDF[MultinormalDistribution[{0, 0}, {{2, 1}, {1, 2}}], {x, y}],
        {x, -4, 4}, {y, -4, 4}, PlotPoints -> {50, 50}]
 \end{mathematica}
 \includegraphics[scale=0.8]{images/multi_normal_distribution.pdf}
+
+The function \texttt{MarginalDistribution} can be used to reduce the number of variables in a multi-variate distribution. The result of
+\begin{mathematica}
+MarginalDistribution[MultinormalDistribution[{0, 0}, {{2, 1}, {1, 2}}], 1]
+\end{mathematica}
+is the uni-variate Normal distribution $\mathcal{N}\left(x\,\vert\,\mu=0,\sigma^2=2\right)$. The second argument can be a single index or a list of multiple indices of the variables, which should be present in the new distribution.   
 \end{example}
 
 \begin{theorem}[Multivariate Normal Distribution under Linear Transformation]

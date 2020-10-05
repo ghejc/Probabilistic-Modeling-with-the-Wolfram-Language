@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[   1197020,      22327]
-NotebookOptionsPosition[   1187067,      22150]
-NotebookOutlinePosition[   1187410,      22165]
-CellTagsIndexPosition[   1187367,      22162]
+NotebookDataLength[   1198081,      22358]
+NotebookOptionsPosition[   1187907,      22177]
+NotebookOutlinePosition[   1188250,      22192]
+CellTagsIndexPosition[   1188207,      22189]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -22146,6 +22146,33 @@ Projects\\\\Book\\\\Probabilistic Modeling with the Wolfram \
 Language\\\\images\\\\cumulative_uniform_distribution.pdf\"\>"], "Output",
  CellChangeTimes->{3.810755944889572*^9},
  CellLabel->"Out[46]=",ExpressionUUID->"6a2f7ac3-a273-4c70-99d2-b365e2299b6e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"MarginalDistribution", "[", 
+  RowBox[{
+   RowBox[{"MultinormalDistribution", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0", ",", "0"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"2", ",", "1"}], "}"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"1", ",", "2"}], "}"}]}], "}"}]}], "]"}], ",", " ", "1"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.8108860146227865`*^9, 3.810886040766336*^9}},
+ CellLabel->"In[3]:=",ExpressionUUID->"fb638b8a-4210-4f05-9801-3085309fc8e2"],
+
+Cell[BoxData[
+ RowBox[{"NormalDistribution", "[", 
+  RowBox[{"0", ",", 
+   SqrtBox["2"]}], "]"}]], "Output",
+ CellChangeTimes->{{3.8108860163436756`*^9, 3.810886042347392*^9}},
+ CellLabel->"Out[3]=",ExpressionUUID->"46aceb73-ec65-48b3-a39c-8d0f4e24e8a5"]
 }, Open  ]]
 },
 WindowSize->{758, 697},
@@ -22314,7 +22341,7 @@ Cell[1158909, 21551, 381, 5, 52, "Output",ExpressionUUID->"afdce09f-17c0-45e5-bf
 }, Open  ]],
 Cell[1159305, 21559, 315, 6, 28, "Input",ExpressionUUID->"29c817b2-a2ba-488a-9b88-c9c0997f0d49"],
 Cell[CellGroupData[{
-Cell[1159645, 21569, 391, 8, 28, InheritFromParent,ExpressionUUID->"8f2a2dbe-b7f6-498d-95e7-b1a3f97dd713"],
+Cell[1159645, 21569, 391, 8, 28, "Input",ExpressionUUID->"8f2a2dbe-b7f6-498d-95e7-b1a3f97dd713"],
 Cell[1160039, 21579, 171, 3, 49, "Output",ExpressionUUID->"1b03112c-ed43-418e-a786-6311e7eb88e9"]
 }, Open  ]],
 Cell[CellGroupData[{
@@ -22328,6 +22355,10 @@ Cell[1161940, 21638, 24344, 488, 258, "Output",ExpressionUUID->"cd4a3863-6dfd-48
 Cell[CellGroupData[{
 Cell[1186321, 22131, 423, 10, 48, "Input",ExpressionUUID->"e0065197-6b70-428b-8c14-5053ada7573c"],
 Cell[1186747, 22143, 304, 4, 52, "Output",ExpressionUUID->"6a2f7ac3-a273-4c70-99d2-b365e2299b6e"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1187088, 22152, 546, 15, 28, "Input",ExpressionUUID->"fb638b8a-4210-4f05-9801-3085309fc8e2"],
+Cell[1187637, 22169, 254, 5, 71, "Output",ExpressionUUID->"46aceb73-ec65-48b3-a39c-8d0f4e24e8a5"]
 }, Open  ]]
 }
 ]
