@@ -23,7 +23,7 @@
 % Chapters
 %---------------------------------------------------------------------------
 %---------------------------------------------------------------------------
-\chapter{Preface}
+\chapter*{Preface}
 
 The book originally developed from talks and lecture notes given at the Fraunhofer institute in Nuremberg, Germany as an introduction to probabilistic modeling. The goal was primarily to provide the students with a minimal set of mathematical tools and concepts to do probabilistic computations by themselves and to apply it to real-world problems. This sounds easier than it actually is, because even conceptually easy problems can lead to results, which contradicts intuition like the famous Monty Hall problem.\\
 
@@ -638,7 +638,7 @@ The expectation value of a function $f(x)$ of a random variable $x$, which is di
   \label{th:expectation}
   \index{expectation}
   \begin{equation}
-    E[f(x)]=\int_{-\infty}^{+\infty}f(x) p(x)dx
+    \mathbb{E}_{x\sim p(x)}[f(x)]=\int_{-\infty}^{+\infty}f(x) p(x)dx
   \end{equation}
 \end{definition}
 
@@ -648,7 +648,7 @@ While the probability density contains all the information needed to perform cal
   \label{th:mean}
   \index{mean}
   \begin{equation}
-    \mu = E[x]=\int_{-\infty}^{+\infty}x p(x)dx
+    \mu = \mathbb{E}_{x\sim p(x)}[x]=\int_{-\infty}^{+\infty}x p(x)dx
   \end{equation}
 \end{definition}
 
@@ -656,7 +656,7 @@ While the probability density contains all the information needed to perform cal
   \label{th:variance}
   \index{variance}
   \begin{equation}
-    \sigma^2=V[x]=E[(x-\mu)^2]=\int_{-\infty}^{+\infty}(x-\mu)^2 p(x)dx
+    \sigma^2=\mathbb{E}_{x\sim p(x)}[(x-\mu)^2]=\int_{-\infty}^{+\infty}(x-\mu)^2 p(x)dx
   \end{equation}
 \end{definition}
 
@@ -689,11 +689,11 @@ The result is $\begin{pmatrix}\Sigma_{11} & \Sigma_{12} \\
 \end{pmatrix}$.
 
 \begin{exercise}
- Show that the mean and variance of a random variable $x$ distributed as a Poisson distribution $\mathcal{P}\left(x\,\vert\,\lambda\right)$ is given by $E[x]=\lambda$ and $V[x]=\lambda$ if the possible values $x$ can take are $x_k=k$. 
+ Show that the mean and variance of a random variable $x$ distributed as a Poisson distribution $\mathcal{P}\left(x\,\vert\,\lambda\right)$ is given by $\mu=\lambda$ and $\sigma^2=\lambda$ if the possible values $x$ can take are $x_k=k$. 
 \end{exercise}
 
 \begin{exercise}
- Show that the mean and variance of a random variable $x$ distributed as a uniform distribution $\mathcal{U}\left(x\,\vert\,\alpha,\beta\right)$ is given by $E[x]=\frac{\alpha+\beta}{2}$ and $V[x]=\frac{(\beta-\alpha)^2}{12}$.
+ Show that the mean and variance of a random variable $x$ distributed as a uniform distribution $\mathcal{U}\left(x\,\vert\,\alpha,\beta\right)$ is given by $\mu=\frac{\alpha+\beta}{2}$ and $\sigma^2=\frac{(\beta-\alpha)^2}{12}$.
 \end{exercise}
 
 \section{Examples}
