@@ -688,9 +688,27 @@ The result is $\begin{pmatrix}\Sigma_{11} & \Sigma_{12} \\
 \Sigma_{12} & \Sigma_{22} \\
 \end{pmatrix}$.
 
-\begin{exercise}
- Show that the mean and variance of a random variable $x$ distributed as a Poisson distribution $\mathcal{P}\left(x\,\vert\,\lambda\right)$ is given by $\mu=\lambda$ and $\sigma^2=\lambda$ if the possible values $x$ can take are $x_k=k$. 
-\end{exercise}
+\begin{example}[Mean and Variance of Poisson Distribution]
+What is the mean and variance of a random variable $x$ distributed as a Poisson distribution $\mathcal{P}\left(x\,\vert\,\lambda\right)$ if the possible values $x$ can take are $x_k=k$?\\
+The mean $\mu$ is given by 
+  \begin{equation}
+    \mu(\lambda)=\sum_{k=0}^{\infty}P_k k=\sum_{k=1}^{\infty}k\frac{\lambda^k}{k!}\exp(-\lambda) =\exp(-\lambda)\lambda\sum_{k=1}^{\infty}\frac{\lambda^{k-1}}{(k-1)!}=\exp(-\lambda)\lambda\underbrace{\sum_{k=0}^{\infty}\frac{\lambda^{k}}{k!}}_{\exp(\lambda)}=\lambda
+  \end{equation}
+The summation range was changed from $k=0$ to $k=1$, because the $k=0$ term is identically zero.\\
+The variance $\sigma^2$ can be calculated as 
+  \begin{equation}
+    \sigma(\lambda)^2=\sum_{k=0}^{\infty}P_k (k-\lambda)^2=\sum_{k=0}^{\infty}P_k k^2 - 2\lambda \underbrace{\sum_{k=0}^{\infty}P_k k}_{\lambda} + \lambda^2\underbrace{\sum_{k=0}^{\infty}P_k}_{1}=
+\exp(-\lambda)\sum_{k=0}^{\infty}k^2\frac{\lambda^k}{k!} - \lambda^2
+  \end{equation}
+Applying $\lambda\frac{\partial}{\partial \lambda}$ to $\mu(\lambda)$ gives the following identity
+\begin{equation}
+\lambda\frac{\partial \mu(\lambda)}{\partial \lambda}=\sum_{k=0}^{\infty}k^2\frac{\lambda^k}{k!}\exp(-\lambda)-\lambda\underbrace{\sum_{k=0}^{\infty}k\frac{\lambda^k}{k!}\exp(-\lambda)}_{\lambda}=\lambda
+\end{equation}  
+This leads to the final result for $\sigma^2$.
+  \begin{equation}
+    \sigma(\lambda)^2=\underbrace{\exp(-\lambda)\sum_{k=0}^{\infty}k^2\frac{\lambda^k}{k!}}_{\lambda^2+\lambda} - \lambda^2=\lambda
+  \end{equation}  
+\end{example}
 
 \begin{exercise}
  Show that the mean and variance of a random variable $x$ distributed as a uniform distribution $\mathcal{U}\left(x\,\vert\,\alpha,\beta\right)$ is given by $\mu=\frac{\alpha+\beta}{2}$ and $\sigma^2=\frac{(\beta-\alpha)^2}{12}$.
