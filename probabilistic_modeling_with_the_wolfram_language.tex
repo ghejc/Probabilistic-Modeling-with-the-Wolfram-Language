@@ -494,26 +494,26 @@ The probability density of $y$ is also a Normal distribution with $\mu\rightarro
 \end{example}
 %---------------------------------------------------------------------------
 \section{Discrete Random Variables}
-So far, we have studied continuous random variables and their associated probability densities. Next, we look at discrete random variables, which only take values from a discrete countable set $x_1,x_2,\ldots,x_n$.
+So far, we have studied continuous random variables and their associated probability densities. Next, we look at discrete random variables, which only take values from a discrete set $x_i$ with $i\in \mathbb{Z}$.
 
 How can we construct a probability density for discrete random variables?
 
-We assign a probability $P_i$ to each $x_i$ for $i=1,\ldots,n$ and the corresponding discrete probability density is given by
+We assign a probability $P_i$ to each $x_i$ and the corresponding discrete probability density is given by
 
 \begin{definition}[Discrete Probability Density]
   \label{th:discreteprobabilitydensity}
   \index{discrete probability density}
   \begin{equation}
   \label{eq:discreteprobabilitydensity}
-    p(x)=\sum_{i=1}^{n}P_i\delta\left(x-x_i\right)
+    p(x)=\sum_{i=-\infty}^{+\infty}P_i\delta\left(x-x_i\right)
   \end{equation}
   Note that $x$ is still a continuous variable, but due to the Dirac delta functions it is restricted to the discrete values $x_i=f(i)$, which can be an arbitrary function of the integer-valued index $i$. We write here the coefficients with a capital $P$ to indicate that these numbers are indeed probabilities.
 The normalization condition simplifies to a sum over all probabilities.
      \begin{equation}
-    \int_{-\infty}^{+\infty}p(x)dx=\sum_{i=1}^{n}P_i=1
+    \int_{-\infty}^{+\infty}p(x)dx=\sum_{i=-\infty}^{+\infty}P_i=1
   \end{equation}
 \end{definition}
-The definition shows that in the case of discrete random variables, probability densities $p(x)$ reduce to probabilities $P(x)$ and integrals to sums over all the possible values of $x$.
+The definition shows that in the case of discrete random variables, probability densities $p(x)$ reduce to probabilities $P_i$ and integrals to sums over all the possible values of $x$. If the index range is limited to a finite set e.g. $i=0,1,\ldots,n$, $P_i=0$ for $i<0$ and $i>n$.
 
 \begin{remark}
 While eq. \ref{eq:discreteprobabilitydensity} is useful to express continuous and discrete probability densities in the same way, it has its limitations e.g. the logarithm or powers of $p(x)$ don't make sense due to the presence of Dirac delta-functions and are ill-defined. Only convolution 
@@ -805,6 +805,49 @@ Print["Probability of winning by choosing the remaining door = ",
 The probability of winning with 1000 samples is \texttt{0.32} in the case of staying with the first choice and \texttt{0.68} in the case of choosing the remaining door. Using 1000000 samples the values are \texttt{0.333} and \texttt{0.667}, respectively. 
 \end{example}
 
+\begin{example}[The Birthday Problem]
+The Birthday problem is another classic probabilistic example. Let's assume that each day of the year (we ignore leap years) is equally likely a birthday with probability $p=\frac{1}{365}$. What is the probability that in a group with $n$ distinct individuals (no twins) at least two persons have the same birthday?\\
+
+We want to solve this problem with a simulation and plot the probability as a function of the group size. \\
+
+We create a variable \texttt{birthdays} containing all possible birthdays from \texttt{1} to \texttt{365}.
+The main part is the function \texttt{sameBirthdaysInGroup}, which calculates the probability of having at least two persons with the same birthday in a group of $n$ people. A random matrix \texttt{groupSamples} is generated with \texttt{sampleSize} rows and \texttt{n} columns with elements chosen randomly from the list \texttt{birthdays}. The next line evaluates each row of \texttt{groupSamples} if there are same birthdays present. Each row is first sorted and then the difference of each element is calculated. If two birthdays are the same, at least one difference is zero and
+\texttt{MemberQ} tests if a zero is present. \texttt{Boole} converts the boolean to numerical values (\texttt{True} to \texttt{1} and \texttt{False} to \texttt{0}) and the result is stored in the variable \texttt{sameBirthDay}. The return value is simply the number of ones in the list \texttt{sameBirthDay} divided by the number of samples.\\ 
+
+\begin{mathematica}
+birthdays = Range[365];
+sameBirthdaysInGroup[n_Integer] := Module[
+   {sameBirthday, groupSamples, sampleSize = 1000},
+   groupSamples = RandomChoice[birthdays, {sampleSize, n}];
+   sameBirthday = Map[Boole[MemberQ[Differences[Sort[#]], 0]] &, groupSamples];
+   Return[Apply[Plus, sameBirthday] / sampleSize // N]
+   ];
+groupSizes = {5, 10, 15, 20, 25, 30};
+probs = Map[sameBirthdaysInGroup, groupSizes];
+ListPlot[Transpose[{groupSizes, probs}],
+         Filling -> Axis, 
+         AxesLabel -> {"n", "Probability"}]
+\end{mathematica}
+
+ \includegraphics{images/birthday_problem.pdf}
+ 
+ The probability is larger than 50\%  for a group size > 22.\\
+
+What is the probability that at least three persons have the same birthday?\\
+
+Only one line of the code above has to be changed to answer this question. 
+\begin{mathematica}
+sameBirthday = 
+  Map[Boole[MemberQ[Partition[Differences[Sort[#]], 2, 1], {0, 0}]] &,
+    groupSamples];
+\end{mathematica}
+
+The function \texttt{Partition} decomposes the differences list into overlapping pairs and any pair with only zeros in it is a triple birthday.   
+\end{example}
+
+\begin{exercise}
+Verify that the probability of having at least three persons with the same birthday in a group of 88 people is larger than 50\%.
+\end{exercise}
 
 %---------------------------------------------------------------------------
 \chapter{Density Estimation and Random Data}

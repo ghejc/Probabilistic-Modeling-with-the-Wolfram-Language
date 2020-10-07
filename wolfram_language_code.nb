@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[   1198081,      22358]
-NotebookOptionsPosition[   1187907,      22177]
-NotebookOutlinePosition[   1188250,      22192]
-CellTagsIndexPosition[   1188207,      22189]
+NotebookDataLength[   1207131,      22563]
+NotebookOptionsPosition[   1196489,      22374]
+NotebookOutlinePosition[   1196832,      22389]
+CellTagsIndexPosition[   1196789,      22386]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -22173,6 +22173,203 @@ Cell[BoxData[
    SqrtBox["2"]}], "]"}]], "Output",
  CellChangeTimes->{{3.8108860163436756`*^9, 3.810886042347392*^9}},
  CellLabel->"Out[3]=",ExpressionUUID->"46aceb73-ec65-48b3-a39c-8d0f4e24e8a5"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"Birthday", " ", "Problem"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"birthdays", "=", 
+     RowBox[{"Range", "[", "365", "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"sameBirthdaysInGroup", "[", "n_Integer", "]"}], ":=", 
+     RowBox[{"Module", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"sameBirthday", ",", "groupSamples", ",", 
+         RowBox[{"sampleSize", "=", "10000"}]}], "}"}], ",", 
+       RowBox[{
+        RowBox[{"groupSamples", "=", 
+         RowBox[{"RandomChoice", "[", 
+          RowBox[{"birthdays", ",", 
+           RowBox[{"{", 
+            RowBox[{"sampleSize", ",", "n"}], "}"}]}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"(*", 
+         RowBox[{
+          RowBox[{"sameBirthday", "=", 
+           RowBox[{"Map", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"Boole", "[", 
+               RowBox[{"MemberQ", "[", 
+                RowBox[{
+                 RowBox[{"Partition", "[", 
+                  RowBox[{
+                   RowBox[{"Differences", "[", 
+                    RowBox[{"Sort", "[", "#", "]"}], "]"}], ",", "2", ",", 
+                   "1"}], "]"}], ",", 
+                 RowBox[{"{", 
+                  RowBox[{"0", ",", "0"}], "}"}]}], "]"}], "]"}], "&"}], ",", 
+             "groupSamples"}], "]"}]}], ";"}], "*)"}], "\[IndentingNewLine]", 
+        RowBox[{"sameBirthday", "=", 
+         RowBox[{"Map", "[", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"Boole", "[", 
+             RowBox[{"MemberQ", "[", 
+              RowBox[{
+               RowBox[{"Differences", "[", 
+                RowBox[{"Sort", "[", "#", "]"}], "]"}], ",", "0"}], "]"}], 
+             "]"}], "&"}], ",", "groupSamples"}], "]"}]}], ";", 
+        "\[IndentingNewLine]", 
+        RowBox[{"Return", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"Apply", "[", 
+            RowBox[{"Plus", ",", "sameBirthday"}], "]"}], "/", "sampleSize"}],
+           " ", "//", "N"}], "]"}]}]}], "]"}]}], ";"}], "\n", 
+   RowBox[{
+    RowBox[{"groupSizes", " ", "=", 
+     RowBox[{"{", 
+      RowBox[{"5", ",", "10", ",", "15", ",", "20", ",", "25", ",", "30"}], 
+      "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"probs", " ", "=", " ", 
+     RowBox[{"Map", "[", 
+      RowBox[{"sameBirthdaysInGroup", ",", " ", "groupSizes"}], "]"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{"ListPlot", "[", 
+    RowBox[{
+     RowBox[{"Transpose", "[", 
+      RowBox[{"{", 
+       RowBox[{"groupSizes", ",", "probs"}], "}"}], "]"}], ",", 
+     RowBox[{"Filling", "->", "Axis"}], ",", " ", 
+     RowBox[{"AxesLabel", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{"\"\<Group Size\>\"", ",", "\"\<Probability\>\""}], "}"}]}]}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.81101420653113*^9, 3.8110142693043823`*^9}, {
+   3.8110156740064383`*^9, 3.811015816176473*^9}, {3.811015928159766*^9, 
+   3.8110160159049025`*^9}, {3.811016093791477*^9, 3.8110161904060755`*^9}, {
+   3.811016224992463*^9, 3.8110162817852535`*^9}, {3.8110167241984*^9, 
+   3.8110167361024065`*^9}, {3.8110167870631475`*^9, 
+   3.8110168296569405`*^9}, {3.8110178579517965`*^9, 
+   3.8110178614927254`*^9}, {3.8110185111994114`*^9, 3.8110185159387555`*^9}, 
+   3.8110186769738073`*^9, {3.8110190797584734`*^9, 3.811019087290423*^9}, {
+   3.8110194046240997`*^9, 3.8110194429229336`*^9}, {3.811019730138191*^9, 
+   3.8110197439081774`*^9}, {3.8110198106469803`*^9, 
+   3.8110198490553803`*^9}, {3.811019894953088*^9, 3.8110198965525203`*^9}, {
+   3.8110200721407814`*^9, 3.8110201009226418`*^9}, {3.8110208090467205`*^9, 
+   3.8110208304981427`*^9}, {3.8110208712588267`*^9, 
+   3.8110208890133066`*^9}, {3.811021473497774*^9, 3.8110215060161624`*^9}, {
+   3.811021700073865*^9, 3.811021710057263*^9}, {3.811021747221299*^9, 
+   3.811021801393895*^9}, {3.8110218526188264`*^9, 3.8110218634995475`*^9}, {
+   3.8110221814100943`*^9, 3.8110221839571996`*^9}, {3.8110222457074847`*^9, 
+   3.8110222460216804`*^9}, {3.811022575483119*^9, 3.8110226458047724`*^9}, {
+   3.8110228773523135`*^9, 3.8110228858533616`*^9}, {3.811022918389472*^9, 
+   3.811022925568541*^9}, {3.811023030091544*^9, 3.8110230341160526`*^9}, {
+   3.811024220412795*^9, 3.8110243781078424`*^9}, {3.811024439545102*^9, 
+   3.8110244942061*^9}},
+ CellLabel->
+  "In[345]:=",ExpressionUUID->"aca41b12-9106-42c9-ba6e-812fe9a15798"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, 
+   GraphicsComplexBox[{{5., 0.0248}, {10., 0.121}, {15., 0.2557}, {20., 
+    0.413}, {25., 0.5736}, {30., 0.706}, {5., 0.}, {10., 0.}, {15., 0.}, {20.,
+     0.}, {25., 0.}, {30., 0.}, {5., 0.0248}, {10., 0.121}, {15., 0.2557}, {
+    20., 0.413}, {25., 0.5736}, {30., 0.706}}, {{{}, {}, {}, {}, 
+      {RGBColor[0.368417, 0.506779, 0.709798], Opacity[0.3], LineBox[{7, 1}], 
+       LineBox[{8, 2}], LineBox[{9, 3}], LineBox[{10, 4}], LineBox[{11, 5}], 
+       LineBox[{12, 6}]}}, 
+     {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
+      0.012833333333333334`], AbsoluteThickness[1.6], 
+      PointBox[{13, 14, 15, 16, 17, 18}]}, {
+      {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
+       0.012833333333333334`], AbsoluteThickness[1.6]}, {}}, {
+      {RGBColor[0.368417, 0.506779, 0.709798], PointSize[
+       0.012833333333333334`], AbsoluteThickness[1.6]}, {}}}], {{}, {}}},
+  AspectRatio->NCache[GoldenRatio^(-1), 0.6180339887498948],
+  Axes->{True, True},
+  AxesLabel->{
+    FormBox["\"Group Size\"", TraditionalForm], 
+    FormBox["\"Probability\"", TraditionalForm]},
+  AxesOrigin->{0, 0},
+  DisplayFunction->Identity,
+  Frame->{{False, False}, {False, False}},
+  FrameLabel->{{None, None}, {None, None}},
+  FrameTicks->{{Automatic, Automatic}, {Automatic, Automatic}},
+  GridLines->{None, None},
+  GridLinesStyle->Directive[
+    GrayLevel[0.5, 0.4]],
+  Method->{
+   "OptimizePlotMarkers" -> True, 
+    "CoordinatesToolOptions" -> {"DisplayFunction" -> ({
+        (Identity[#]& )[
+         Part[#, 1]], 
+        (Identity[#]& )[
+         Part[#, 2]]}& ), "CopiedValueFunction" -> ({
+        (Identity[#]& )[
+         Part[#, 1]], 
+        (Identity[#]& )[
+         Part[#, 2]]}& )}},
+  PlotRange->{{0, 30.}, {0, 0.706}},
+  PlotRangeClipping->True,
+  PlotRangePadding->{{
+     Scaled[0.02], 
+     Scaled[0.02]}, {
+     Scaled[0.02], 
+     Scaled[0.05]}},
+  Ticks->{Automatic, Automatic}]], "Output",
+ CellChangeTimes->{{3.8110157187613697`*^9, 3.8110158205028687`*^9}, {
+   3.811015981181547*^9, 3.811016004501743*^9}, 3.8110161016468744`*^9, {
+   3.8110161724297185`*^9, 3.8110161921034627`*^9}, {3.811016271711505*^9, 
+   3.8110162831347837`*^9}, {3.8110167263204317`*^9, 
+   3.8110167377844267`*^9}, {3.8110167895005875`*^9, 3.8110168306565514`*^9}, 
+   3.811017862987908*^9, 3.811018517513419*^9, 3.811018679568597*^9, 
+   3.811019090738989*^9, {3.8110194066728687`*^9, 3.8110194438477554`*^9}, {
+   3.8110197375279226`*^9, 3.811019745055565*^9}, {3.811019811628438*^9, 
+   3.8110198502159543`*^9}, 3.811019897355175*^9, {3.8110200742022605`*^9, 
+   3.8110201019354706`*^9}, {3.8110208108407063`*^9, 
+   3.8110208322397485`*^9}, {3.8110208760919423`*^9, 3.811020896085993*^9}, {
+   3.8110214755627365`*^9, 3.8110215084554024`*^9}, {3.811021702758746*^9, 
+   3.8110217107934027`*^9}, {3.8110217614235764`*^9, 3.8110218024629593`*^9}, 
+   3.8110218645884104`*^9, 3.811022246939989*^9, {3.8110226187478514`*^9, 
+   3.8110226468795753`*^9}, 3.8110228899433174`*^9, 3.811022928206205*^9, 
+   3.811023035270793*^9, {3.811024247498266*^9, 3.811024349616124*^9}, 
+   3.8110243798819294`*^9, {3.811024480800909*^9, 3.811024495563957*^9}},
+ CellLabel->
+  "Out[349]=",ExpressionUUID->"ca43ee18-1bf9-4d2f-be5b-7a29290220bd"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+      "\"\<images/birthday_problem.pdf\>\""}], "}"}], "]"}], ",", "%"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.8110164232226706`*^9, 3.8110164271961412`*^9}},
+ CellLabel->
+  "In[112]:=",ExpressionUUID->"f8ad8e40-0edf-4f14-acff-dff992d457b2"],
+
+Cell[BoxData["\<\"C:\\\\Users\\\\gerha\\\\My \
+Projects\\\\Book\\\\Probabilistic Modeling with the Wolfram \
+Language\\\\images\\\\birthday_problem.pdf\"\>"], "Output",
+ CellChangeTimes->{3.8110164315769234`*^9, 3.8110178683143854`*^9, 
+  3.811018684603894*^9},
+ CellLabel->
+  "Out[112]=",ExpressionUUID->"84a62a2e-b477-4b10-b2af-5459c4a19c22"]
 }, Open  ]]
 },
 WindowSize->{758, 697},
@@ -22358,7 +22555,15 @@ Cell[1186747, 22143, 304, 4, 52, "Output",ExpressionUUID->"6a2f7ac3-a273-4c70-99
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[1187088, 22152, 546, 15, 28, "Input",ExpressionUUID->"fb638b8a-4210-4f05-9801-3085309fc8e2"],
-Cell[1187637, 22169, 254, 5, 71, "Output",ExpressionUUID->"46aceb73-ec65-48b3-a39c-8d0f4e24e8a5"]
+Cell[1187637, 22169, 254, 5, 38, "Output",ExpressionUUID->"46aceb73-ec65-48b3-a39c-8d0f4e24e8a5"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1187928, 22179, 4478, 100, 257, "Input",ExpressionUUID->"aca41b12-9106-42c9-ba6e-812fe9a15798"],
+Cell[1192409, 22281, 3267, 66, 254, "Output",ExpressionUUID->"ca43ee18-1bf9-4d2f-be5b-7a29290220bd"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1195713, 22352, 413, 11, 28, "Input",ExpressionUUID->"f8ad8e40-0edf-4f14-acff-dff992d457b2"],
+Cell[1196129, 22365, 344, 6, 52, "Output",ExpressionUUID->"84a62a2e-b477-4b10-b2af-5459c4a19c22"]
 }, Open  ]]
 }
 ]
