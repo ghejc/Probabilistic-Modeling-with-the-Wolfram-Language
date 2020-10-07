@@ -716,6 +716,8 @@ This leads to the final result for $\sigma^2$.
 
 \section{Examples}
 
+In this chapter we apply the learned concepts to some interesting examples by using both analytical and computational approaches to solve the problem.
+
 \begin{example}[The Monty Hall Problem]
 
 This is a famous and non-trivial example of a probabilistic problem, where intuition will give you the wrong result. The problem statement is as follows:\\
@@ -776,22 +778,23 @@ So the final result is
   \end{equation}  
 The remarkable result is that making a new choice increases your chances to win considerably. Naively one would have thought that the probability in this case is $\frac{1}{2}$, because after the moderator has opened a door without the prize, two doors are remaining and there is an equal chance to get the right door with the prize. But unfortunately this intuitively convincing argument is wrong.\\
 
-The following code shows a Monte Carlo simulation with the following variables and functions:\\
-\texttt{doorsWithPrize} is a randomly generated list of door numbers, which contain a prize,\\
-\texttt{firstChoice} is a randomly generated list of door numbers from the participant's first choice (this variable will be used to evaluate the case participant stays with his first choice),\\
-\texttt{doorsWithoutPrize} is a randomly generated list of the doors opened by the moderator after the first choice was made,\\
-\texttt{secondChoice} is a list of door numbers from the participant's second choice (this variable will be used to evaluate the case participant chooses the remaining door),\\
+The following code shows a Monte Carlo simulation with the following variables and functions:
+\texttt{doorsWithPrize} is a randomly generated list of door numbers, which contain a prize,
+\texttt{firstChoice} is a randomly generated list of door numbers from the participant's first choice (this variable will be used to evaluate the case participant stays with his first choice),
+\texttt{doorsWithoutPrize} is a randomly generated list of the doors opened by the moderator after the first choice was made,
+\texttt{secondChoice} is a list of door numbers from the participant's second choice (this variable will be used to evaluate the case participant chooses the remaining door),
 \texttt{ProbabilityWinningPrize} is a function to calculate the probability to win a prize for a given choice (it simply counts the number of elements in the choice list, which agree with the corresponding item in the \texttt{doorsWithPrize} list). 
 \\   
 
 \begin{mathematica}
-doorsWithPrize = RandomChoice[{1, 2, 3}, 1000];
-firstChoice = RandomChoice[{1, 2, 3}, Length[doorsWithPrize]];
+doors = Range[3];
+doorsWithPrize = RandomChoice[doors, 1000];
+firstChoice = RandomChoice[doors, Length[doorsWithPrize]];
 doorsWithoutPrize = MapThread[
-                        RandomChoice[Complement[{1, 2, 3}, {#1, #2}]] &,
+                        RandomChoice[Complement[doors, {#1, #2}]] &,
                         {doorsWithPrize, firstChoice}];
 secondChoice = MapThread[
-                        RandomChoice[Complement[{1, 2, 3}, {#1, #2}]] &,
+                        RandomChoice[Complement[doors, {#1, #2}]] &,
                         {doorsWithoutPrize, firstChoice}];
 ProbabilityWinningPrize[choice_] := Apply[Plus, 
                                           MapThread[Boole[#1 == #2] &,
@@ -829,7 +832,7 @@ ListPlot[Transpose[{groupSizes, probs}],
          AxesLabel -> {"n", "Probability"}]
 \end{mathematica}
 
- \includegraphics{images/birthday_problem.pdf}
+ \includegraphics{images/double_birthday_problem.pdf}
  
  The probability is larger than 50\%  for a group size > 22.\\
 
@@ -838,16 +841,16 @@ What is the probability that at least three persons have the same birthday?\\
 Only one line of the code above has to be changed to answer this question. 
 \begin{mathematica}
 sameBirthday = 
-  Map[Boole[MemberQ[Partition[Differences[Sort[#]], 2, 1], {0, 0}]] &,
+    Map[Boole[MemberQ[Partition[Differences[Sort[#]], 2, 1], {0, 0}]] &,
     groupSamples];
 \end{mathematica}
 
-The function \texttt{Partition} decomposes the differences list into overlapping pairs and any pair with only zeros in it is a triple birthday.   
-\end{example}
+The function \texttt{Partition} decomposes the differences list into overlapping pairs and any pair with only zeros in it is a triple birthday.\\   
 
-\begin{exercise}
-Verify that the probability of having at least three persons with the same birthday in a group of 88 people is larger than 50\%.
-\end{exercise}
+\includegraphics{images/triple_birthday_problem.pdf}
+
+So a group of 88 people is needed to have a 50\% chance of having at least three persons with the same birthday.
+\end{example}
 
 %---------------------------------------------------------------------------
 \chapter{Density Estimation and Random Data}
