@@ -385,6 +385,7 @@ cond = ProbabilityDistribution[
 \end{mathematica}
 The result is
   \begin{equation}
+  \label{eq:conditional_binormal_distribution}
     p\left(x_1\,\vert\, x_2, \mu_1, \mu_2, \sigma_1, \sigma_2, \rho\right)=\frac{\exp \left(\frac{(x_2-\mu_2)^2}{2 \sigma_2^2}-\frac{\frac{(x_1-\mu _1)^2}{\sigma_1^2}-\frac{2 \rho  (x_1-\mu_1) (x_2-\mu_2)}{\sigma_1 \sigma_2}+\frac{(x_2-\mu_2)^2}{\sigma_2^2}}{2 \left(1-\rho ^2\right)}\right)}{\sqrt{2 \pi } \sqrt{1-\rho ^2} \sigma_1}
   \end{equation}
 The normalization condition can be checked with
@@ -392,9 +393,10 @@ The normalization condition can be checked with
 Integrate[PDF[cond, x], {x, -Infinity, Infinity}, 
    Assumptions -> {Element[\[Sigma]1, NonNegativeReals], 
                    Element[\[Sigma]2, NonNegativeReals], 
-                   Element[\[Rho], NonNegativeReals]}]
+                   Element[\[Rho], NonNegativeReals],
+                   \[Rho] < 1, \[Sigma]1 > 0}]
 \end{mathematica}
-The result is a \texttt{ConditionalExpression} being $1$ under the constraints $\rho < 1$ and $\sigma_1 > 0$. These conditions can be added as \texttt{Assumptions} to \texttt{ProbabilityDistribution}.
+The result is exactly $1$ if the constraints $\rho < 1$ and $\sigma_1 > 0$ are taken into account, because eq. \ref{eq:conditional_binormal_distribution} is singular at $\rho = 1$ and $\sigma_1 = 0$. 
 
 %---------------------------------------------------------------------------
 \section{Deterministic Functions}
@@ -884,15 +886,16 @@ where $\mathcal{I}$ is the indicator function defined as
   \end{equation}
 Then the probability density estimate $\hat{p}(x)$ can be written as
   \begin{equation}
+  \label{eq:probability_density_estimate}
     \hat{p}(x)=\frac{1}{N}\sum_{i=1}^{b}\frac{N_i}{w_i}\mathcal{I}\left(x_k-\tilde{x}_i;w_i\right)
   \end{equation}
   where $b$ is the number of bins.
   
-There are some best practice rules for choosing the number of bins $b$ and the bin width $w$:
-
+There are some best practice rules for choosing the number of bins $b$ 
   \begin{equation}
         b = [1 + \log_{2}(N)]
   \end{equation}
+and the bin width $w$
   \begin{equation}
         w = 3.5 s N^{-\frac{1}{3}}
   \end{equation}
@@ -905,7 +908,24 @@ If we create $n$ histograms from datasets $\mathcal{D}_{1:n}$ sampled from the s
   \end{equation}
 with $\sum_{i=1}^m N_i=N$ and $P_i$ are the probabilities of $x$ to be assigned to bin $[x_i,x_{i+1}]$.\\
 
-The Wolfram Language provides the function \texttt{Histogram} e.g. \texttt{Histogram[data, \{\{1,2,3,4\}\}]} creates a histogram with 3 bins $[1,2]$, $[2,3]$ and $[3,4]$ or \texttt{Histogram[data, \{-10,10,1\}, "Probability"]} creates a histogram of normalized counts $\frac{N_i}{N}$ from $-10$ to $10$ with a bin width of $1$. Using the option \texttt{"PDF"}, a probability density estimate $\hat{p}(x)$ can be plotted.\\
+The Wolfram Language provides the function \texttt{Histogram} e.g. 
+\begin{mathematica}
+Histogram[data, {{1,2,3,4}}]
+\end{mathematica}
+creates a histogram with 3 bins $[1,2]$, $[2,3]$ and $[3,4]$ or 
+\begin{mathematica}
+Histogram[data, {-10,10,1}, "Probability"]
+\end{mathematica}
+creates a histogram of normalized counts $\frac{N_i}{N}$ from $-10$ to $10$ with a bin width of $1$. Using the option \texttt{"PDF"}, a probability density estimate $\hat{p}(x)$ can be plotted. If the bin values and histogram heights are only required numerically, the function \texttt{HistogramList} can be used.\\
+
+A probability density estimate can be constructed with the function \texttt{HistogramDistribution}  according to eq. \ref{eq:probability_density_estimate}.
+\begin{mathematica}
+data = RandomVariate[NormalDistribution[], 1000];
+dist = HistogramDistribution[data];
+DiscretePlot[PDF[dist, x], {x, -4, 4, .01}]
+\end{mathematica}
+
+ \includegraphics[scale=0.9]{images/histogram_distribution.pdf}
 
 In addition, \texttt{Histogram3D} and \texttt{DensityHistogram} are available for bi-variate random data. In the following examples the bi-variate data samples are generated with the \texttt{BinormalDistribution}, which is a special case of the multinormal distribution for $n=2$.
 
@@ -913,13 +933,13 @@ In addition, \texttt{Histogram3D} and \texttt{DensityHistogram} are available fo
 Histogram3D[RandomVariate[BinormalDistribution[0], 10000]]
 \end{mathematica}
 
- \includegraphics{images/histogram_3d.pdf}
+ \includegraphics[scale=0.8]{images/histogram_3d.pdf}
  
  \begin{mathematica}
 DensityHistogram[RandomVariate[BinormalDistribution[0], 10000]]
 \end{mathematica}
 
- \includegraphics{images/density_histogram.pdf}     
+ \includegraphics[scale=0.8]{images/density_histogram.pdf}     
   
 \section{Maximum Likelihood}
 If the physical process how data is generated is understood, the functional form of the probability density $p(\mathbf{x}\vert \boldsymbol{\theta})$ is typically known. In these cases the goal is to estimate the parameters $\boldsymbol{\theta}$ of a probability density from data.
