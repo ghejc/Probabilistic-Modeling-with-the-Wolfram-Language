@@ -887,13 +887,13 @@ where $\mathcal{I}$ is the indicator function defined as
 Then the probability density estimate $\hat{p}(x)$ can be written as
   \begin{equation}
   \label{eq:probability_density_estimate}
-    \hat{p}(x)=\frac{1}{N}\sum_{i=1}^{b}\frac{N_i}{w_i}\mathcal{I}\left(x_k-\tilde{x}_i;w_i\right)
+    \hat{p}(x)=\frac{1}{N}\sum_{i=1}^{m}\frac{N_i}{w_i}\mathcal{I}\left(x-\tilde{x}_i;w_i\right)
   \end{equation}
-  where $b$ is the number of bins.
+  where $m$ is the number of bins.
   
-There are some best practice rules for choosing the number of bins $b$ 
+There are some best practice rules for choosing the number of bins $m$ 
   \begin{equation}
-        b = [1 + \log_{2}(N)]
+        m = [1 + \log_{2}(N)]
   \end{equation}
 and the bin width $w$
   \begin{equation}
