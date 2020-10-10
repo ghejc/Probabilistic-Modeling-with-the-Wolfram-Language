@@ -947,6 +947,34 @@ Verify that $\hat{p}(x)$ given by eq. \ref{eq:probability_density_estimate} is n
 \int_{-\infty}^{+\infty}\hat{p}(x)dx=1        
   \end{equation}
 \end{exercise}
+
+\section{Gaussian Mixture Model}
+Histograms are typically a coarse-grained representation of a probability density, which depends very much on the choice of binning. A better representation is a Gaussian Mixture Model (GMM).
+
+\begin{definition}[Gaussian Mixture Model]
+  \label{th:gaussianmixturemodel}
+  \index{gaussian mixture model}
+  The Gaussian Mixture Model is defined by
+  \begin{equation}
+    p_{GMM}(x\,\vert\,\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}) = \sum_{i=1}^N \alpha_i \mathcal{N}\left(x\,\vert\,\mu_i,\sigma_i^2\right)
+  \end{equation}
+  with $\sum_{i=1}^N \alpha_i=1$
+\end{definition}
+
+Wolfram Language can learn GMM's from data using the high-level function \texttt{LearnDistribution} with the option \texttt{Method -> "GaussianMixture"}.
+
+\begin{mathematica}
+mixture = MixtureDistribution[{0.4, 0.6},
+             {NormalDistribution[], NormalDistribution[2, 0.5]}];
+data = RandomVariate[mixture, 1000];
+dist = LearnDistribution[data, Method -> "GaussianMixture"];
+Plot[{PDF[dist, x], PDF[mixture, x]}, {x, -4, 4},
+     Filling -> Axis, 
+     PlotLegends -> Placed[{"Data", "GMM"}, Right] 
+\end{mathematica}
+
+ \includegraphics[scale=0.9]{images/gaussian_mixture_model.pdf}   
+
  
 \section{Maximum Likelihood}
 If the physical process how data is generated is understood, the functional form of the probability density $p(\mathbf{x}\vert \boldsymbol{\theta})$ is typically known. In these cases the goal is to estimate the parameters $\boldsymbol{\theta}$ of a probability density from data.
@@ -1125,17 +1153,7 @@ Check for all $k$ the condition $r_k < \frac{p(x=x_k)}{p_{max}}$. If it is true,
 \end{itemize}
 The rejection rate determines the efficiency of the algorithm.\\ 
 
-Finding a pdf, which is easy to sample from and has a similar functional form as the distribution of interest, can be achieved with the help of a Gaussian Mixture Model.
-
-\begin{definition}[Gaussian Mixture Model]
-  \label{th:gaussianmixturemodel}
-  \index{gaussian mixture model}
-  The Gaussian Mixture Model (GMM) is defined by
-  \begin{equation}
-    p_{GMM}(x\,\vert\,\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}) = \sum_{i=1}^N \alpha_i \mathcal{N}\left(x\,\vert\,\mu_i,\sigma_i^2\right)
-  \end{equation}
-  with $\sum_{i=1}^N \alpha_i=1$
-\end{definition}
+Finding a pdf, which is easy to sample from and has a similar functional form as the distribution of interest, can be achieved with the help of a Gaussian Mixture Model $p_{GMM}(x\,\vert\,\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2})$.
 The parameters $\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}$ determines the shape of the distribution and can be chosen to approximate a given pdf $p(x)$ as closely as possible.\\
 
 Sampling from an Gaussian Mixture Model is straightforward:
