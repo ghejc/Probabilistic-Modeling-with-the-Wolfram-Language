@@ -940,7 +940,14 @@ DensityHistogram[RandomVariate[BinormalDistribution[0], 10000]]
 \end{mathematica}
 
  \includegraphics[scale=0.8]{images/density_histogram.pdf}     
-  
+
+\begin{exercise}
+Verify that $\hat{p}(x)$ given by eq. \ref{eq:probability_density_estimate} is normalized.
+  \begin{equation}
+\int_{-\infty}^{+\infty}\hat{p}(x)dx=1        
+  \end{equation}
+\end{exercise}
+ 
 \section{Maximum Likelihood}
 If the physical process how data is generated is understood, the functional form of the probability density $p(\mathbf{x}\vert \boldsymbol{\theta})$ is typically known. In these cases the goal is to estimate the parameters $\boldsymbol{\theta}$ of a probability density from data.
 
@@ -987,6 +994,26 @@ The derivative with respect to $\sigma^2$ gives
 and has the solution $\hat{\sigma}^2=\frac{1}{N}\sum_{i=1}^N \left(x_i-\hat{\mu}\right)^2$ (biased sample variance). An unbiased sample variance is given by $s^2=\frac{1}{N-1}\sum_{i=1}^N \left(x_i-\hat{\mu}\right)^2$. If you evaluate your statistics with data, where this distinction is relevant, your sample size is very likely too small.
  
 \end{example} 
+
+Wolfram Language has built in Maximum Likelihood parameter estimation using the function \texttt{EstimatedDistribution} with the option \texttt{ParameterEstimator -> "MaximumLikelihood"}.
+
+\begin{mathematica}
+data = RandomVariate[NormalDistribution[0, 1], 1000];
+dist = EstimatedDistribution[data, NormalDistribution[\[Mu], \[Sigma]],
+                             ParameterEstimator -> "MaximumLikelihood"]
+\end{mathematica}
+has the result \texttt{NormalDistribution[0.0400075, 0.974344]}.
+\begin{mathematica}
+{Mean[data], StandardDeviation[data], RootMeanSquare[data - Mean[data]]}
+\end{mathematica}
+has the result \texttt{\{0.0400075, 0.974832, 0.974344\}}. The function 
+\texttt{StandardDeviation} implements the square root of the unbiased sample variance, while \texttt{RootMeanSquare[data - Mean[data]]} calculates the square root of the biased sample variance, which agrees with the result from the Maximum Likelihood calculation.\\
+
+The function \texttt{FindDistribution} tries to find the best distribution for the given data.
+\begin{mathematica}
+FindDistribution[data]
+\end{mathematica}
+returns exactly the same result as the Maximum Likelihood estimator without specifying a distribution as an argument.
 
 \section{Sampling}
 In the previous sections we studied the reconstruction of a probability density from data. Here we investigate the inverse problem: the generation of data from a given probability density. This process is called sampling.
