@@ -48,6 +48,8 @@ Glen Cowan's book \textbf{Statistical Data Analysis} \cite{cowan1998} is a conci
 
 Some knowledge in Linear Algebra and Calculus is also required e.g. see Murray Spiegel's book \textbf{Schaum's Outline of Advanced Mathematics for Engineers and Scientists} \cite{spiegel2009} for an excellent coverage of all the mathematical methods and tools used by engineers and scientists. There is also another book by the same author completely dedicated to probability and statistics \cite{spiegel2012}, which consists of 897 fully solved problems and 20 online videos.\\
 
+A great tool for exploring univariate probability distributions built into the Wolfram Language is the \textbf{The Ultimate Univariate Probability Distribution Explorer}, which can be downloaded from \cite{marichev2013}.\\
+
 There is already a very good book \textbf{Introduction to Probability with Mathematica} by Kevin J. Hastings \cite{hastings2001} with a similar intention than this one. The second edition is based on Mathematica 7.0 and it is highly recommended as a complementary reading.\\
 
 Nevertheless the goal of this book is a bit different. We want to cover only the relevant topics and concepts, which are necessary for building and analyzing probabilistic models and applying them to all kind of problems. Therefore it does not claim to be a complete treatise of the subject, but a rather concise introduction to bring the reader as fast as possible into a state to perform computations and to understand its results.    
@@ -1043,6 +1045,28 @@ FindDistribution[data]
 \end{mathematica}
 returns exactly the same result as the Maximum Likelihood estimator without specifying a distribution as an argument.
 
+\begin{example}[Parameter Estimation of Poisson Distribution]
+In the case of a discrete probability density like the Poisson distribution, the likelihood is calculated with the probabilities evaluated on the data samples $x_{1:N}$.
+  \begin{equation}
+    \mathcal{L}(\lambda) = \prod_{i=1}^N \frac{\lambda^{x_k}}{x_k!}\exp{(-\lambda)}= \frac{\lambda^{\sum_{i=1}^N x_k}}{\prod_{i=1}^N x_k!}\exp{(-N\lambda)}
+  \end{equation}
+Differentiating with respect to $\lambda$ gives
+  \begin{equation}
+    \frac{\partial\mathcal{L}(\lambda)}{\partial\lambda} = \left(\frac{\sum_{i=1}^N x_k}{\lambda} - N\right)\frac{\lambda^{\sum_{i=1}^N x_k}}{\prod_{i=1}^N x_k!} \exp{(-N\lambda)} =0
+  \end{equation}
+The result is $\hat{\lambda} = \frac{1}{N}\sum_{i=1}^N x_k$ (sample mean).
+\end{example}
+
+
+\begin{exercise}
+The likelihood of a uniform distribution evaluated on the data samples $x_{1:N}$ is given by
+  \begin{equation}
+  \label{eq:uniform_likelihood}
+    \mathcal{L}(\alpha,\beta) = \prod_{i=1}^N \frac{1}{\beta-\alpha}\Theta(x_k-a)\Theta(b-x_k)= \frac{1}{(\beta-\alpha)^N}\Theta(x_{min}-\alpha)\Theta(\beta - x_{max})
+  \end{equation}
+with $x_{min} = \text{min}(x_{1:N})$ and $x_{max} = \text{max}(x_{1:N})$. Show that eq. \ref{eq:uniform_likelihood} has a maximum at $\alpha = x_{min}$ and $\beta = x_{max}$.
+\end{exercise}
+
 \section{Sampling}
 In the previous sections we studied the reconstruction of a probability density from data. Here we investigate the inverse problem: the generation of data from a given probability density. This process is called sampling.
 
@@ -1078,7 +1102,7 @@ Histogram[data,
 
 The histogram shows the counts of the data samples generated from an empirical distribution for each category. The counts are indeed numerically close to the given weights.\\
 
- \includegraphics{images/sampling_from_discrete_distribution.pdf}   
+ \includegraphics[scale=1]{images/sampling_from_discrete_distribution.pdf}   
 \end{example}
 
 \begin{example}[Normal-Distributed Random Numbers]
@@ -1117,7 +1141,7 @@ data2 = RandomVariate[NormalDistribution[2, 0.5], 1000];
 Histogram[{data1, data2}]
 \end{mathematica}
 
- \includegraphics{images/normal_distributions_from_data.pdf}
+ \includegraphics[scale=1]{images/normal_distributions_from_data.pdf}
    
 \begin{exercise}
   Show that the function $x(r)$ for the exponential distribution 

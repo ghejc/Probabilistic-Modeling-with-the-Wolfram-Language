@@ -11,6 +11,7 @@
 *.maf
 *.run.xml
 *.mtc*
+*.out
 *.tex.Backup*
 *.toc
 *.jpg.bb
