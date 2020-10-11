@@ -821,14 +821,14 @@ The main part is the function \texttt{sameBirthdaysInGroup}, which calculates th
 
 \begin{mathematica}
 birthdays = Range[365];
-sameBirthdaysInGroup[n_Integer] := Module[
+SameBirthdaysInGroup[n_Integer] := Module[
    {sameBirthday, groupSamples, sampleSize = 1000},
    groupSamples = RandomChoice[birthdays, {sampleSize, n}];
    sameBirthday = Map[Boole[MemberQ[Differences[Sort[#]], 0]] &, groupSamples];
    Return[Apply[Plus, sameBirthday] / sampleSize // N]
    ];
 groupSizes = {5, 10, 15, 20, 25, 30};
-probs = Map[sameBirthdaysInGroup, groupSizes];
+probs = Map[SameBirthdaysInGroup, groupSizes];
 ListPlot[Transpose[{groupSizes, probs}],
          Filling -> Axis, 
          AxesLabel -> {"n", "Probability"}]
@@ -997,8 +997,8 @@ Using the logarithm of the likelihood is better from the view point of numerical
     \log(\mathcal{L}(\boldsymbol{\theta})) = \sum_{i=1}^N \log\left(p\left(x_i\,\vert\, \boldsymbol{\theta}\right)\right)
   \end{equation}
 \end{definition}
-An optimal estimate of the parameters $\hat{\boldsymbol{\theta}}$ can be found by solving 
-$\frac{ \partial\log\left(\mathcal{L}(\boldsymbol{\theta})\right)}{\partial\boldsymbol{\theta}}=0$. 
+An optimal estimate of the parameters $\boldsymbol{\hat{\theta}}$ can be found by solving 
+$\frac{ \partial\log\left(\mathcal{L}(\boldsymbol{\theta})\right)}{\partial\boldsymbol{\theta}}=0$. The probability density $p(\mathbf{x}\vert \boldsymbol{\hat{\theta}})$ is then called the Maximum Likelihood estimate. 
 
 \begin{example}[Parameter Estimation of Normal Distribution]
 The loglikelihood function for the Normal distribution is given by
@@ -1019,7 +1019,7 @@ The derivative with respect to $\sigma^2$ gives
   \begin{equation}
     \frac{\partial\log(\mathcal{L}(\mu,\sigma^2)}{\partial\sigma^2} = -\frac{1}{2\sigma^4}\sum_{i=1}^N \left(x_i-\mu\right)^2 + \frac{N}{2\sigma^2}=-\frac{1}{2\sigma^4}\left(\sum_{i=1}^N \left(x_i-\mu\right)^2 - N\sigma^2\right)=0
   \end{equation}
-and has the solution $\hat{\sigma}^2=\frac{1}{N}\sum_{i=1}^N \left(x_i-\hat{\mu}\right)^2$ (biased sample variance). An unbiased sample variance is given by $s^2=\frac{1}{N-1}\sum_{i=1}^N \left(x_i-\hat{\mu}\right)^2$. If you evaluate your statistics with data, where this distinction is relevant, your sample size is very likely too small.
+and has the solution $\hat{\sigma}^2=\frac{1}{N}\sum_{i=1}^N \left(x_i-\hat{\mu}\right)^2$ (biased sample variance). An unbiased sample variance is given by $s^2=\frac{1}{N-1}\sum_{i=1}^N \left(x_i-\hat{\mu}\right)^2$.
  
 \end{example} 
 
@@ -1151,7 +1151,32 @@ Draw samples $x_k=(b-a)s_k+a$ from a uniform distribution $\mathcal{U}(s\,\vert\
 \item
 Check for all $k$ the condition $r_k < \frac{p(x=x_k)}{p_{max}}$. If it is true, accept $x_k$ as a sample from $p(x)$, otherwise reject the sample.
 \end{itemize}
-The rejection rate determines the efficiency of the algorithm.\\ 
+The rejection rate determines the efficiency of the algorithm.
+
+\begin{example}[Sampling from a SemiCircle Distribution]
+We want to sample data from a semicircle distribution
+
+\begin{equation}
+p(x)=\begin{cases}\frac{2}{\pi}\sqrt{1-x^2} & -1 \leqq x \leqq +1 \\
+0 & otherwise \\
+\end{cases}
+\end{equation}
+The maximum value of the distribution is given by $p_{max}=\frac{2}{\pi}$.\\
+
+The following Wolfram language code implements rejection sampling for this distribution.
+\begin{mathematica}
+pmax = 2/Pi;
+SemiCircleDistribution[x_] := pmax * Sqrt[1 - x^2];
+xk = RandomVariate[UniformDistribution[{-1, 1}], 10000];
+rk = RandomVariate[UniformDistribution[{0, 1}], 10000];
+data = Pick[xk, MapThread[#1 < (SemiCircleDistribution[#2]/pmax) &, {rk, xk}]];
+Show[{Histogram[data, 20, "PDF"], 
+      Plot[SemiCircleDistribution[x], {x, -1, 1}]}]
+\end{mathematica}
+
+ \includegraphics[scale=0.9]{images/rejection_sampling.pdf}
+
+\end{example} 
 
 Finding a pdf, which is easy to sample from and has a similar functional form as the distribution of interest, can be achieved with the help of a Gaussian Mixture Model $p_{GMM}(x\,\vert\,\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2})$.
 The parameters $\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}$ determines the shape of the distribution and can be chosen to approximate a given pdf $p(x)$ as closely as possible.\\
