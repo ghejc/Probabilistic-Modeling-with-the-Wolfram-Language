@@ -183,10 +183,10 @@ MarginalDistribution[MultinormalDistribution[{0, 0}, {{2, 1}, {1, 2}}], 1]
 is the uni-variate Normal distribution $\mathcal{N}\left(x\,\vert\,\mu=0,\sigma^2=2\right)$. The second argument can be a single index or a list of multiple indices of the variables, which should be present in the new distribution.   
 \end{example}
 
-\begin{theorem}[Multivariate Normal Distribution under Linear Transformation]
-  \label{th:multivariatenormaldistributionunderlineartransformation}
+\begin{theorem}[Multivariate Normal Distribution under Affine Transformation]
+  \label{th:multivariatenormaldistributionunderaffinetransformation}
   \index{linear transformation}
-An important property of the multi-variate Normal distribution is that the result of a linear transformation $\mathbf{x}'=\mathrm{M}\mathbf{x}+\mathbf{b}$ with a $n\times n$ matrix $\mathrm{M}$ and a $n\times 1$ vector $\mathbf{b}$ is again a multi-variate Normal distribution   
+An important property of the multi-variate Normal distribution is that the result of an affine transformation $\mathbf{x}'=\mathrm{M}\mathbf{x}+\mathbf{b}$ with a $n\times n$ matrix $\mathrm{M}$ and a $n\times 1$ vector $\mathbf{b}$ is again a multi-variate Normal distribution   
   \begin{equation}
   \mathcal{N}\left(\mathbf{x}\,\vert\,\boldsymbol{\mu},\boldsymbol{\Sigma}\right)=
   \vert\det(M)\vert\,\mathcal{N}\left(\mathbf{x}'\,\vert\,\mathrm{M}\boldsymbol{\mu}+\mathbf{b},\mathrm{M}\boldsymbol{\Sigma}\mathrm{M}^T\right)
@@ -951,7 +951,7 @@ Verify that $\hat{p}(x)$ given by eq. \ref{eq:probability_density_estimate} is n
 \end{exercise}
 
 \section{Gaussian Mixture Model}
-Histograms are typically a coarse-grained representation of a probability density, which depends very much on the choice of binning. A better representation is a Gaussian Mixture Model (GMM).
+Histograms are typically a coarse-grained representation of a probability density, which depends very much on the choice of binning. A better representation is a Gaussian Mixture Model (GMM). 
 
 \begin{definition}[Gaussian Mixture Model]
   \label{th:gaussianmixturemodel}
@@ -962,6 +962,8 @@ Histograms are typically a coarse-grained representation of a probability densit
   \end{equation}
   with $\sum_{i=1}^N \alpha_i=1$.
 \end{definition}
+
+A Gaussian Mixture Model can approximate any continuous probability density as long as $N$ is big enough.\\
 
 Wolfram Language can learn GMM's from data using the high-level function \texttt{LearnDistribution} with the option \texttt{Method -> "GaussianMixture"}.
 
@@ -1115,18 +1117,15 @@ where $\tilde{x}_j$ is the center coordinate and $w_j$ is the width of bin $j$.\
 
 The Wolfram Language provides the function \texttt{HistogramDistribution}, which can be constructed from given data and can be also used to generate new data samples using \texttt{RandomVariate}, but we first we want to implement our own function based on the sampling procedure described above. \\
 
-The function \texttt{sampleFromHistogram} has three arguments: the bin interval limits \texttt{bins} as a list of $N+1$ elements, the normalized bin heights \texttt{binHeights} as a list with $N$ elements and the number of samples \texttt{numSamples}. It calculates first the center coordinates and widths of the bins and then the cumulative sum of the bin heights, where zero is appended at the beginning of the list. \texttt{numSamples} random numbers are generated to sample a list of bin indices. This is done by subtracting the random number from each element of the cumulative sum and keep only the largest element of the non-positive results. The index is then used to generate uniformly distributed random numbers inside the corresponding bin.
+The function \texttt{sampleFromHistogram} has three arguments: the bin interval limits \texttt{bins} as a list of $N+1$ elements, the normalized bin heights \texttt{binHeights} as a list with $N$ elements and the number of samples \texttt{numSamples}. So the number of bins $N$ is provided implicitely by the length of the list arguments. It calculates first the cumulative sum of the bin heights, where zero is appended at the beginning of the list. \texttt{numSamples} random numbers are generated to sample a list of bin indices. This is done by subtracting the random number from each element of the cumulative sum and keep only the largest element of the non-positive results. The index is then used to generate uniformly distributed random numbers inside the corresponding bin.
 \begin{mathematica}
-sampleFromHistogram[bins_, binHeights_, numSamples_Integer] := Module[
-  {binWidths, binCenters, cumSum, randomNumbers, binIndices, histSamples},
-  binWidths = Differences[bins];
-  binCenters = MovingAverage[bins, 2];
-  cumSum = Prepend[Accumulate[binHeights], 0]; 
-  randomNumbers = RandomReal[1, numSamples]; 
-  binIndices = Flatten[Map[Ordering[Select[cumSum - #, NonPositive], -1] &,
+sampleFromHistogram[bins_, binHeights_, numSamples_] := Module[
+  {cumSum, randomNumbers, binIndices, histSamples},
+  cumSum = Prepend[Accumulate[binHeights], 0];
+  randomNumbers = RandomReal[1, numSamples];
+  binIndices = Flatten[Map[Ordering[Select[cumSum - #, NonPositive], -1] &, 
                            randomNumbers]];
-  histSamples = Map[RandomReal[{binCenters[[#]] - binWidths[[#]]/2,
-                                binCenters[[#]] + binWidths[[#]]/2}] &, binIndices];
+  histSamples = Map[RandomReal[{bins[[#]], bins[[# + 1]]}] &, binIndices];
   Return[histSamples]]
 
 data = sampleFromHistogram[{1, 3, 5, 10, 12},
@@ -1142,6 +1141,7 @@ dist = HistogramDistribution[data, {{1, 3, 5, 10, 12}}];
 data2 = RandomVariate[dist, 1000];
 Histogram[data2, {{1, 3, 5, 10, 12}}, "Probability"]
 \end{mathematica}
+but the performance is much better (almost a factor 100 using \texttt{Timing} to measure the runtime of \texttt{sampleFromHistogram} and \texttt{RandomVariate} generating 1000000 samples). 
 \end{example}
 
 \begin{example}[Normal-Distributed Random Numbers]
@@ -1241,16 +1241,37 @@ Show[{Histogram[data, 20, "PDF"],
 
 \end{example} 
 
-Finding a pdf, which is easy to sample from and has a similar functional form as the distribution of interest, can be achieved with the help of a Gaussian Mixture Model $p_{GMM}(x\,\vert\,\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2})$.
-The parameters $\boldsymbol{\alpha},\boldsymbol{\mu},\boldsymbol{\sigma^2}$ determines the shape of the distribution and can be chosen to approximate a given pdf $p(x)$ as closely as possible.\\
+\begin{example}[Sampling from a Gaussian Mixture Model]
+Sampling from a Gaussian Mixture Model is easy to implement in the Wolfram Language. We write a function \texttt{sampleFromGaussianMixtureModel} with four arguments: \texttt{weights}, which are the normalized coefficients as a list, \texttt{means}, which is a list of mean vectors or numbers, \texttt{covariances}, which is a list of covariance matrices or standard variances and \texttt{numSamples}, which is the number of samples, which should be returned. In the case of a multi-variate distribution, the returned samples are a matrix with \texttt{numSamples} rows and as many columns as there are variables. The first step is to create a list of normal distributions with the parameters specified by \texttt{means} and \texttt{covariances}, which will be the input for the \texttt{MixtureDistribution} together with \texttt{weights}. This gives already a distribution, where we can sample from using \texttt{RandomVariate}.
+The output will be either a list of samples in the uni-variate case or a matrix with \texttt{numSamples} and as many columns as there are variables in the multi-variate case.
+  
+\begin{mathematica}
+sampleFromGaussianMixtureModel[weights_,
+                               means_,
+                               covariances_,
+                               numSamples_] := Module[
+  {distributions, mixture, samples},
+  distributions = If[NumberQ[means[[1]]],
+                     MapThread[NormalDistribution[#1, #2] &,
+                               {means, covariances}],
+                     MapThread[MultinormalDistribution[#1, #2] &,
+                               {means, covariances}]];
+  mixture = MixtureDistribution[weights, distributions];
+  samples = RandomVariate[mixture, numSamples];
+  Return[samples]]
+  
+data = sampleFromGaussianMixtureModel[{0.3, 0.7}, 
+                                      {1, 2}, {1, 1}, 
+                                      1000];
+Show[{Histogram[data, 20, "PDF"], 
+      Plot[{0.3 * PDF[NormalDistribution[1, 1], x],
+            0.7 * PDF[NormalDistribution[2, 1], x], 
+            0.3 * PDF[NormalDistribution[1, 1], x] + 
+            0.7 * PDF[NormalDistribution[2, 1], x]}, {x, -2, 5}]}] 
+\end{mathematica}
 
-Sampling from an Gaussian Mixture Model is straightforward:
-\begin{itemize}
-\item
-Sample an index $j$ from the empirical distribution of $\alpha_{1:N}$ 
-\item 
-Sample $x$ from the normal distribution $\mathcal{N}\left(x\,\vert\,\mu_j,\sigma_j^2\right)$
-\end{itemize}
+ \includegraphics[scale=0.9]{images/gaussian_mixture_model_sampling.pdf}
+\end{example}
 
 %---------------------------------------------------------------------------
 \chapter{Probabilistic Models}
