@@ -4,6 +4,7 @@
 \usepackage{mathematica}
 \usepackage[T1]{fontenc}
 \usepackage[scaled=0.9]{DejaVuSansMono}
+\usepackage[export]{adjustbox}
 
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -123,7 +124,7 @@ Plot[{PDF[dist, x] //. {\[Alpha] -> 1},
       PlotLegends -> Placed[{"\[Alpha]=1", "\[Alpha]=2"}, Right]]
 \end{mathematica}
 
-\includegraphics[scale=0.7]{images/probability_distribution.pdf}
+\includegraphics[scale=0.7, center]{images/probability_distribution.pdf}
 
 \texttt{ProbabilityDistribution} can be also used for the creation of joint probability densities. 
 \begin{mathematica}
@@ -135,7 +136,7 @@ Plot3D[PDF[dist, {x, y}], {x, -4, 4}, {y, -4, 4},
        PlotRange -> {0, 0.2}, PlotPoints -> {50, 50}]
 \end{mathematica}
 
-\includegraphics[scale=0.7]{images/joint_probability_distribution.pdf}
+\includegraphics[scale=0.7, center]{images/joint_probability_distribution.pdf}
 
 \begin{example}[The Univariate Normal Distribution]
   The most important probability density is the Normal (or Gauss) distribution $\mathcal{N}\left(x\,\vert\,\mu,\sigma^2\right)$, which has the functional form
@@ -159,7 +160,7 @@ Plot[Table[PDF[NormalDistribution[0, \[Sigma]], x],
      PlotLegends -> Placed[{"\[Sigma]=0.75","\[Sigma]=1","\[Sigma]=2"}, Right]]
 \end{mathematica}
 
-\includegraphics[scale=0.8]{images/normal_distribution.pdf}
+\includegraphics[scale=0.8, center]{images/normal_distribution.pdf}
 \end{example}
 
 \begin{example}[The Multivariate Normal Distribution]
@@ -174,7 +175,7 @@ The corresponding function in the Wolfram Language is \texttt{MultinormalDistrib
 Plot3D[PDF[MultinormalDistribution[{0, 0}, {{2, 1}, {1, 2}}], {x, y}],
        {x, -4, 4}, {y, -4, 4}, PlotPoints -> {50, 50}]
 \end{mathematica}
-\includegraphics[scale=0.8]{images/multi_normal_distribution.pdf}
+\includegraphics[scale=0.8, center]{images/multi_normal_distribution.pdf}
 
 The function \texttt{MarginalDistribution} can be used to reduce the number of variables in a multi-variate distribution. The result of
 \begin{mathematica}
@@ -235,7 +236,7 @@ Plot[Table[PDF[UniformDistribution[{0, \[Beta]}], x],
      {x, -1, 5}, Filling -> Axis, PlotRange -> {0, 1},
      PlotLegends -> Placed[{"\[Beta]=1", "\[Beta]=2", "\[Beta]=4"}, Right]]
 \end{mathematica}
-\includegraphics{images/uniform_distribution.pdf}  
+\includegraphics[scale=1, center]{images/uniform_distribution.pdf}  
 \end{example}
 
 \begin{exercise}
@@ -311,7 +312,7 @@ Plot[Table[CDF[NormalDistribution[0, \[Sigma]], x],
      Placed[{"\[Sigma]=0.5", "\[Sigma]=1", "\[Sigma]=2"}, Right]]
 \end{mathematica}
 
-\includegraphics[scale=0.8]{images/cumulative_normal_distribution.pdf}
+\includegraphics[scale=0.8, center]{images/cumulative_normal_distribution.pdf}
 
 \begin{mathematica}
 Plot[Table[CDF[UniformDistribution[{0, \[Beta]}], x],
@@ -321,7 +322,7 @@ Plot[Table[CDF[UniformDistribution[{0, \[Beta]}], x],
   Placed[{"\[Beta]=1", "\[Beta]=2", "\[Beta]=3"}, Right]]
 \end{mathematica}
 
-\includegraphics[scale=0.8]{images/cumulative_uniform_distribution.pdf}
+\includegraphics[scale=0.8, center]{images/cumulative_uniform_distribution.pdf}
 
 %---------------------------------------------------------------------------
 \section{Conditional Probability Density}
@@ -349,6 +350,7 @@ A conditional probability density $p(x\,\vert\, y,\theta)$ means a probability d
 
 A joint probability density $p(\mathbf{x}\,\vert\, \mathbf{y},\boldsymbol{\theta})$ can be decomposed into univariate conditional probability densities by iteratively applying Bayes rule.
   \begin{equation}
+  \label{eq:decomposition}
     p(\mathbf{x}\,\vert\, \mathbf{y},\boldsymbol{\theta})=p(x_{1:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})=p(x_1\,\vert\, x_{2:n},\mathbf{y},\boldsymbol{\theta})
 \underbrace{p(x_{2}\,\vert\, x_{3:n},\mathbf{y},\boldsymbol{\theta})\overbrace{\ldots p(x_{n-1}\,\vert\, x_n,\mathbf{y},\boldsymbol{\theta})
 p(x_{n}\,\vert\, \mathbf{y},\boldsymbol{\theta})}^{p(x_{3:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})}
@@ -542,7 +544,7 @@ DiscretePlot[Table[PDF[BinomialDistribution[100, p], k],
              {k, 90}, PlotRange -> All, PlotMarkers -> Automatic, 
              PlotLegends -> {"p=0.1", "p=0.5", "p=0.8"}]
 \end{mathematica}
-\includegraphics[scale=0.9]{images/binomial_distribution.pdf} 
+\includegraphics[scale=0.9, center]{images/binomial_distribution.pdf} 
 \end{example}
 
 \begin{example}[The Multinomial Distribution]
@@ -560,7 +562,7 @@ GraphicsRow[Table[DiscretePlot3D[
    {y, 0, n}, {x,0, n}, PlotLabel -> Row[{"n = ", n}], 
    ExtentSize -> 0.5], {n, {3, 6, 9}}], ImageSize -> Full]
 \end{mathematica}
-\includegraphics[scale=0.9]{images/multinomial_distribution.pdf}  
+\includegraphics[scale=0.9, center]{images/multinomial_distribution.pdf}  
 \end{example}
 
 \begin{example}[The Poisson Distribution]
@@ -577,7 +579,7 @@ DiscretePlot[Table[PDF[PoissonDistribution[\[Lambda]], k],
              {k, 0, 30}, PlotRange -> All, PlotMarkers -> Automatic, 
              PlotLegends -> {"\[Lambda]=5", "\[Lambda]=10", "\[Lambda]=20"}]
 \end{mathematica}
-\includegraphics[scale=0.9]{images/poisson_distribution.pdf}  
+\includegraphics[scale=0.9, center]{images/poisson_distribution.pdf}  
 \end{example}
 
 \begin{theorem}[Sum of two Poisson distributions]
@@ -840,7 +842,7 @@ ListPlot[Transpose[{groupSizes, probs}],
          AxesLabel -> {"n", "Probability"}]
 \end{mathematica}
 
- \includegraphics{images/double_birthday_problem.pdf}
+ \includegraphics[scale=1, center]{images/double_birthday_problem.pdf}
  
  The probability is larger than 50\%  for a group size > 22.\\
 
@@ -855,7 +857,7 @@ sameBirthday =
 
 The function \texttt{Partition} decomposes the differences list into overlapping pairs and any pair with only zeros in it is a triple birthday.\\   
 
-\includegraphics{images/triple_birthday_problem.pdf}
+\includegraphics[scale=1, center]{images/triple_birthday_problem.pdf}
 
 So a group of 88 people is needed to have a 50\% chance of having at least three persons with the same birthday.
 \end{example}
@@ -931,7 +933,7 @@ dist = HistogramDistribution[data];
 DiscretePlot[PDF[dist, x], {x, -4, 4, .01}]
 \end{mathematica}
 
- \includegraphics[scale=0.9]{images/histogram_distribution.pdf}
+ \includegraphics[scale=0.9, center]{images/histogram_distribution.pdf}
 
 In addition, \texttt{Histogram3D} and \texttt{DensityHistogram} are available for bi-variate random data. In the following examples the bi-variate data samples are generated with the \texttt{BinormalDistribution}, which is a special case of the multinormal distribution for $n=2$.
 
@@ -939,13 +941,13 @@ In addition, \texttt{Histogram3D} and \texttt{DensityHistogram} are available fo
 Histogram3D[RandomVariate[BinormalDistribution[0], 10000]]
 \end{mathematica}
 
- \includegraphics[scale=0.8]{images/histogram_3d.pdf}
+ \includegraphics[scale=0.8, center]{images/histogram_3d.pdf}
  
  \begin{mathematica}
 DensityHistogram[RandomVariate[BinormalDistribution[0], 10000]]
 \end{mathematica}
 
- \includegraphics[scale=0.8]{images/density_histogram.pdf}     
+ \includegraphics[scale=0.8, center]{images/density_histogram.pdf}     
 
 \begin{exercise}
 Verify that $\hat{p}(x)$ given by eq. \ref{eq:probability_density_estimate} is normalized.
@@ -981,7 +983,7 @@ Plot[{PDF[dist, x], PDF[mixture, x]}, {x, -4, 4},
      PlotLegends -> Placed[{"Data", "GMM"}, Right] 
 \end{mathematica}
 
- \includegraphics[scale=0.9]{images/gaussian_mixture_model.pdf}   
+ \includegraphics[scale=0.9, center]{images/gaussian_mixture_model.pdf}   
 
  
 \section{Maximum Likelihood}
@@ -1108,7 +1110,7 @@ Histogram[data,
 
 The histogram shows the counts of the data samples generated from an empirical distribution for each category. The counts are indeed numerically close to the given weights.\\
 
- \includegraphics[scale=1]{images/sampling_from_discrete_distribution.pdf}   
+ \includegraphics[scale=1, center]{images/sampling_from_discrete_distribution.pdf}   
 \end{example}
 
 \begin{example}[Sampling from a Histogram]
@@ -1137,7 +1139,7 @@ data = sampleFromHistogram[{1, 3, 5, 10, 12},
                            1000];
 Histogram[data, {{1, 3, 5, 10, 12}}, "Probability"]    
 \end{mathematica}
- \includegraphics[scale=0.9]{images/histogram_sampling.pdf}   
+ \includegraphics[scale=0.9, center]{images/histogram_sampling.pdf}   
 
 The same result can be obtained with
 \begin{mathematica}
@@ -1184,7 +1186,7 @@ data2 = RandomVariate[NormalDistribution[2, 0.5], 1000];
 Histogram[{data1, data2}]
 \end{mathematica}
 
- \includegraphics[scale=1]{images/normal_distributions_from_data.pdf}
+ \includegraphics[scale=1, center]{images/normal_distributions_from_data.pdf}
    
 \begin{exercise}
   Show that the function $x(r)$ for the exponential distribution 
@@ -1241,7 +1243,7 @@ Show[{Histogram[data, 20, "PDF"],
       Plot[SemiCircleDistribution[x], {x, -1, 1}]}]
 \end{mathematica}
 
- \includegraphics[scale=0.9]{images/rejection_sampling.pdf}
+ \includegraphics[scale=0.9, center]{images/rejection_sampling.pdf}
 
 \end{example} 
 
@@ -1274,7 +1276,7 @@ Show[{Histogram[data, 20, "PDF"],
             0.7 * PDF[NormalDistribution[2, 1], x]}, {x, -2, 5}]}] 
 \end{mathematica}
 
- \includegraphics[scale=0.9]{images/gaussian_mixture_model_sampling.pdf}
+ \includegraphics[scale=0.9, center]{images/gaussian_mixture_model_sampling.pdf}
 \end{example}
 
 %---------------------------------------------------------------------------
@@ -1286,9 +1288,19 @@ Show[{Histogram[data, 20, "PDF"],
 
 \section{Graphical Models}
 
-Probabilistic models are described by a number of random variables $x_{1:n}$, a number of parameters $\theta_{1:m}$ and a joint probability density $p(x_{1:n}\,\vert\, \theta_{1:n})$, but there are also conditional dependencies between the random variables and parameters, which can expressed using a graph.\\
+Probabilistic models are described by a number of random variables $x_{1:n}$, a number of parameters $\theta_{1:m}$ and a joint probability density $p(x_{1:n}\,\vert\, \theta_{1:n})$, but there are also conditional dependencies between the random variables and parameters, which can expressed using a graph. Such a graph is also called a belief network \cite{barber2011} \cite{koller2009}.
 
-The following Wolfram Language code draws a graph with 3 random variables $x$, $y$, $z$ and one parameter $\theta$. The function \texttt{Graph} gets an adjacency list as the first argument, which contains a list of edges. The nodes or vertices are numbered from $1$ to $4$ and \texttt{i \textbackslash\lbrack DirectedEdge\rbrack \,j} means that there is a directed edge from node $i$ to $j$. This expresses a conditional dependence of node $j$ on node $i$.\\
+\begin{definition}[Belief Network]
+  \label{th:beliefnetwork}
+  \index{belief network}
+  A belief network is a directed graph of random variables $x_{1:n}$, which represents a probability distribution of the form
+  \begin{equation}
+    p(x_{1:n})=\prod_{i=1}^{n}p\left(x_i\,\vert\, pa(x_i)\right)
+  \end{equation}
+  where $pa(x_i)$ are all random variables $x_j$ (parents), which are connected to the random variable $x_i$ (child) with a directed edge pointing from node $x_j$ to node $x_i$.
+\end{definition}
+
+The following Wolfram Language code draws a graph with 3 random variables $x$, $y$, $z$ and one parameter $\theta$. The function \texttt{Graph} gets an adjacency list as the first argument, which contains a list of edges. The nodes or vertices are numbered from $1$ to $4$ and \texttt{i \textbackslash\lbrack DirectedEdge\rbrack \,j} means that there is a directed edge from node $i$ to $j$. This expresses a conditional dependence of node $j$ on node $i$. The other options are only necessary to customize the graphical representation.\\
 
 \begin{mathematica}
 Graph[{1 \[DirectedEdge] 3, 2 \[DirectedEdge] 3, 4 \[DirectedEdge] 3},
@@ -1296,12 +1308,33 @@ Graph[{1 \[DirectedEdge] 3, 2 \[DirectedEdge] 3, 4 \[DirectedEdge] 3},
                        3 -> Placed["z", Below], 4 -> \[Theta]},
       VertexShapeFunction -> {4 -> "Square"}, VertexSize -> Tiny]
 \end{mathematica}
- \includegraphics[scale=0.9]{images/simple_graph.pdf}
+ \includegraphics[scale=0.9, center]{images/simple_graph.pdf}
 
 From this graph we can immediately derive the joint probability density as
 \begin{equation}
+\label{eq:belief}
 p(x,y,z\,\vert\, \theta)=p(z\,\vert\, x,y,\theta)p(x)p(y)
-\end{equation}  
+\end{equation}
+
+The multivariate probability density is decomposed into univariate probability densities. We saw such a decomposition already in eq. \ref{eq:decomposition}. We can iteratively apply Bayes rule to $p(x,y,z\,\vert\, \theta)$ with the result
+
+\begin{equation}
+\begin{aligned}
+p(x,y,z\,\vert\, \theta)&=p(z\,\vert\, x,y,\theta)p(y\,\vert\, x,\theta)p(x\,\vert\, \theta)\\
+p(x,y,z\,\vert\, \theta)&=p(x\,\vert\, y,z,\theta)p(z\,\vert\, y,\theta)p(y\,\vert\, \theta)\\
+p(x,y,z\,\vert\, \theta)&=p(y\,\vert\, z,x,\theta)p(x\,\vert\, z,\theta)p(z\,\vert\, \theta)\\
+\end{aligned}
+\end{equation}
+
+and the corresponding graphs
+
+ \includegraphics[scale=0.9, center]{images/decomposition_graphs.pdf}
+
+All these decompositions are equivalent and differ only by a reordering of the random variables $x$, $y$ and $z$. The first one can be rewritten to eq. \ref{eq:belief} using $p(y\,\vert\, x,\theta)=p(y)$ and $p(x\,\vert\, \theta)$ assuming that $y$ is conditionally independent of $x$ and $\theta$ and $x$ is conditionally independent of $\theta$, but the other two decompositions seem to express contradictory conditional independence relations, so what is now correct?\\
+
+One has to be careful to interpret these equations as conditional independence relations e.g. the third equation has a term $p(z\,\vert\, \theta)$, which indicates that $z$ is only conditionally dependent on $\theta$, which could be right or wrong. This can be only decided if the probability density is known. If it is right, $p(z\,\vert\, \theta)$ can indeed be written as a function of the parameter $\theta$ only. If it is wrong e.g. $z$ depends on $x$ and $y$, $p(z\,\vert\, \theta)$ is the result of a marginalization of $\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z\,\vert\, x,y,\theta)p(x)p(y)dxdy$.\\
+
+The graph does exactly that: it specifies conditional independence relations, which can be used to simplify the joint probability density. This is basically an assumption or belief based on some prior knowledge. If this assumption is valid, has to be verified.  
 
 \section{Poisson Clock}
 A very simplified model of a clock is the Poisson clock, where the tick counts $x$ are Poisson-distributed.

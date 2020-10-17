@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[   1449474,      27519]
-NotebookOptionsPosition[   1433587,      27243]
-NotebookOutlinePosition[   1433930,      27258]
-CellTagsIndexPosition[   1433887,      27255]
+NotebookDataLength[   1465843,      27857]
+NotebookOptionsPosition[   1449487,      27573]
+NotebookOutlinePosition[   1449830,      27588]
+CellTagsIndexPosition[   1449787,      27585]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -27239,6 +27239,336 @@ Projects\\\\Book\\\\Probabilistic Modeling with the Wolfram \
 Language\\\\images\\\\simple_graph.pdf\"\>"], "Output",
  CellChangeTimes->{3.8118842715032277`*^9, 3.811886622743267*^9},
  CellLabel->"Out[22]=",ExpressionUUID->"43d87e3c-3a6c-4c51-a8b0-f1bf235d433a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"GraphicsRow", "[", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"Graph", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"1", "\[DirectedEdge]", "3"}], ",", 
+         RowBox[{"2", "\[DirectedEdge]", "3"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "3"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "2"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "1"}], ",", 
+         RowBox[{"1", "\[DirectedEdge]", "2"}]}], "}"}], ",", 
+       RowBox[{"VertexLabels", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"1", "\[Rule]", " ", "\"\<x\>\""}], ",", 
+          RowBox[{"2", "\[Rule]", " ", 
+           RowBox[{"Placed", "[", 
+            RowBox[{"\"\<y\>\"", ",", "Below"}], "]"}]}], ",", 
+          RowBox[{"3", "\[Rule]", " ", 
+           RowBox[{"Placed", "[", 
+            RowBox[{"\"\<z\>\"", ",", " ", "Below"}], "]"}]}], ",", 
+          RowBox[{"4", "\[Rule]", " ", "\[Theta]"}]}], "}"}]}], ",", 
+       RowBox[{"VertexShapeFunction", "\[Rule]", " ", 
+        RowBox[{"{", 
+         RowBox[{"4", "\[Rule]", "\"\<Square\>\""}], "}"}]}], ",", 
+       RowBox[{"VertexSize", "\[Rule]", "0.3"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Graph", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"2", "\[DirectedEdge]", "1"}], ",", 
+         RowBox[{"3", "\[DirectedEdge]", "1"}], ",", 
+         RowBox[{"2", "\[DirectedEdge]", "3"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "3"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "2"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "1"}]}], "}"}], ",", 
+       RowBox[{"VertexLabels", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"1", "\[Rule]", " ", 
+           RowBox[{"Placed", "[", 
+            RowBox[{"\"\<x\>\"", ",", " ", "Below"}], "]"}]}], ",", 
+          RowBox[{"2", "\[Rule]", "\"\<y\>\""}], ",", 
+          RowBox[{"3", "\[Rule]", " ", 
+           RowBox[{"Placed", "[", 
+            RowBox[{"\"\<z\>\"", ",", " ", "Below"}], "]"}]}], ",", 
+          RowBox[{"4", "\[Rule]", " ", "\[Theta]"}]}], "}"}]}], ",", 
+       RowBox[{"VertexShapeFunction", "\[Rule]", " ", 
+        RowBox[{"{", 
+         RowBox[{"4", "\[Rule]", "\"\<Square\>\""}], "}"}]}], ",", 
+       RowBox[{"VertexSize", "\[Rule]", "0.3"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Graph", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"1", "\[DirectedEdge]", "2"}], ",", 
+         RowBox[{"3", "\[DirectedEdge]", "2"}], ",", 
+         RowBox[{"3", "\[DirectedEdge]", "1"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "3"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "2"}], ",", 
+         RowBox[{"4", "\[DirectedEdge]", "1"}]}], "}"}], ",", 
+       RowBox[{"VertexLabels", "\[Rule]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"1", "\[Rule]", " ", 
+           RowBox[{"Placed", "[", 
+            RowBox[{"\"\<x\>\"", ",", " ", "Below"}], "]"}]}], ",", 
+          RowBox[{"2", "\[Rule]", 
+           RowBox[{"Placed", "[", 
+            RowBox[{"\"\<y\>\"", ",", "Below"}], "]"}]}], ",", 
+          RowBox[{"3", "\[Rule]", " ", "\"\<z\>\""}], ",", 
+          RowBox[{"4", "\[Rule]", " ", "\[Theta]"}]}], "}"}]}], ",", 
+       RowBox[{"VertexShapeFunction", "\[Rule]", " ", 
+        RowBox[{"{", 
+         RowBox[{"4", "\[Rule]", "\"\<Square\>\""}], "}"}]}], ",", 
+       RowBox[{"VertexSize", "\[Rule]", "0.3"}]}], "]"}]}], "}"}], 
+   "\[IndentingNewLine]", "]"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.8119275489103713`*^9, 3.8119276379259357`*^9}, {
+  3.8119277080659184`*^9, 3.8119277421824865`*^9}, {3.811927779273698*^9, 
+  3.8119277958210874`*^9}, {3.811927826165671*^9, 3.811928000438363*^9}, {
+  3.8119281752839327`*^9, 3.81192818353465*^9}},
+ CellLabel->"In[11]:=",ExpressionUUID->"93fce37c-8b18-4566-afde-6487c2ff3b3f"],
+
+Cell[BoxData[
+ GraphicsBox[{{}, {InsetBox[
+     FormBox[
+      GraphicsBox[
+       NamespaceBox["NetworkGraphics",
+        DynamicModuleBox[{Typeset`graph = HoldComplete[
+          
+          Graph[{1, 3, 2, 
+           4}, {{{1, 2}, {3, 2}, {4, 2}, {4, 3}, {4, 1}, {1, 3}}, Null}, {
+           VertexLabels -> {
+             3 -> Placed["z", Below], 4 -> $CellContext`\[Theta], 2 -> 
+              Placed["y", Below], 1 -> "x"}, 
+            VertexShapeFunction -> {4 -> "Square"}, VertexSize -> {0.3}}]]}, 
+         TagBox[GraphicsGroupBox[{
+            {Hue[0.6, 0.7, 0.5], Opacity[0.7], Arrowheads[Medium], 
+             ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGCQAWIQjQYcYIzl8zZ2X7f/bw/jJ000+lCS/Q/O17vRpHuj
+6S+cz1O8yJmx7Q+c/ysRpOE3gr/EH4QQ6m3uzpIX+wnnG6pbiSSc+A7np4HB
+Nzh/MVj7Fzj/sUUfEH2G85WVQOATnJ/IvS2Be9sHON/+5WS7l5Pfwfl7doPA
+azjfEmTc4xdwPkh3AvczON8YDB7D+eDgyX8A55/j757SuPw2nC+ec1As5+A1
+OF+yYpepvc4lOH9F+ptHX8+fhvOn2IEceBjOf/Dy2p8NHjvh/H9aZzr5WFfA
++TAAAGdHa/U=
+              "]], 0.15], ArrowBox[{{0., 2.}, {-1., 1.}}, 0.15], 
+             ArrowBox[{{-1., 1.}, {0., 0.}}, 0.15], 
+             ArrowBox[{{0., 3.}, {0., 2.}}, 0.15], 
+             ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGBQBWIQjQo4HGbympsuPrTC/qSydvHXOewOcuvXBN86vMu+
+Y1aS7kNNdoeqPTNFz04+am+Zskzv8DI2B41P0yd4HDtnf6/hW9lsYTYHn5qM
+s+trrtiXfQhiyypgdXiSriTVKXbLnmXz7jt6e1kc3t+1EY+QeGDfcsLg18uf
+zA6yNuatk1If2/802BQ3W43ZodqP4frnT8/sE9/Yczk7MzlETA4Vtb/5wt7I
+VUh98n5Gh3MtoT4hba/s37t1zvtmyujwSImhxvjXa/sZH5cU5C5jcOjPDV1y
+x+StvZZr6tzvAgwO11JCj/qbvbMPaJ7iqfX6n/1ODob7Pf/e2SudW87bs+Kv
+vVlk6MfJve/tT2SxtItE/bH3Cwv9k/L4vb175Kqth///soeEywf7NDD4Zu8L
+ld+xLNTLhuErXL/51N8Vr5d+tt8FNf+BYcSn4vBP9jD7N9Rkb7sq8tG+D+q+
+iNdZXYp73tvD3L/IMsfWK+2t/Xmo/5ye3GpV1XhtD/O/6ettyZsZX9rDwgdG
+y0DDD0bDwhdGP4OGP4yGxQ+MVofGH4yuhsYvjIbFP4yeB00fMBo9BQEAMtsN
++g==
+              "]], 0.15], ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGCQAWIQjQo4HGbympsuPrRi/0ll7eKvc9gd5NavCb51eNf+
+jllJug812R2q9swUPTv56H7LlGV6h5exOWh8mj7B49i5/fcavpXNFmZz8KnJ
+OLu+5sr+sg9BbFkFrA5P0pWkOsVu7WfZvPuO3l4Wh/d3bcQjJB7sbzlh8Ovl
+T2YHWRvz1kmpj/f/NNgUN1uN2aHaj+H650/P9ie+sedydmZyiJgcKmp/88V+
+I1ch9cn7GR3OtYT6hLS92v/erXPeN1NGh0dKDDXGv17vn/FxSUHuMgaH/tzQ
+JXdM3u7Xck2d+12AweFaSuhRf7N3+wOap3hqvf5nv5OD4X7Pv3f7lc4t5+1Z
+8dfeLDL04+Te9/tPZLG0i0T9sfcLC/2T8vj9fvfIVVsP//9lDwmXD/tnzQSB
+n3D++RtHX883/wHnfz6slPrg5Td7RiifPXoDa/SGr3B59nl5Z/m7v8D5X3ti
+9/yr/AznX1KvBaJPcD5Y+ZSPcH5Eol+JxoEPcD6UtgcA7hvDDQ==
+              "]], 0.15]}, 
+            {Hue[0.6, 0.2, 0.8], EdgeForm[{GrayLevel[0], Opacity[
+             0.7]}], {DiskBox[{0., 2.}, 0.15], 
+              InsetBox["\<\"x\"\>", Offset[{2, 2}, {0.15, 2.15}], 
+               ImageScaled[{0, 0}],
+               BaseStyle->"Graphics"]}, {DiskBox[{0., 0.}, 0.15], 
+              InsetBox["\<\"z\"\>", Offset[{0, -2}, {0., -0.15}], 
+               ImageScaled[{0.5, 1}],
+               BaseStyle->"Graphics"]}, {DiskBox[{-1., 1.}, 0.15], 
+              InsetBox["\<\"y\"\>", Offset[{0, -2}, {-1., 0.85}], 
+               ImageScaled[{0.5, 1}],
+               BaseStyle->"Graphics"]}, {
+              RectangleBox[{-0.13235295, 2.86764705}, \
+{0.13235295, 3.13235295}], 
+              InsetBox["\[Theta]", Offset[{2, 2}, {0.15, 3.15}], ImageScaled[{0, 0}],
+               BaseStyle->"Graphics"]}}}],
+          MouseAppearanceTag["NetworkGraphics"]],
+         AllowKernelInitialization->False]],
+       DefaultBaseStyle->{
+        "NetworkGraphics", FrontEnd`GraphicsHighlightColor -> 
+         Hue[0.8, 1., 0.6]},
+       FormatType->TraditionalForm,
+       FrameTicks->None],
+      TraditionalForm], {193.5, -189.}, {Center, Center}, {360., 360.}], 
+    InsetBox[
+     FormBox[
+      GraphicsBox[
+       NamespaceBox["NetworkGraphics",
+        DynamicModuleBox[{Typeset`graph = HoldComplete[
+          
+          Graph[{2, 1, 3, 
+           4}, {{{1, 2}, {3, 2}, {1, 3}, {4, 3}, {4, 1}, {4, 2}}, Null}, {
+           VertexLabels -> {
+             3 -> Placed["z", Below], 4 -> $CellContext`\[Theta], 2 -> "y", 1 -> 
+              Placed["x", Below]}, VertexShapeFunction -> {4 -> "Square"}, 
+            VertexSize -> {0.3}}]]}, 
+         TagBox[GraphicsGroupBox[{
+            {Hue[0.6, 0.7, 0.5], Opacity[0.7], Arrowheads[Medium], 
+             ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGCQAWIQjQYcYIzl8zZ2X7f/bw/jJ000+lCS/Q/O17vRpHuj
+6S+cz1O8yJmx7Q+c/ysRpOE3gr/EH4QQ6m3uzpIX+wnnG6pbiSSc+A7np4HB
+Nzh/MVj7Fzj/sUUfEH2G85WVQOATnJ/IvS2Be9sHON/+5WS7l5Pfwfl7doPA
+azjfEmTc4xdwPkh3AvczON8YDB7D+eDgyX8A55/j757SuPw2nC+ec1As5+A1
+OF+yYpepvc4lOH9F+ptHX8+fhvOn2IEceBjOf/Dy2p8NHjvh/H9aZzr5WFfA
++TAAAGdHa/U=
+              "]], 0.15], ArrowBox[{{0., 2.}, {-1., 1.}}, 0.15], 
+             ArrowBox[{{-1., 1.}, {0., 0.}}, 0.15], 
+             ArrowBox[{{0., 3.}, {0., 2.}}, 0.15], 
+             ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGBQBWIQjQo4HGbympsuPrTC/qSydvHXOewOcuvXBN86vMu+
+Y1aS7kNNdoeqPTNFz04+am+Zskzv8DI2B41P0yd4HDtnf6/hW9lsYTYHn5qM
+s+trrtiXfQhiyypgdXiSriTVKXbLnmXz7jt6e1kc3t+1EY+QeGDfcsLg18uf
+zA6yNuatk1If2/802BQ3W43ZodqP4frnT8/sE9/Yczk7MzlETA4Vtb/5wt7I
+VUh98n5Gh3MtoT4hba/s37t1zvtmyujwSImhxvjXa/sZH5cU5C5jcOjPDV1y
+x+StvZZr6tzvAgwO11JCj/qbvbMPaJ7iqfX6n/1ODob7Pf/e2SudW87bs+Kv
+vVlk6MfJve/tT2SxtItE/bH3Cwv9k/L4vb175Kqth///soeEywf7NDD4Zu8L
+ld+xLNTLhuErXL/51N8Vr5d+tt8FNf+BYcSn4vBP9jD7N9Rkb7sq8tG+D+q+
+iNdZXYp73tvD3L/IMsfWK+2t/Xmo/5ye3GpV1XhtD/O/6ettyZsZX9rDwgdG
+y0DDD0bDwhdGP4OGP4yGxQ+MVofGH4yuhsYvjIbFP4yeB00fMBo9BQEAMtsN
++g==
+              "]], 0.15], ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGCQAWIQjQo4HGbympsuPrRi/0ll7eKvc9gd5NavCb51eNf+
+jllJug812R2q9swUPTv56H7LlGV6h5exOWh8mj7B49i5/fcavpXNFmZz8KnJ
+OLu+5sr+sg9BbFkFrA5P0pWkOsVu7WfZvPuO3l4Wh/d3bcQjJB7sbzlh8Ovl
+T2YHWRvz1kmpj/f/NNgUN1uN2aHaj+H650/P9ie+sedydmZyiJgcKmp/88V+
+I1ch9cn7GR3OtYT6hLS92v/erXPeN1NGh0dKDDXGv17vn/FxSUHuMgaH/tzQ
+JXdM3u7Xck2d+12AweFaSuhRf7N3+wOap3hqvf5nv5OD4X7Pv3f7lc4t5+1Z
+8dfeLDL04+Te9/tPZLG0i0T9sfcLC/2T8vj9fvfIVVsP//9lDwmXD/tnzQSB
+n3D++RtHX883/wHnfz6slPrg5Td7RiifPXoDa/SGr3B59nl5Z/m7v8D5X3ti
+9/yr/AznX1KvBaJPcD5Y+ZSPcH5Eol+JxoEPcD6UtgcA7hvDDQ==
+              "]], 0.15]}, 
+            {Hue[0.6, 0.2, 0.8], EdgeForm[{GrayLevel[0], Opacity[
+             0.7]}], {DiskBox[{0., 2.}, 0.15], 
+              InsetBox["\<\"y\"\>", Offset[{2, 2}, {0.15, 2.15}], 
+               ImageScaled[{0, 0}],
+               BaseStyle->"Graphics"]}, {DiskBox[{0., 0.}, 0.15], 
+              InsetBox["\<\"x\"\>", Offset[{0, -2}, {0., -0.15}], 
+               ImageScaled[{0.5, 1}],
+               BaseStyle->"Graphics"]}, {DiskBox[{-1., 1.}, 0.15], 
+              InsetBox["\<\"z\"\>", Offset[{0, -2}, {-1., 0.85}], 
+               ImageScaled[{0.5, 1}],
+               BaseStyle->"Graphics"]}, {
+              RectangleBox[{-0.13235295, 2.86764705}, \
+{0.13235295, 3.13235295}], 
+              InsetBox["\[Theta]", Offset[{2, 2}, {0.15, 3.15}], ImageScaled[{0, 0}],
+               BaseStyle->"Graphics"]}}}],
+          MouseAppearanceTag["NetworkGraphics"]],
+         AllowKernelInitialization->False]],
+       DefaultBaseStyle->{
+        "NetworkGraphics", FrontEnd`GraphicsHighlightColor -> 
+         Hue[0.8, 1., 0.6]},
+       FormatType->TraditionalForm,
+       FrameTicks->None],
+      TraditionalForm], {580.5, -189.}, {Center, Center}, {360., 360.}], 
+    InsetBox[
+     FormBox[
+      GraphicsBox[
+       NamespaceBox["NetworkGraphics",
+        DynamicModuleBox[{Typeset`graph = HoldComplete[
+          
+          Graph[{1, 2, 3, 
+           4}, {{{1, 2}, {3, 2}, {3, 1}, {4, 3}, {4, 2}, {4, 1}}, Null}, {
+           VertexLabels -> {
+             3 -> "z", 4 -> $CellContext`\[Theta], 2 -> Placed["y", Below], 1 -> 
+              Placed["x", Below]}, VertexShapeFunction -> {4 -> "Square"}, 
+            VertexSize -> {0.3}}]]}, 
+         TagBox[GraphicsGroupBox[{
+            {Hue[0.6, 0.7, 0.5], Opacity[0.7], Arrowheads[Medium], 
+             ArrowBox[{{0., 1.}, {1., 0.}}, 0.15], 
+             ArrowBox[{{1., 2.}, {0., 1.}}, 0.15], 
+             ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGCQAWIQDQEf7KEMBxh/+byN3dft/9vD+EkTjT6UZP+zZ4Ty
+9W406d5o+guX5yle5MzY9gfO/5UI0vAbwV/iD0II9TZ3Z8mL/YTzDdWtRBJO
+fIfz08DgG5y/GKz9C5z/2KIPiD7D3aOsBAKf4PKJ3NsSuLd9gPPtX062ezn5
+HZy/ZzcIvIbzLUHGPX4B54N0J3A/g/ONweAxnA8OnvwHcP45/u4pjctvw90j
+nnNQLOfgNbi8ZMUuU3udS3D+ivQ3j76ePw3nT7EDOfAwnP/g5bU/Gzx2wvn/
+tM508rGugPNhMQcApt6NHA==
+              "]], 0.15], ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGCQAWIQDQEf7CE0h4Na/5ozV4vf2Z9U1i7+OofdQSara2vL
+8jf2HbOSdB9qsjs8njBzF8/sV/aWKcv0Di9jcyhjvnU71++F/b2Gb2Wzhdkc
+bh/0llxx8Kl92YcgtqwCVge+M++Kdn95ZM+yefcdvb0sDkoubRf9z9+3bzlh
+8OvlT2aHE+0Tv94yuWn/02BT3Gw1Zgeu5P+BElKX7BPf2HM5OzM5LNi0chXz
+7DP2Rq5C6pP3MzocebPy3LpnR+3fu3XO+2bK6FBT8p/fSPyA/YyPSwpylzE4
+9E8OuSsVuc1eyzV17ncBBqj+NfYBzVM8tV7/s4eoX2CvdG45b8+Kv/YQ+R77
+E1ks7SJRf+xXgvk59u6Rq7Ye/v/LHhZCs2aCwE84//yNo6/nm/+A8z8fVkp9
+8PIbnM8evYE1esNXBH9e3ln+7i9w/tee2D3/Kj/D+ZfUa4HoE5wPVj7lI5wf
+kehXonHgA5wPizcAmH6uWg==
+              "]], 0.15], ArrowBox[BezierCurveBox[CompressedData["
+1:eJxTTMoPSmViYGBQBWIQDQEf7CE0h0POjpWSosc+2J9U1i7+Oofd4dMpq6W2
+az7ad8xK0n2oye4wwXzzospNn+wtU5bpHV7G5uD6T0jo5I3P9vcavpXNFmZz
+EJaP+qwt/9W+7EMQW1YBq8OvmR1ui1q/2bNs3n1Hby+Lw4+8edw6PD/sW04Y
+/Hr5k9mBf95sp5Obftr/NNgUN1uN2cFOveF1ZeVv+8Q39lzOzkwOa06u6pqf
+88feyFVIffJ+Rof0Q1pqWs5/7d+7dc77ZsroUCTIsE/y71/7GR+XFOQuY3A4
+sU0rKG/WP3st19S53wUYHHI2rXqkLv3fPqB5iqfW63/2sSwN+W71/+2Vzi3n
+7Vnx1372mlU/Th77b38ii6VdJOqPvfpqrbpNH//bu0eu2nr4/y9ouDA4pIHB
+N3s1qPyOZaFeNgxf7edA9ZtP/V3xeuln+zio+Q8MIz4Vh3+yz4bav6Eme9tV
+kY/2x6Hui3id1aW45719IdT9iyxzbL3S3tpnQP3n9ORWq6rGa3uY/01fb0ve
+zPjSHhY+1X4M1z9/embPBw0/GRvz1kmpj+1/QsP3/V0b8QiJB/a/oeH/LF1J
+qlPslj0sfnxqMs6ur7liD4s/9U/TJ3gcO2cPi9/qPTNFz04+ag+Lf7n1a4Jv
+Hd5lnwtNH/N4zU0XH1phj5p+GBgAY8EUFA==
+              "]], 0.15], ArrowBox[{{1., 3.}, {1., 2.}}, 0.15]}, 
+            {Hue[0.6, 0.2, 0.8], EdgeForm[{GrayLevel[0], Opacity[
+             0.7]}], {DiskBox[{0., 1.}, 0.15], 
+              InsetBox["\<\"x\"\>", Offset[{0, -2}, {0., 0.85}], ImageScaled[{0.5, 1}],
+               BaseStyle->"Graphics"]}, {DiskBox[{1., 0.}, 0.15], 
+              InsetBox["\<\"y\"\>", Offset[{0, -2}, {1., -0.15}], 
+               ImageScaled[{0.5, 1}],
+               BaseStyle->"Graphics"]}, {DiskBox[{1., 2.}, 0.15], 
+              InsetBox["\<\"z\"\>", Offset[{2, 2}, {1.15, 2.15}], 
+               ImageScaled[{0, 0}],
+               BaseStyle->"Graphics"]}, {
+              RectangleBox[{0.86764705, 2.86764705}, \
+{1.13235295, 3.13235295}], 
+              InsetBox["\[Theta]", Offset[{2, 2}, {1.15, 3.15}], ImageScaled[{0, 0}],
+               BaseStyle->"Graphics"]}}}],
+          MouseAppearanceTag["NetworkGraphics"]],
+         AllowKernelInitialization->False]],
+       DefaultBaseStyle->{
+        "NetworkGraphics", FrontEnd`GraphicsHighlightColor -> 
+         Hue[0.8, 1., 0.6]},
+       FormatType->TraditionalForm,
+       FrameTicks->None],
+      TraditionalForm], {967.5, -189.}, {Center, Center}, {360., 360.}]}, {}},
+  ContentSelectable->True,
+  ImageSize->Automatic,
+  PlotRangePadding->{6, 5}]], "Output",
+ CellChangeTimes->{{3.8119279477024155`*^9, 3.8119279696921773`*^9}, 
+   3.8119280015679426`*^9, 3.811928184496707*^9},
+ CellLabel->"Out[11]=",ExpressionUUID->"eb29a18b-b80f-492a-a700-86408e392e2b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+      "\"\<images/decomposition_graphs.pdf\>\""}], "}"}], "]"}], ",", "%"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.8119280252371616`*^9, 3.811928029963106*^9}},
+ CellLabel->"In[12]:=",ExpressionUUID->"532e565f-1b76-48d4-974d-479858d2e52b"],
+
+Cell[BoxData["\<\"C:\\\\Users\\\\gerha\\\\My \
+Projects\\\\Book\\\\Probabilistic Modeling with the Wolfram \
+Language\\\\images\\\\decomposition_graphs.pdf\"\>"], "Output",
+ CellChangeTimes->{3.811928033352151*^9, 3.8119281978126607`*^9},
+ CellLabel->"Out[12]=",ExpressionUUID->"ee361b72-84a5-41b7-a75d-d184dea60b90"]
 }, Open  ]]
 },
 WindowSize->{758, 697},
@@ -27519,7 +27849,15 @@ Cell[1430742, 27181, 2077, 38, 224, "Output",ExpressionUUID->"3df50eca-e9bc-4b2c
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[1432856, 27224, 403, 10, 28, "Input",ExpressionUUID->"9796bc9b-dbed-4e4f-8e05-ced5cbeaea36"],
-Cell[1433262, 27236, 309, 4, 109, "Output",ExpressionUUID->"43d87e3c-3a6c-4c51-a8b0-f1bf235d433a"]
+Cell[1433262, 27236, 309, 4, 52, "Output",ExpressionUUID->"43d87e3c-3a6c-4c51-a8b0-f1bf235d433a"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1433608, 27245, 3915, 87, 238, "Input",ExpressionUUID->"93fce37c-8b18-4566-afde-6487c2ff3b3f"],
+Cell[1437526, 27334, 11177, 215, 141, "Output",ExpressionUUID->"eb29a18b-b80f-492a-a700-86408e392e2b"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1448740, 27554, 411, 10, 48, "Input",ExpressionUUID->"532e565f-1b76-48d4-974d-479858d2e52b"],
+Cell[1449154, 27566, 317, 4, 109, "Output",ExpressionUUID->"ee361b72-84a5-41b7-a75d-d184dea60b90"]
 }, Open  ]]
 }
 ]
