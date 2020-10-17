@@ -1334,7 +1334,35 @@ All these decompositions are equivalent and differ only by a reordering of the r
 
 One has to be careful to interpret these equations as conditional independence relations e.g. the third equation has a term $p(z\,\vert\, \theta)$, which indicates that $z$ is only conditionally dependent on $\theta$, which could be right or wrong. This can be only decided if the probability density is known. If it is right, $p(z\,\vert\, \theta)$ can indeed be written as a function of the parameter $\theta$ only. If it is wrong e.g. $z$ depends on $x$ and $y$, $p(z\,\vert\, \theta)$ is the result of a marginalization of $\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z\,\vert\, x,y,\theta)p(x)p(y)dxdy$.\\
 
-The graph does exactly that: it specifies conditional independence relations, which can be used to simplify the joint probability density. This is basically an assumption or belief based on some prior knowledge. If this assumption is valid, has to be verified.  
+The graph does exactly that: it specifies conditional independence relations, which can be used to simplify the joint probability density. This is basically an assumption or belief based on some prior knowledge. If this assumption is valid, has to be verified.\\
+ 
+Using eq. \ref{eq:belief} it can be easily shown that $x$ and $y$ are independent.
+
+\begin{equation}
+p(x,y\,\vert\,\theta)=\int_{-\infty}^{\infty}dz p(x,y,z\,\vert\,\theta)=\int_{-\infty}^{\infty}dz p(z\,\vert\, x,y,\theta)p(x)p(y) = p(x)p(y)
+\end{equation}
+
+\begin{example}
+Show that the graph
+ \includegraphics[scale=0.8, left]{images/graph_example.pdf}
+ implies the independence of $x$ and $y$ given $z$.\\
+ 
+ The joint probability density for this graph is given by
+\begin{equation}
+p(x,y,z)=p(y\,\vert\,z)p(z\,\vert\,x)p(x)=p(y\,\vert\,z)p(z,x)=p(y\,\vert\,z)p(x\,\vert\,z)p(z)
+\end{equation}
+Therefore we get for $p(x,y\,\vert\,z)$
+\begin{equation}
+p(x,y\,\vert\,z)=\frac{p(x,y,z)}{p(z)} = p(x\,\vert\,z)p(y\,\vert\,z)
+\end{equation}
+There is no way for $x$ to influence $y$ if we fix $z$.  
+\end{example}
+
+\begin{exercise}
+Show that the graph
+\includegraphics[scale=0.8, left]{images/graph_exercise.pdf}
+ also implies the independence of $x$ and $y$ given $z$.
+\end{exercise} 
 
 \section{Poisson Clock}
 A very simplified model of a clock is the Poisson clock, where the tick counts $x$ are Poisson-distributed.
