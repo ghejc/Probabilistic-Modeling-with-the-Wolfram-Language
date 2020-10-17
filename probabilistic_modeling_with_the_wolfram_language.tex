@@ -587,8 +587,8 @@ DiscretePlot[Table[PDF[PoissonDistribution[\[Lambda]], k],
 \end{theorem}
 \begin{proof}
   \begin{equation}
-    p(z)=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z,x,y)dx dy=
-    \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z\,\vert\, x,y)\mathcal{P}(x\,\vert\,\lambda_1)\mathcal{P}(y\,\vert\,\lambda_2)dx dy
+    p(z)=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z,x,y)dx dy
+    =\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z\,\vert\, x,y)\mathcal{P}(x\,\vert\,\lambda_1)\mathcal{P}(y\,\vert\,\lambda_2)dx dy
   \end{equation}
   Bayes rule was used in last step. $p(z\,\vert\, x,y)$ is a deterministic function $z=x+y$ and is given by $\delta\left(z-x-y\right)$. The $y$-integration can be carried out and gives the following result.
   \begin{equation}
@@ -696,13 +696,17 @@ The result is $\begin{pmatrix}\Sigma_{11} & \Sigma_{12} \\
 What is the mean and variance of a random variable $x$ distributed as a Poisson distribution $\mathcal{P}\left(x\,\vert\,\lambda\right)$ if the possible values $x$ can take are $x_k=k$?\\
 The mean $\mu$ is given by 
   \begin{equation}
-    \mu(\lambda)=\sum_{k=0}^{\infty}P_k k=\sum_{k=1}^{\infty}k\frac{\lambda^k}{k!}\exp(-\lambda) =\exp(-\lambda)\lambda\sum_{k=1}^{\infty}\frac{\lambda^{k-1}}{(k-1)!}=\exp(-\lambda)\lambda\underbrace{\sum_{k=0}^{\infty}\frac{\lambda^{k}}{k!}}_{\exp(\lambda)}=\lambda
+  \begin{aligned}
+    \mu(\lambda)&=\sum_{k=0}^{\infty}P_k k=\sum_{k=1}^{\infty}k\frac{\lambda^k}{k!}\exp(-\lambda)\\ &=\exp(-\lambda)\lambda\sum_{k=1}^{\infty}\frac{\lambda^{k-1}}{(k-1)!}=\exp(-\lambda)\lambda\underbrace{\sum_{k=0}^{\infty}\frac{\lambda^{k}}{k!}}_{\exp(\lambda)}=\lambda
+  \end{aligned}
   \end{equation}
 The summation range was changed from $k=0$ to $k=1$, because the $k=0$ term is identically zero.\\
 The variance $\sigma^2$ can be calculated as 
   \begin{equation}
-    \sigma(\lambda)^2=\sum_{k=0}^{\infty}P_k (k-\lambda)^2=\sum_{k=0}^{\infty}P_k k^2 - 2\lambda \underbrace{\sum_{k=0}^{\infty}P_k k}_{\lambda} + \lambda^2\underbrace{\sum_{k=0}^{\infty}P_k}_{1}=
-\exp(-\lambda)\sum_{k=0}^{\infty}k^2\frac{\lambda^k}{k!} - \lambda^2
+  \begin{aligned}
+    \sigma(\lambda)^2&=\sum_{k=0}^{\infty}P_k (k-\lambda)^2=\sum_{k=0}^{\infty}P_k k^2 - 2\lambda \underbrace{\sum_{k=0}^{\infty}P_k k}_{\lambda} + \lambda^2\underbrace{\sum_{k=0}^{\infty}P_k}_{1}\\
+&=\exp(-\lambda)\sum_{k=0}^{\infty}k^2\frac{\lambda^k}{k!} - \lambda^2
+  \end{aligned}
   \end{equation}
 Applying $\lambda\frac{\partial}{\partial \lambda}$ to $\mu(\lambda)$ gives the following identity
 \begin{equation}
@@ -1279,6 +1283,25 @@ Show[{Histogram[data, 20, "PDF"],
 \begin{summary}
   This chapter covers the whole range of probabilistic models from simple to complex ones. We show that the simple models can be used as building blocks for simulating real-world systems.
 \end{summary}
+
+\section{Graphical Models}
+
+Probabilistic models are described by a number of random variables $x_{1:n}$, a number of parameters $\theta_{1:m}$ and a joint probability density $p(x_{1:n}\,\vert\, \theta_{1:n})$, but there are also conditional dependencies between the random variables and parameters, which can expressed using a graph.\\
+
+The following Wolfram Language code draws a graph with 3 random variables $x$, $y$, $z$ and one parameter $\theta$. The function \texttt{Graph} gets an adjacency list as the first argument, which contains a list of edges. The nodes or vertices are numbered from $1$ to $4$ and \texttt{i \textbackslash\lbrack DirectedEdge\rbrack \,j} means that there is a directed edge from node $i$ to $j$. This expresses a conditional dependence of node $j$ on node $i$.\\
+
+\begin{mathematica}
+Graph[{1 \[DirectedEdge] 3, 2 \[DirectedEdge] 3, 4 \[DirectedEdge] 3},
+      VertexLabels -> {1 -> "x", 2 -> "y", 
+                       3 -> Placed["z", Below], 4 -> \[Theta]},
+      VertexShapeFunction -> {4 -> "Square"}, VertexSize -> Tiny]
+\end{mathematica}
+ \includegraphics[scale=0.9]{images/simple_graph.pdf}
+
+From this graph we can immediately derive the joint probability density as
+\begin{equation}
+p(x,y,z\,\vert\, \theta)=p(z\,\vert\, x,y,\theta)p(x)p(y)
+\end{equation}  
 
 \section{Poisson Clock}
 A very simplified model of a clock is the Poisson clock, where the tick counts $x$ are Poisson-distributed.
