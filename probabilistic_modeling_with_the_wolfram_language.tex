@@ -1288,7 +1288,7 @@ Show[{Histogram[data, 20, "PDF"],
 
 \section{Graphical Models}
 
-Probabilistic models are described by a number of random variables $x_{1:n}$, a number of parameters $\theta_{1:m}$ and a joint probability density $p(x_{1:n}\,\vert\, \theta_{1:n})$, but there are also conditional dependencies between the random variables and parameters, which can expressed using a graph. Such a graph is also called a belief network \cite{barber2011} \cite{koller2009}.
+Probabilistic models are described by a number of random variables $x_{1:n}$, a number of parameters $\theta_{1:m}$ and a joint probability density $p(x_{1:n}\,\vert\, \theta_{1:n})$, but there are also conditional dependencies between the random variables and parameters, which can expressed using a graph. Such a graph is also called a belief or Bayesian network \cite{barber2011} \cite{koller2009}.
 
 \begin{definition}[Belief Network]
   \label{th:beliefnetwork}
@@ -1341,6 +1341,18 @@ Using eq. \ref{eq:belief} it can be easily shown that $x$ and $y$ are independen
 \begin{equation}
 p(x,y\,\vert\,\theta)=\int_{-\infty}^{\infty}dz p(x,y,z\,\vert\,\theta)=\int_{-\infty}^{\infty}dz p(z\,\vert\, x,y,\theta)p(x)p(y) = p(x)p(y)
 \end{equation}
+This independence relation holds for any subgraph of the form
+
+ \includegraphics[scale=0.8, center]{images/v_structure.pdf}
+
+which is also called v-structure.
+
+\begin{remark}
+Note that $x$ and $y$ in the v-structure are not conditionally independent given $z$.
+\begin{equation}
+p(x,y\,\vert\,z)=\frac{p(x,y,z)}{p(z)}=\frac{p(z\,\vert\, x,y)p(x)p(y)}{p(z)}
+\end{equation}
+\end{remark}
 
 \begin{example}
 Show that the graph
@@ -1355,7 +1367,9 @@ Therefore we get for $p(x,y\,\vert\,z)$
 \begin{equation}
 p(x,y\,\vert\,z)=\frac{p(x,y,z)}{p(z)} = p(x\,\vert\,z)p(y\,\vert\,z)
 \end{equation}
-There is no way for $x$ to influence $y$ if we fix $z$.  
+There is no way for $x$ to influence $y$ if we fix $z$. Because the result is symmetric in $x$ and $y$, the same conditional independence relation holds if the nodes $x$ and $y$ in the graph are exchanged
+
+\includegraphics[scale=0.8, center]{images/equivalent_graph.pdf}   
 \end{example}
 
 \begin{exercise}
