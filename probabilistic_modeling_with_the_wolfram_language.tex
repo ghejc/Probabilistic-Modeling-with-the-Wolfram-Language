@@ -1280,15 +1280,19 @@ Show[{Histogram[data, 20, "PDF"],
 \end{example}
 
 %---------------------------------------------------------------------------
-\chapter{Probabilistic Models}
+\chapter{Probabilistic Models (Theory)}
 
 \begin{summary}
-  This chapter covers the whole range of probabilistic models from simple to complex ones. We show that the simple models can be used as building blocks for simulating real-world systems.
+  This chapter introduces the theoretical foundations of probabilistic models, especially how models can be decomposed into simpler parts and how these parts are connected with each other. Such structures can be best represented by graphs or networks, which allows us to identify important relations between random variables. These graphical representations help us also to deal systematically with more complex and diverse systems and allow us to formulate and implement everything in a common graphical way built on top of graph theory, which provides us with mathematical algorithms to perform efficient calculations.
 \end{summary}
 
 \section{Graphical Models}
 
-Probabilistic models are described by a number of random variables $x_{1:n}$, a number of parameters $\theta_{1:m}$ and a joint probability density $p(x_{1:n}\,\vert\, \theta_{1:n})$, but there are also conditional dependencies between the random variables and parameters, which can expressed using a graph. Such a graph is also called a belief or Bayesian network \cite{barber2011} \cite{koller2009}.
+Probabilistic models are described by a number of random variables $x_{1:n}$, a number of parameters $\theta_{1:m}$ and a joint probability density $p(x_{1:n}\,\vert\, \theta_{1:m})$. It is often favorable to introduce further hidden or latent variables $h_{1:k}$, which are not directly observable and therefore do not show up as inputs or outputs of the system, but are hidden inside the model.
+\begin{equation}
+p(x_{1:n}\,\vert\, \theta_{1:m})=\int_{-\infty}^{+\infty}dh_{1}\ldots \int_{-\infty}^{+\infty}dh_{k} p(x_{1:n},h_{1:k}\,\vert\, \theta_{1:m})
+\end{equation}
+These new variables $h_{1:k}$ encode some static or dynamic properties of the system state and often simplify the overall structure of the model by decoupling the outputs from the inputs, which reduces the dependencies between the random variables and parameters in the model. Dependency or causal relations can be very vividly expressed through a graph. Such a graph is also called a belief or Bayesian network \cite{barber2011} \cite{koller2009}.
 
 \begin{definition}[Belief Network]
   \label{th:beliefnetwork}
@@ -1334,7 +1338,7 @@ All these decompositions are equivalent and differ only by a reordering of the r
 
 One has to be careful to interpret these equations as conditional independence relations e.g. the third equation has a term $p(z\,\vert\, \theta)$, which indicates that $z$ is only conditionally dependent on $\theta$, which could be right or wrong. This can be only decided if the probability density is known. If it is right, $p(z\,\vert\, \theta)$ can indeed be written as a function of the parameter $\theta$ only. If it is wrong e.g. $z$ depends on $x$ and $y$, $p(z\,\vert\, \theta)$ is the result of a marginalization of $\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(z\,\vert\, x,y,\theta)p(x)p(y)dxdy$.\\
 
-The graph does exactly that: it specifies conditional independence relations, which can be used to simplify the joint probability density. This is basically an assumption or belief based on some prior knowledge. If this assumption is valid, has to be verified.\\
+The graph does exactly that: it specifies conditional independence relations through the lack of edges between certain nodes (in the example above the edges $\theta\rightarrow x$, $\theta\rightarrow y$ and $x\rightarrow y$) , which can be used to simplify the joint probability density. This is basically an assumption or belief based on some prior knowledge. If this assumption is valid or sufficient to describe the observations or data, has to be verified.\\
  
 Using eq. \ref{eq:belief} it can be easily shown that $x$ and $y$ are independent.
 
@@ -1343,7 +1347,7 @@ p(x,y\,\vert\,\theta)=\int_{-\infty}^{\infty}dz p(x,y,z\,\vert\,\theta)=\int_{-\
 \end{equation}
 This independence relation holds for any subgraph of the form
 
- \includegraphics[scale=0.8, center]{images/v_structure.pdf}
+ \includegraphics[scale=0.7, center]{images/v_structure.pdf}
 
 which is also called v-structure.
 
@@ -1377,6 +1381,12 @@ Show that the graph
 \includegraphics[scale=0.8, left]{images/graph_exercise.pdf}
  also implies the independence of $x$ and $y$ given $z$.
 \end{exercise} 
+
+\chapter{Probabilistic Models (Applications)}
+
+\begin{summary}
+  This chapter covers the whole range of probabilistic models from simple to complex ones. We show that the simple models can be used as building blocks for simulating real-world systems.
+\end{summary}
 
 \section{Poisson Clock}
 A very simplified model of a clock is the Poisson clock, where the tick counts $x$ are Poisson-distributed.
