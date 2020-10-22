@@ -1123,9 +1123,9 @@ where $\tilde{x}_j$ is the center coordinate and $w_j$ is the width of bin $j$.\
 
 The Wolfram Language provides the function \texttt{HistogramDistribution}, which can be constructed from given data and can be also used to generate new data samples using \texttt{RandomVariate}, but we first we want to implement our own function based on the sampling procedure described above. \\
 
-The function \texttt{sampleFromHistogram} has three arguments: the bin interval limits \texttt{bins} as a list of $N+1$ elements, the normalized bin heights \texttt{binHeights} as a list with $N$ elements and the number of samples \texttt{numSamples}. So the number of bins $N$ is provided implicitely by the length of the list arguments. It calculates first the cumulative sum of the bin heights, where zero is appended at the beginning of the list. \texttt{numSamples} random numbers are generated to sample a list of bin indices. This is done by subtracting the random number from each element of the cumulative sum and keep only the largest element of the non-positive results. The index is then used to generate uniformly distributed random numbers inside the corresponding bin.
+The function \texttt{SampleFromHistogram} has three arguments: the bin interval limits \texttt{bins} as a list of $N+1$ elements, the normalized bin heights \texttt{binHeights} as a list with $N$ elements and the number of samples \texttt{numSamples}. So the number of bins $N$ is provided implicitely by the length of the list arguments. It calculates first the cumulative sum of the bin heights, where zero is appended at the beginning of the list. \texttt{numSamples} random numbers are generated to sample a list of bin indices. This is done by subtracting the random number from each element of the cumulative sum and keep only the largest element of the non-positive results. The index is then used to generate uniformly distributed random numbers inside the corresponding bin.
 \begin{mathematica}
-sampleFromHistogram[bins_, binHeights_, numSamples_] := Module[
+SampleFromHistogram[bins_, binHeights_, numSamples_] := Module[
   {cumSum, randomNumbers, binIndices, histSamples},
   cumSum = Prepend[Accumulate[binHeights], 0];
   randomNumbers = RandomReal[1, numSamples];
@@ -1134,7 +1134,7 @@ sampleFromHistogram[bins_, binHeights_, numSamples_] := Module[
   histSamples = Map[RandomReal[{bins[[#]], bins[[# + 1]]}] &, binIndices];
   Return[histSamples]]
 
-data = sampleFromHistogram[{1, 3, 5, 10, 12},
+data = SampleFromHistogram[{1, 3, 5, 10, 12},
                            {0.1, 0.2, 0.5, 0.2}, 
                            1000];
 Histogram[data, {{1, 3, 5, 10, 12}}, "Probability"]    
@@ -1147,7 +1147,7 @@ dist = HistogramDistribution[data, {{1, 3, 5, 10, 12}}];
 data2 = RandomVariate[dist, 1000];
 Histogram[data2, {{1, 3, 5, 10, 12}}, "Probability"]
 \end{mathematica}
-but the performance is much better (almost a factor 100 using \texttt{Timing} to measure the runtime of \texttt{sampleFromHistogram} and \texttt{RandomVariate} generating 1000000 samples). 
+but the performance is much better (almost a factor 100 using \texttt{Timing} to measure the runtime of \texttt{SampleFromHistogram} and \texttt{RandomVariate} generating 1000000 samples). 
 \end{example}
 
 \begin{example}[Normal-Distributed Random Numbers]
@@ -1248,11 +1248,11 @@ Show[{Histogram[data, 20, "PDF"],
 \end{example} 
 
 \begin{example}[Sampling from a Gaussian Mixture Model]
-Sampling from a Gaussian Mixture Model is easy to implement in the Wolfram Language. We write a function \texttt{sampleFromGaussianMixtureModel} with four arguments: \texttt{weights}, which are the normalized coefficients as a list, \texttt{means}, which is a list of mean vectors or numbers, \texttt{covariances}, which is a list of covariance matrices or standard variances and \texttt{numSamples}, which is the number of samples, which should be returned. In the case of a multi-variate distribution, the returned samples are a matrix with \texttt{numSamples} rows and as many columns as there are variables. The first step is to create a list of normal distributions with the parameters specified by \texttt{means} and \texttt{covariances}, which will be the input for the \texttt{MixtureDistribution} together with \texttt{weights}. This gives already a distribution, where we can sample from using \texttt{RandomVariate}.
+Sampling from a Gaussian Mixture Model is easy to implement in the Wolfram Language. We write a function \texttt{SampleFromGaussianMixtureModel} with four arguments: \texttt{weights}, which are the normalized coefficients as a list, \texttt{means}, which is a list of mean vectors or numbers, \texttt{covariances}, which is a list of covariance matrices or standard variances and \texttt{numSamples}, which is the number of samples, which should be returned. In the case of a multi-variate distribution, the returned samples are a matrix with \texttt{numSamples} rows and as many columns as there are variables. The first step is to create a list of normal distributions with the parameters specified by \texttt{means} and \texttt{covariances}, which will be the input for the \texttt{MixtureDistribution} together with \texttt{weights}. This gives already a distribution, where we can sample from using \texttt{RandomVariate}.
 The output will be either a list of samples in the uni-variate case or a matrix with \texttt{numSamples} and as many columns as there are variables in the multi-variate case.
   
 \begin{mathematica}
-sampleFromGaussianMixtureModel[weights_,
+SampleFromGaussianMixtureModel[weights_,
                                means_,
                                covariances_,
                                numSamples_] := Module[
@@ -1266,7 +1266,7 @@ sampleFromGaussianMixtureModel[weights_,
   samples = RandomVariate[mixture, numSamples];
   Return[samples]]
   
-data = sampleFromGaussianMixtureModel[{0.3, 0.7}, 
+data = SampleFromGaussianMixtureModel[{0.3, 0.7}, 
                                       {1, 2}, {1, 1}, 
                                       1000];
 Show[{Histogram[data, 20, "PDF"], 
@@ -1380,7 +1380,75 @@ There is no way for $x$ to influence $y$ if we fix $z$. Because the result is sy
 Show that the graph
 \includegraphics[scale=0.8, left]{images/graph_exercise.pdf}
  also implies the independence of $x$ and $y$ given $z$.
-\end{exercise} 
+\end{exercise}
+
+\begin{example}[Conditional Independence Test]
+We want to implement a function \texttt{IsConditionalIndependent}, which returns \texttt{True} if \texttt{sourceNode} is conditionally independent of \texttt{targetNode} given a list of \texttt{conditionalNodes} for \texttt{graph}, otherwise \texttt{False}.\\
+
+The implemented algorithm works as follows:\\
+\begin{itemize}
+\item
+If \texttt{sourceNode} and \texttt{targetNode} are identical, then they are dependent.
+\item
+If there exist undirected paths between \texttt{sourceNode} and \texttt{targetNode} and one of these paths has only two nodes, \texttt{sourceNode} and \texttt{targetNode} are directly connected and dependent.
+\item
+If there is no undirected path between \texttt{sourceNode} and \texttt{targetNode}, they are independent.
+\item
+If all paths contain at least one segment with 3 nodes, which is not a v-structure and the center node is in \texttt{conditionalNodes}, \texttt{sourceNode} and \texttt{targetNode} are independent.
+\item
+If all paths contain at least one segment with 3 nodes, which is a v-structure and the center node and all its descendants are not in \texttt{conditionalNodes}, \texttt{sourceNode} and \texttt{targetNode} are independent, else they are dependent. 
+\end{itemize}
+
+\begin{mathematica}
+IsConditionalIndependent[g_Graph,
+                         sourceNode_Integer,
+                         targetNode_Integer,
+                         conditionalNodes_List]:= Module[
+    {paths, blockedPathSegments},
+    (* source and target node are identical *)
+    If[sourceNode == targetNode,
+       Return[False]];
+    paths = FindPath[UndirectedGraph[g], sourceNode, targetNode,
+                     Infinity, All];
+    (* there is a direct path between source and target node *)
+    If[AnyTrue[paths, Length[#] == 2 &],
+       Return[False]];
+    (* there is no path between source and target node *)
+    If[Length[paths] == 0,
+       Return[True]];
+    (* partition each path into overlapping segments of 3 nodes *)
+    paths = Map[Partition[#, 3, 1] &,
+                paths];
+    (* get all paths, which are not blocked by a a conditional node *)
+    blockedPathSegments = Map[Not[EdgeQ[g, #[[1]] \[DirectedEdge] #[[2]]] && 
+                                  EdgeQ[g, #[[3]] \[DirectedEdge] #[[2]]]] && 
+                                  MemberQ[conditionalNodes, #[[2]]]  &,
+                              paths, {2}];
+    paths = Pick[paths, Map[Not[AnyTrue[#, TrueQ]] &, blockedPathSegments]];
+    If[Length[paths] == 0,
+       Return[True]];
+    (* get all paths, which are not blocked by a v-structure *)
+    blockedPathSegments = Map[EdgeQ[g, #[[1]] \[DirectedEdge] #[[2]]] && 
+                              EdgeQ[g, #[[3]] \[DirectedEdge] #[[2]]] && 
+                              Not[MemberQ[conditionalNodes, #[[2]]]] &&
+                              Length[Intersection[VertexOutComponent[g, #[[2]]],
+                                                  conditionalNodes]] == 0  &,
+                              paths, {2}];
+    paths = Pick[paths, Map[Not[AnyTrue[#, TrueQ]] &, blockedPathSegments]];
+    If[Length[paths] == 0,
+       Return[True],
+       Return[False]];
+    ]
+
+g = Graph[{1 \[DirectedEdge] 3, 2 \[DirectedEdge] 3, 3 \[DirectedEdge] 4}];
+IsConditionalIndependent[g, 1, 2, {4}]       
+\end{mathematica}
+returns \texttt{False} for the graph\\
+
+\includegraphics[scale=0.8, center]{images/v_structure_with_descendant.pdf}
+
+which states that $x$ is not independent of $y$ given $w$ even if $x$, $y$ and $z$ are a v-structure.
+\end{example}
 
 \chapter{Probabilistic Models (Applications)}
 
