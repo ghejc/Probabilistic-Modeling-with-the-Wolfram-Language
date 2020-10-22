@@ -1440,15 +1440,33 @@ IsConditionalIndependent[g_Graph,
        Return[False]];
     ]
 
-g = Graph[{1 \[DirectedEdge] 3, 2 \[DirectedEdge] 3, 3 \[DirectedEdge] 4}];
+g = Graph[{1 \[DirectedEdge] 3, 2 \[DirectedEdge] 3, 3 \[DirectedEdge] 4},
+          VertexLabels -> {1 -> "x", 2 -> "y", 3 -> "z", 4 -> "w"}];
 IsConditionalIndependent[g, 1, 2, {4}]       
 \end{mathematica}
 returns \texttt{False} for the graph\\
 
 \includegraphics[scale=0.8, center]{images/v_structure_with_descendant.pdf}
 
-which states that $x$ is not independent of $y$ given $w$ even if $x$, $y$ and $z$ are a v-structure.
+which states that $x$ is not independent of $y$ given $w$ even if $x$, $y$ and $z$ are nodes of a v-structure.\\
+
+To verify this statement, we write down the joint distribution for this graph
+\begin{equation}
+p(x,y,z,w)=p(w\,\vert\, z)p(z\,\vert\, x,y)p(x)p(y)
+\end{equation}
+We marginalize over $z$ and condition on $w$.
+\begin{equation}
+p(x,y\,\vert\,w)=\int_{-\infty}^{+\infty}dz \frac{p(x,y,z,w)}{p(w)}=p(x)p(y)\int_{-\infty}^{+\infty}dz \frac{p(w\,\vert\, z)p(z\,\vert\, x,y)}{p(w)}
+\end{equation}
+which does not factor into a product of $x$ and $y$. For some special probability densities it could happen that the factorization occurs, but in general $x$ and $y$ are dependent, which agrees with the result of the function \texttt{IsConditionalIndependent}. The independence relation is broken in the case of a v-structure if any descendants of the center node is conditioned on.
 \end{example}
+\begin{exercise}
+Apply the function \texttt{IsConditionalIndependent} to the graph
+
+\includegraphics[scale=0.8, center]{images/complex_graph.pdf}
+
+and check under which conditions node $x$ and $y$ are independent when conditioned on a certain subset of the remaining nodes.
+\end{exercise}
 
 \chapter{Probabilistic Models (Applications)}
 
