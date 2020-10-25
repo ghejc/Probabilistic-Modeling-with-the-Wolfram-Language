@@ -1468,6 +1468,21 @@ Apply the function \texttt{IsConditionalIndependent} to the graph
 and check under which conditions node $x$ and $y$ are independent when conditioned on a certain subset of the remaining nodes.
 \end{exercise}
 
+\section{Time Series}
+We now want to apply graphical models to the analysis of time series data \cite{barber2010}. A time series can be represented by a sequence of random variables $x_{1:T}$, which are associated with a sequence of time points $t_{1:T}$. A time point can be e.g. 01 Jan 1970 00:00:00.000, which has a resolution of milliseconds, but depending on your application a higher resolution may be necessary such as nanoseconds and therefore more digits after decimal point. We also use the notation $x_t$, where $t$ stands for the index associated with current time $t$, and $x_{t-1}$ means the random variable at the previous time point and $x_{t+1}$ the random variable at the next future time point and so on.\\
+
+The Wolfram Language has the built-in symbol \texttt{TimeSeries} as a wrapper around a list of time-value pairs $\{t_{i},x_{i}\}$, where $x_{i}$ can be a scalar or an array and $t_{i}$ can be numeric or \texttt{AbsoluteTime} e.g. \texttt{AbsoluteTime["01 Jan 1900 00:00:00.000"]}, which returns the result \texttt{0} as the number of seconds since the beginning of January 1, 1900 in your local timezone. Local time has typically an offset to GMT in multiple of hours including daylight savings, which is given by \texttt{\$TimeZone}. Therefore the number of seconds returned by \texttt{AbsoluteTime} is the same on each computer in the world, where the code is executed.
+
+\begin{remark}
+If you specify a timezone explictly e.g.\\
+
+\texttt{AbsoluteTime["01 Jan 1900 00:00:00.000", TimeZone -> 0]},\\
+
+the returned number is non-zero and a multiple of 3600, because it calculates the difference between January 1, 1900 00:00:00 GMT and January 1, 1900 00:00:00 in your local timezone.
+\end{remark}
+      
+
+
 \chapter{Probabilistic Models (Applications)}
 
 \begin{summary}
