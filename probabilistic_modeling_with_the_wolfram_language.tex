@@ -1533,29 +1533,30 @@ p(x_{t+1},y_{t+1},y_{t},\ldots)&=\int_{-\infty}^{+\infty}dx_{t}\int_{-\infty}^{+
 We now condition on all the observations $y_{t+1},y_{t},\ldots$
 \begin{equation}
 \begin{aligned}
-p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)&=\frac{p(x_{t+1},y_{t+1},y_{t},\ldots)}{p(y_{t+1},y_{t},\ldots)}\\
-&=\frac{1}{Z}p(x_{t+1},y_{t+1},y_{t},\ldots)\\
-&=\frac{1}{Z}p(y_{t+1}\,\vert\, x_{t+1})\int_{-\infty}^{+\infty}dx_{t} p(x_{t+1}\,\vert\, x_{t}) p(x_{t}\,\vert\, y_{t},y_{t-1},\ldots)
+p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)&=\frac{p(x_{t+1},y_{t+1},y_{t},\ldots)}{p(y_{t+1},y_{t},\ldots)}
+=\frac{p(x_{t+1},y_{t+1},y_{t},\ldots)}{p(y_{t+1}\,\vert\, y_{t},\ldots)p(y_{t},\ldots)}\\
+&=\frac{1}{p(y_{t+1}\,\vert\, y_{t},\ldots)}p(y_{t+1}\,\vert\, x_{t+1})\int_{-\infty}^{+\infty}dx_{t} p(x_{t+1}\,\vert\, x_{t}) \underbrace{\frac{p(x_{t},y_{t},y_{t-1},\ldots)}{p(y_{t},\ldots)}}_{p(x_{t}\,\vert\,\ y_{t},y_{t-1},\ldots)}
 \end{aligned}
 \end{equation}
-and introduce the normalization factor $Z=p(y_{t+1},y_{t},\ldots)$.
+This recursive equation is the mathematical fundament of the Bayes filter \cite{gustafsson2012}.\\
 
 \begin{definition}[Bayes Filter]
   \label{th:bayesfilter}
   \index{bayes filter}
-  The probability density $p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)$ can be calculated iteratively from the last known $p(x_{t}\,\vert\,\ y_{t},y_{t},\ldots)$ by a prediction step 
+  The probability density $p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)$ can be calculated iteratively from the last known $p(x_{t}\,\vert\,\ y_{t},y_{t-1},\ldots)$ by a prediction step 
 \begin{equation}
 p(x_{t+1}\,\vert\, y_{t},\ldots)=\int_{-\infty}^{+\infty}dx_{t} p(x_{t+1}\,\vert\, x_{t}) p(x_{t}\,\vert\, y_{t},y_{t-1},\ldots)
 \end{equation}
 followed by a correction step
 \begin{equation}
-p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)=\frac{1}{Z}p(y_{t+1}\,\vert\, x_{t+1})p(x_{t+1}\,\vert\, y_{t},\ldots)
+p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)=\frac{p(y_{t+1}\,\vert\, x_{t+1})}{p(y_{t+1}\,\vert\, y_{t},\ldots)}p(x_{t+1}\,\vert\, y_{t},\ldots)
 \end{equation}
-$p(x_{t+1}\,\vert\, x_{t})$ describes the time evolution of the system and $p(y_{t+1}\,\vert\, x_{t+1})$ the measurement process of the system state. If the system state can be controlled by an external input $u_t$, it is only necessary to modify $p(x_{t+1}\,\vert\, x_{t})$ by $p(x_{t+1}\,\vert\, x_{t}, u_{t})$. 
-\end{definition} 
+$p(x_{t+1}\,\vert\, x_{t})$ describes the time evolution of the system and $p(y_{t+1}\,\vert\, x_{t+1})$ the measurement process of the system state. If the system state is controlled by an external input $u_t$, it is only necessary to modify $p(x_{t+1}\,\vert\, x_{t})$ by $p(x_{t+1}\,\vert\, x_{t}, u_{t})$. 
+\end{definition}
+
 The Bayes filter estimates the state at time $t+1$ from the all the previous states and observations, but how do we start the iteration or what can we say about the system state without any observations?\\
 
-It turns out that the prior state estimate $p(x_0)$ before any observations are made can be chosen as a constant. After the first correction step when the normalization is performed the constant will anyhow be cancelled out.\\  
+It turns out that the prior state estimate $p(x_0)$ before any observations are made can be chosen as a constant. After the first correction step when the normalization is performed the constant will anyhow be cancelled out and the state estimate will improve with each update.\\  
 
 The Bayes filter framework is the conceptual basis of a large number of existing models:
 \begin{itemize}
