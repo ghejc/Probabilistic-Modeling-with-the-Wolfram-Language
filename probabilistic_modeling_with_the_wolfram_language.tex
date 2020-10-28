@@ -1359,6 +1359,7 @@ p(x,y\,\vert\,z)=\frac{p(x,y,z)}{p(z)}=\frac{p(z\,\vert\, x,y)p(x)p(y)}{p(z)}
 \end{remark}
 
 \begin{example}
+\label{ex:chain_graph}
 Show that the graph
  \includegraphics[scale=0.8, left]{images/graph_example.pdf}
  implies the independence of $x$ and $y$ given $z$.\\
@@ -1480,8 +1481,95 @@ If you specify a timezone explictly e.g.\\
 
 the returned number is non-zero and a multiple of 3600, because it calculates the difference between January 1, 1900 00:00:00 GMT and January 1, 1900 00:00:00 in your local timezone.
 \end{remark}
-      
 
+\begin{remark}
+\texttt{AbsoluteTime} does not take into account leap seconds. Therefore the difference between two calendar dates calculated by \texttt{AbsoluteTime} will differ by the amount of leap seconds, which were introduced in this time interval.   
+\end{remark}
+
+We want to study a probabilistic model based on the following subgraph\\
+     
+\includegraphics[scale=1.2, center]{images/time_series_graph.pdf}
+
+The idea behind this model is that the system is fully described by the variable $x$ and there are observations $y$, which determine $x$ completely or partially depending on the measurement process. The system state $x$ is not directly observable, nevertheless we want to predict the future system state based on all its observations and some prior knowledge of $x$.\\
+
+The system state $x$ also fulfills the Markov property.
+
+\begin{definition}[Markov Property]
+  \label{th:markovproperty}
+  \index{markov property}
+  The system state $x_t$ is completely determined by the previous state $x_{t-1}$ only, which can be written as
+\begin{equation}
+p(x_t\,\vert\, x_{t-1},x_{t-2},\ldots,x_{t-n})=p(x_t\,\vert\, x_{t-1})
+\end{equation}
+\end{definition} 
+The property can be directly read off the graph, because if we condition on $x_{t-1}$, $x_t$ become conditionally independent of its complete past history $x_{t-2},\ldots$ as we have shown in example \ref{ex:chain_graph}.
+
+\begin{exercise}
+A graph like
+
+\includegraphics[scale=1.2, center]{images/non_markov_graph.pdf}
+
+does not fulfill the Markov property. Show that by merging two $x$ nodes and two $y$ nodes to new nodes $z$ and $o$, the new graph takes the form
+
+\includegraphics[scale=1.0, center]{images/markov_graph.pdf}
+
+with $z_{t-1}=\{x_{t-3},x_{t-2}\}$, $o_{t-1}=\{y_{t-3},y_{t-2}\}$, $z_t=\{x_{t-1},x_t\}$, $o_t=\{y_{t-1},y_t\}$, $z_{t+1}=\{x_{t+1},x_{t+2}\}$, $o_{t+1}=\{y_{t+1},y_{t+2}\}$ and fulfills the Markov property.  
+\end{exercise}
+
+
+The joint probability density can be immediately written down as a recursive equation
+\begin{equation}
+p(x_{t+1},y_{t+1},x_{t},y_{t},\ldots)=p(x_{t+1}\,\vert\, x_{t})p(y_{t+1}\,\vert\, x_{t+1})p(x_{t},y_{t},x_{t-1},y_{t-1},\ldots)
+\end{equation}
+We are only interested to predict $x_{t+1}$, so we marginalize over all previous system states $x_{t},x_{t-1},\ldots$.
+
+\begin{equation}
+\begin{aligned}
+p(x_{t+1},y_{t+1},y_{t},\ldots)&=\int_{-\infty}^{+\infty}dx_{t}\int_{-\infty}^{+\infty}dx_{t-1}\ldots p(x_{t+1},y_{t+1},x_{t},y_{t},\ldots)\\
+&=p(y_{t+1}\,\vert\, x_{t+1})\int_{-\infty}^{+\infty}dx_{t} p(x_{t+1}\,\vert\, x_{t})\int_{-\infty}^{+\infty}dx_{t-1}\ldots p(x_{t},y_{t},x_{t-1},y_{t-1},\ldots)\\
+&=p(y_{t+1}\,\vert\, x_{t+1})\int_{-\infty}^{+\infty}dx_{t} p(x_{t+1}\,\vert\, x_{t}) p(x_{t},y_{t},y_{t-1},\ldots)
+\end{aligned}
+\end{equation}
+We now condition on all the observations $y_{t+1},y_{t},\ldots$
+\begin{equation}
+\begin{aligned}
+p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)&=\frac{p(x_{t+1},y_{t+1},y_{t},\ldots)}{p(y_{t+1},y_{t},\ldots)}\\
+&=\frac{1}{Z}p(x_{t+1},y_{t+1},y_{t},\ldots)\\
+&=\frac{1}{Z}p(y_{t+1}\,\vert\, x_{t+1})\int_{-\infty}^{+\infty}dx_{t} p(x_{t+1}\,\vert\, x_{t}) p(x_{t}\,\vert\, y_{t},y_{t-1},\ldots)
+\end{aligned}
+\end{equation}
+and introduce the normalization factor $Z=p(y_{t+1},y_{t},\ldots)$.
+
+\begin{definition}[Bayes Filter]
+  \label{th:bayesfilter}
+  \index{bayes filter}
+  The probability density $p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)$ can be calculated iteratively from the last known $p(x_{t}\,\vert\,\ y_{t},y_{t},\ldots)$ by a prediction step 
+\begin{equation}
+p(x_{t+1}\,\vert\, y_{t},\ldots)=\int_{-\infty}^{+\infty}dx_{t} p(x_{t+1}\,\vert\, x_{t}) p(x_{t}\,\vert\, y_{t},y_{t-1},\ldots)
+\end{equation}
+followed by a correction step
+\begin{equation}
+p(x_{t+1}\,\vert\, y_{t+1},y_{t},\ldots)=\frac{1}{Z}p(y_{t+1}\,\vert\, x_{t+1})p(x_{t+1}\,\vert\, y_{t},\ldots)
+\end{equation}
+$p(x_{t+1}\,\vert\, x_{t})$ describes the time evolution of the system and $p(y_{t+1}\,\vert\, x_{t+1})$ the measurement process of the system state. If the system state can be controlled by an external input $u_t$, it is only necessary to modify $p(x_{t+1}\,\vert\, x_{t})$ by $p(x_{t+1}\,\vert\, x_{t}, u_{t})$. 
+\end{definition} 
+The Bayes filter estimates the state at time $t+1$ from the all the previous states and observations, but how do we start the iteration or what can we say about the system state without any observations?\\
+
+It turns out that the prior state estimate $p(x_0)$ before any observations are made can be chosen as a constant. After the first correction step when the normalization is performed the constant will anyhow be cancelled out.\\  
+
+The Bayes filter framework is the conceptual basis of a large number of existing models:
+\begin{itemize}
+\item
+Kalman filters
+\item
+Particle filter
+\item
+Hidden Markov Models
+\item
+Dynamic Bayesian networks
+\item
+Markov Decision Processes
+\end{itemize}
 
 \chapter{Probabilistic Models (Applications)}
 
