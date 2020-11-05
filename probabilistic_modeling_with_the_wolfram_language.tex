@@ -1558,19 +1558,166 @@ The Bayes filter estimates the state at time $t+1$ from the all the previous sta
 
 It turns out that the prior state estimate $p(x_0)$ before any observations are made can be chosen as a constant. After the first correction step when the normalization is performed the constant will anyhow be cancelled out and the state estimate will improve with each update.\\  
 
-The Bayes filter framework is the conceptual basis of a large number of existing models:
-\begin{itemize}
-\item
-Kalman filters
-\item
-Particle filter
-\item
-Hidden Markov Models
-\item
-Dynamic Bayesian networks
-\item
-Markov Decision Processes
-\end{itemize}
+The Bayes filter framework is the conceptual basis of a large number of existing models like Kalman and Particle filters (which will be covered in the next sections of this chapter), Hidden Markov Models (see next example), Dynamic Bayesian Networks (basically the introduction in this chapter) and Markov Decision Processes (which will be covered in the context of reinforcement learning in the next chapter) with a wide range of applications.
+
+\begin{example}[Graph World]
+We want to study a simple system called Graph World, which is a generalization of the Grid World system often used as an introductory example in reinforcement learning.\\
+
+The system consists of a finite number of states $1,2,\ldots,k$ and a $k\times k$ transition matrix $P_{ij}$, which describes the probabilities of a transition from state $i$ to state $j$. $P_{ij}$ is also an adjacency matrix with an associated graph structure, where the vertices are the system states and the directed edges with an assigned weight corresponding to the probability that a transition from a source to a target node happens (a probability $0$ means that such a transition never happens and therefore no edge is drawn in this case).\\
+
+% We further introduce a measurement process, which is based on an observer node % $o$, which measures the number of edges in the shortest path from node $o$ to the % current system state node $i$. The shortest path computation ignores the weight % and direction of each edge.\\
+
+We further introduce a measurement process, which returns with a probability $p$ the right state $i$ the system is currently in and with probability $1-p$ a wrong state $j \neq i$. So the pure measurement would give us the right prediction only with probability $p$. Let's see if the application of the Bayes filter can improve the prediction accuracy.\\
+
+Let's assume that the system is in state $i$ at $t_0$ and in the next time step $t_1$, it will transition to another state $j$, where $P_{ij}\neq 0$. It is also possible that the system remains in the same state at $t_1$ if $P_{ii}\neq 0$. At the beginning the first state is unknown and we start with a prior state estimate of $p(x_0)=\frac{1}{k}\sum_{i=1}^{k}\delta(x-i)$.\\
+
+We write first a function \texttt{GraphWorld}, which constructs a random graph world from a list of node names, which provide a textual label for each node, and the length of history of states. It returns key-value pairs with 3 pre-defined keys: a key \texttt{"graph"} with an associated \texttt{Graph} object, a key \texttt{"transition\_probabilities"} with the matrix $P_{ij}$, a key \texttt{history} with a sequence of states, which are generated from a random initial state, and a graphical representation of the state history with key \texttt{"timeline"}.
+
+\begin{mathematica}
+GraphWorld[nodeLabels_List, historyLength_Integer] := Module[
+   {graph, transitionMatrix, history, world, numNodes, labels, 
+   initialState, nodes, dists, edges, historyGraph},
+   numNodes = Length[nodeLabels];
+   nodes = Range[numNodes];
+   labels = MapThread[#1 -> #2 &, {nodes, nodeLabels}];
+   transitionMatrix = RandomChoice[{0, 1}, {numNodes, numNodes}];
+   (* There could be a row with only zeros, where no transitions to
+      another node occurs. To avoid this situation, a random unit
+      vector will replace such a row.
+    *)
+   transitionMatrix = Map[If[Total[#] == 0, 
+                          UnitVector[Length[#], RandomChoice[nodes]], #] &, 
+                          transitionMatrix];
+   (* A graphical representation of all possible state transitions, which can occur
+      in this world.
+    *)
+   graph = AdjacencyGraph[transitionMatrix, VertexLabels -> labels];
+   (* Normalize each row of the transition matrix *)
+   transitionMatrix = Map[#/Total[#] &, transitionMatrix];
+   initialState = RandomChoice[nodes];
+   (* Create an empirical distribution for each node from the transition matrix *)
+   dists = Map[EmpiricalDistribution[# -> nodes] &,
+               transitionMatrix];
+   (* Starting with a random initial state, sample a new state from the old state
+      using the empirical distributions and collect them in a list.
+    *)
+   history = NestList[RandomVariate[dists[[#]]] &,
+                      initialState, historyLength];
+   (* Create a graphical representation of the state transitions as directed graph,
+      where each edge represents a time step from node at time t to the node at time
+      t + 1.
+    *)
+   edges = Partition[history, 2, 1];
+   historyGraph = Graph[Table[Labeled[i \[DirectedEdge] i + 1, i],
+                              {i, 1, Length[edges]}],
+    VertexLabels -> Append[Table[i -> nodeLabels[[edges[[i, 1]]]],
+                                 {i, 1, Length[edges]}],
+                    Length[edges] + 1 -> nodeLabels[[edges[[Length[edges], 2]]]]]];
+   world = Association["graph" -> graph, 
+                       "transition_probabilities" -> transitionMatrix,
+                       "history" -> history ,
+                       "timeline" -> historyGraph];
+   Return[world]]
+
+SeedRandom[123456789];   
+world = GraphWorld[Characters["abcdefg"], 10];
+world["graph"]
+\end{mathematica}
+
+\includegraphics[scale=0.9, center]{images/graph_world.pdf}
+
+\begin{mathematica}
+world["timeline"]
+\end{mathematica}
+\includegraphics[scale=1.2, center]{images/state_history.pdf}
+
+The timeline graph shows the sequence of states at $t_0,t_1,\ldots$ and the edge $i$ represents a transition from state at $t_{i-1}$ to the state at $t_{i}$. We assume that there are no measurements before $t_1$.\\ 
+
+In the next step we implement a measurement function \texttt{MeasurementProcess}, which gets a world as the first argument, on which the measurement is performed, and an observer node \texttt{observerNode} and returns a list of distributions for each time step of the world history. Each distribution has as many elements as number of nodes in the graph and the values represent the probability that the graph distance of a node to the observer node is compatible with the distance measurement of the system state. If the graph distance would unambiguously determine the system state, only one element would be $1$ and the others would be $0$, but there are typically more nodes with the same graph distance. Because the measurement cannot distinguish between these nodes, they have equal probability to be the actual system state.\\
+
+Wolfram Language provides the function \texttt{GraphDistance}, which returns the number edges of the shortest path between two nodes in a graph. If two nodes are not connected, the graph distance will be \texttt{Infinity}.    
+
+\begin{mathematica}
+MeasurementProcess[world_, observerNode_] := Module[
+   {measurements, distances, size, distributions},
+   (* Calculate a list of measurements of the graph distance between the
+      observer node and all the system states in the world's history
+      excluding the initial system state.
+    *)
+   measurements = Map[GraphDistance[world["graph"], observerNode, #]&,
+                      world["history"][[2 ;; All]]];
+   (* Calculate the graph distances between the observer node and all other
+      graph nodes. *)
+   distances = GraphDistance[world["graph"], observerNode];
+   size = Length[distances];
+   (* Calculate the measurement distribution for each time step by checking,
+      which node has the same graph distance than the measurement. 
+    *)
+   distributions = Boole[Map[MapThread[Equal, {distances, Table[#, size]}] &,
+                             measurements]];
+   (* Normalize each row so that the values can be interpreted as
+      probabilities. *)
+   distributions = Map[# / Total[#]&, distributions]; 
+   Return[distributions]]
+   
+measurements = MeasurementProcess[world, 2];
+\end{mathematica}
+
+The observer node is chosen to be b.\\
+
+The Bayes filtering starts with an initial distribution of states reflecting our prior knowledge about the system state at $t_0$. Because we have no prior knowledge at this point, we choose a uniform distribution over all possible states or nodes of the graph.
+
+\begin{mathematica}
+nodes = Characters["abcdefg"];
+stateDistribution = AssociationThread[nodes -> Table[1/Length[nodes],
+                                                     Length[nodes]]];
+\end{mathematica}
+
+Then we apply the transition matrix to this distribution in the prediction step.
+
+\begin{mathematica}
+stateDistribution = AssociationThread[nodes -> world["transition_probabilities"].
+                                      Values[stateDistribution]];
+\end{mathematica}
+
+In the correction step we multiply with the first element of the distributions returned by \texttt{MeasurementProcess} and normalize the result.  
+
+\begin{mathematica}
+stateDistribution = AssociationThread[nodes -> measurements[[1]] *
+                                      Values[stateDistribution]];
+stateDistribution = If[Total[stateDistribution] == 0,
+                       AssociationThread[nodes -> Table[1/Length[nodes],
+                                                        Length[nodes]]],
+                       stateDistribution / Total[stateDistribution]];
+\end{mathematica}
+
+This gives the estimated state distribution at time step $t_1$.
+
+\includegraphics[scale=0.9, center]{images/state_estimate_t1.pdf}
+
+We repeat the steps for $t_2$ with the result
+
+\includegraphics[scale=0.9, center]{images/state_estimate_t2.pdf}
+
+and for $t_3$
+
+\includegraphics[scale=0.9, center]{images/state_estimate_t3.pdf}
+
+If we take the state with the maximum probability, the state estimates at $t_1$, $t_2$ and $t_3$ are f, d and f, which agrees perfectly with the timeline graph. 
+
+\end{example}
+
+\begin{exercise}
+At $t_4$ the result is that all system states have probability $0$, which cannot be the case, because the system is always in a particular state and as we see from the timeline graph, it is in state e. In this case a uniform probability distribution is returned, so we completely lost any information about the system state at $t_4$.
+
+\includegraphics[scale=0.9, center]{images/state_estimate_t4.pdf}
+
+Analyze this situation and come up with an explanation, why this happens. 
+\end{exercise}
+
+\section{Kalman Filter}
+
+\section{Particle Filter}
 
 \chapter{Probabilistic Models (Applications)}
 
