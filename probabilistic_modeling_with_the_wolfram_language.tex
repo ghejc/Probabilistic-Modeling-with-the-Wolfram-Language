@@ -1614,7 +1614,7 @@ GraphWorld[nodeLabels_List, historyLength_Integer] := Module[
                                  {i, 1, Length[edges]}],
                     Length[edges] + 1 -> nodeLabels[[edges[[Length[edges], 2]]]]]];
    world = Association["graph" -> graph, 
-                       "transition_probabilities" -> transitionMatrix,
+                       "transition_probabilities" -> Transpose[transitionMatrix],
                        "history" -> history ,
                        "timeline" -> historyGraph];
    Return[world]]
@@ -1708,11 +1708,11 @@ If we take the state with the maximum probability, the state estimates at $t_1$,
 \end{example}
 
 \begin{exercise}
-At $t_4$ the result is that all system states have probability $0$, which cannot be the case, because the system is always in a particular state and as we see from the timeline graph, it is in state e. In this case a uniform probability distribution is returned, so we completely lost any information about the system state at $t_4$.
+At $t_5$ the result is that state c, d and g have the same probability and as we see from the timeline graph, the system is in state c.
 
-\includegraphics[scale=0.9, center]{images/state_estimate_t4.pdf}
+\includegraphics[scale=0.9, center]{images/state_estimate_t5.pdf}
 
-Analyze this situation and come up with an explanation, why this happens. 
+Analyze this situation and come up with an explanation, why the system state cannot be predicted unambiguously in this case. 
 \end{exercise}
 
 \section{Kalman Filter}
