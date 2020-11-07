@@ -1693,26 +1693,32 @@ stateDistribution = If[Total[stateDistribution] == 0,
 
 This gives the estimated state distribution at time step $t_1$.
 
-\includegraphics[scale=0.9, center]{images/state_estimate_t1.pdf}
+\includegraphics[scale=0.8, center]{images/state_estimate_t1.pdf}
 
 We repeat the steps for $t_2$ with the result
 
-\includegraphics[scale=0.9, center]{images/state_estimate_t2.pdf}
+\includegraphics[scale=0.8, center]{images/state_estimate_t2.pdf}
 
 and for $t_3$
 
-\includegraphics[scale=0.9, center]{images/state_estimate_t3.pdf}
+\includegraphics[scale=0.8, center]{images/state_estimate_t3.pdf}
 
-If we take the state with the maximum probability, the state estimates at $t_1$, $t_2$ and $t_3$ are f, d and f, which agrees perfectly with the timeline graph. 
+If we take the state with the maximum probability, the state estimates at $t_1$, $t_2$ and $t_3$ are f, d and f, which agrees perfectly with the timeline graph.\\
+
+Also at $t_4$ the system state is correctly predicted as e, but at $t_5$ the states c, d and g have all the same probability and the correct state cannot be unambiguously estimated.
+
+\includegraphics[scale=0.8, center]{images/state_estimate_t5.pdf}
+
+The reason for this ambiguity is shown in the next figure, where the red edges mark all transitions from the previous state e at $t_4$ to the possible next states at $t_5$. The blue edges highlight the shortest paths from the observer node b to these states and they all have the same graph distance $2$.
+
+\includegraphics[scale=0.8, center]{images/highlighted_graph_world.pdf}
+
+Therefore it is not possible to identify the correct state at $t_5$ based on this measurement.   
 
 \end{example}
 
 \begin{exercise}
-At $t_5$ the result is that state c, d and g have the same probability and as we see from the timeline graph, the system is in state c.
-
-\includegraphics[scale=0.9, center]{images/state_estimate_t5.pdf}
-
-Analyze this situation and come up with an explanation, why the system state cannot be predicted unambiguously in this case. 
+Modify the parameter of the last example e.g. the observer node or the number of nodes in the graph to get an deeper understanding how the Bayes filter works.
 \end{exercise}
 
 \section{Kalman Filter}
