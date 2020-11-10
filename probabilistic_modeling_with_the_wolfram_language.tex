@@ -1558,7 +1558,7 @@ The Bayes filter estimates the state at time $t+1$ from the all the previous sta
 
 It turns out that the prior state estimate $p(x_0)$ before any observations are made can be chosen as a constant. After the first correction step when the normalization is performed the constant will anyhow be cancelled out and the state estimate will improve with each update.\\  
 
-The Bayes filter framework is the conceptual basis of a large number of existing models like Kalman and Particle filters, Hidden Markov Models (see next example), Dynamic Bayesian Networks (basically the introduction to this chapter) and Markov Decision Processes with a wide range of applications.
+The Bayes filter framework is the conceptual basis of a large number of existing models like Kalman and Particle filters (see \ref{se:particle_filter}), Hidden Markov Models (see next example), Dynamic Bayesian Networks (basically the introduction to this chapter) and Markov Decision Processes with a wide range of applications.
 
 \begin{example}[Graph World]
 We want to study a simple system called Graph World, which is a generalization of the Grid World system often used as an introductory example in reinforcement learning.\\
@@ -1575,10 +1575,12 @@ We write first a function \texttt{GraphWorld}, which constructs a random graph w
 GraphWorld[nodeLabels_List, historyLength_Integer] := Module[
    {graph, transitionMatrix, history, world, numNodes, labels, 
    initialState, nodes, dists, edges, historyGraph},
+
    numNodes = Length[nodeLabels];
    nodes = Range[numNodes];
    labels = MapThread[#1 -> #2 &, {nodes, nodeLabels}];
    transitionMatrix = RandomChoice[{0, 1}, {numNodes, numNodes}];
+
    (* There could be a row with only zeros, where no transitions to
       another node occurs. To avoid this situation, a random unit
       vector will replace such a row.
@@ -1586,24 +1588,29 @@ GraphWorld[nodeLabels_List, historyLength_Integer] := Module[
    transitionMatrix = Map[If[Total[#] == 0, 
                           UnitVector[Length[#], RandomChoice[nodes]], #] &, 
                           transitionMatrix];
+
    (* A graphical representation of all possible state transitions, which can occur
       in this world.
     *)
    graph = AdjacencyGraph[transitionMatrix, VertexLabels -> labels];
+
    (* Normalize each row of the transition matrix *)
    transitionMatrix = Map[#/Total[#] &, transitionMatrix];
    initialState = RandomChoice[nodes];
+
    (* Create an empirical distribution for each node from the transition matrix *)
    dists = Map[EmpiricalDistribution[# -> nodes] &,
                transitionMatrix];
+
    (* Starting with a random initial state, sample a new state from the old state
       using the empirical distributions and collect them in a list.
     *)
    history = NestList[RandomVariate[dists[[#]]] &,
                       initialState, historyLength];
+
    (* Create a graphical representation of the state transitions as directed graph,
-      where each edge represents a time step from node at time t to the node at time
-      t + 1.
+      where each edge represents a time step from node at time t to the node at
+      time t + 1.
     *)
    edges = Partition[history, 2, 1];
    historyGraph = Graph[Table[Labeled[i \[DirectedEdge] i + 1, i],
@@ -1638,21 +1645,25 @@ Wolfram Language provides the function \texttt{GraphDistance}, which returns the
 \begin{mathematica}
 MeasurementProcess[world_, observerNode_] := Module[
    {measurements, distances, size, distributions},
+
    (* Calculate a list of measurements of the graph distance between the
       observer node and all the system states in the world's history
       excluding the initial system state.
     *)
    measurements = Map[GraphDistance[world["graph"], observerNode, #]&,
                       world["history"][[2 ;; All]]];
+
    (* Calculate the graph distances between the observer node and all other
       graph nodes. *)
    distances = GraphDistance[world["graph"], observerNode];
    size = Length[distances];
+
    (* Calculate the measurement distribution for each time step by checking,
       which node has the same graph distance than the measurement. 
     *)
    distributions = Boole[Map[MapThread[Equal, {distances, Table[#, size]}] &,
                              measurements]];
+
    (* Normalize each row so that the values can be interpreted as
       probabilities. *)
    distributions = Map[# / Total[#]&, distributions]; 
@@ -1689,25 +1700,25 @@ stateDistribution = If[Total[stateDistribution] == 0,
                        stateDistribution / Total[stateDistribution]];
 \end{mathematica}
 
-This gives the estimated state distribution at time step $t_1$.
+This gives the estimated state distribution at time step $t_1$.\\
 
 \includegraphics[scale=0.8, center]{images/state_estimate_t1.pdf}
 
-We repeat the steps for $t_2$ with the result
+We repeat the steps for $t_2$ with the result\\
 
 \includegraphics[scale=0.8, center]{images/state_estimate_t2.pdf}
 
-and for $t_3$
+and for $t_3$\\
 
 \includegraphics[scale=0.8, center]{images/state_estimate_t3.pdf}
 
 If we take the state with the maximum probability, the state estimates at $t_1$, $t_2$ and $t_3$ are f, d and f, which agrees perfectly with the timeline graph.\\
 
-Also at $t_4$ the system state is correctly predicted as e, but at $t_5$ the states c, d and g have all the same probability and the correct state cannot be unambiguously estimated.
+Also at $t_4$ the system state is correctly predicted as e, but at $t_5$ the states c, d and g have all the same probability and the correct state cannot be unambiguously estimated.\\
 
 \includegraphics[scale=0.8, center]{images/state_estimate_t5.pdf}
 
-The reason for this ambiguity is shown in the next figure, where the red edges mark all transitions from the previous state e at $t_4$ to the possible next states at $t_5$. The blue edges highlight the shortest paths from the observer node b to these states and they all have the same graph distance $2$.
+The reason for this ambiguity is shown in the next figure, where the red edges mark all transitions from the previous state e at $t_4$ to the possible next states at $t_5$. The blue edges highlight the shortest paths from the observer node b to these states and they all have the same graph distance $2$.\\
 
 \includegraphics[scale=0.8, center]{images/highlighted_graph_world.pdf}
 
@@ -1719,7 +1730,10 @@ Therefore it is not possible to identify the correct state at $t_5$ based on thi
 Modify the parameter of the last example e.g. the observer node or the number of nodes in the graph to get an deeper understanding how the Bayes filter works.
 \end{exercise}
 
+\section{Particle Filter}
+\label{se:particle_filter}
 
+The Bayes filter can be easily and efficiently applied to all problems, where the state space is discrete and not too large. For continuous state spaces there exists closed-form solutions only for special cases like the Kalman filter for linear models with additive Gaussian noise. In the general non-linear case with arbitrary additive noise distributions, only approximate solutions are possible. 
 
 \chapter{Probabilistic Models (Applications)}
 
