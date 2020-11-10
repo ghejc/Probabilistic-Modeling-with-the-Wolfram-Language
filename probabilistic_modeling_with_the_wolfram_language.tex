@@ -1558,16 +1558,14 @@ The Bayes filter estimates the state at time $t+1$ from the all the previous sta
 
 It turns out that the prior state estimate $p(x_0)$ before any observations are made can be chosen as a constant. After the first correction step when the normalization is performed the constant will anyhow be cancelled out and the state estimate will improve with each update.\\  
 
-The Bayes filter framework is the conceptual basis of a large number of existing models like Kalman and Particle filters (which will be covered in the next sections of this chapter), Hidden Markov Models (see next example), Dynamic Bayesian Networks (basically the introduction in this chapter) and Markov Decision Processes (which will be covered in the context of reinforcement learning in the next chapter) with a wide range of applications.
+The Bayes filter framework is the conceptual basis of a large number of existing models like Kalman and Particle filters, Hidden Markov Models (see next example), Dynamic Bayesian Networks (basically the introduction to this chapter) and Markov Decision Processes with a wide range of applications.
 
 \begin{example}[Graph World]
 We want to study a simple system called Graph World, which is a generalization of the Grid World system often used as an introductory example in reinforcement learning.\\
 
 The system consists of a finite number of states $1,2,\ldots,k$ and a $k\times k$ transition matrix $P_{ij}$, which describes the probabilities of a transition from state $i$ to state $j$. $P_{ij}$ is also an adjacency matrix with an associated graph structure, where the vertices are the system states and the directed edges with an assigned weight corresponding to the probability that a transition from a source to a target node happens (a probability $0$ means that such a transition never happens and therefore no edge is drawn in this case).\\
 
-% We further introduce a measurement process, which is based on an observer node % $o$, which measures the number of edges in the shortest path from node $o$ to the % current system state node $i$. The shortest path computation ignores the weight % and direction of each edge.\\
-
-We further introduce a measurement process, which returns with a probability $p$ the right state $i$ the system is currently in and with probability $1-p$ a wrong state $j \neq i$. So the pure measurement would give us the right prediction only with probability $p$. Let's see if the application of the Bayes filter can improve the prediction accuracy.\\
+We further introduce a measurement process, which measures the distance between an arbitrarily selected observer node $o$ and the current system state $i$ in terms of the number of edges between them. Because there can be many possible paths between two nodes in the graph, the one with a minimum number of edges is chosen as a measure of distance. However, this measurement does not determine the system state uniquely, because there may be several other nodes with the same distance. Only for distance $0$ the system state will be known without doubt. \\
 
 Let's assume that the system is in state $i$ at $t_0$ and in the next time step $t_1$, it will transition to another state $j$, where $P_{ij}\neq 0$. It is also possible that the system remains in the same state at $t_1$ if $P_{ii}\neq 0$. At the beginning the first state is unknown and we start with a prior state estimate of $p(x_0)=\frac{1}{k}\sum_{i=1}^{k}\delta(x-i)$.\\
 
@@ -1721,9 +1719,7 @@ Therefore it is not possible to identify the correct state at $t_5$ based on thi
 Modify the parameter of the last example e.g. the observer node or the number of nodes in the graph to get an deeper understanding how the Bayes filter works.
 \end{exercise}
 
-\section{Kalman Filter}
 
-\section{Particle Filter}
 
 \chapter{Probabilistic Models (Applications)}
 
