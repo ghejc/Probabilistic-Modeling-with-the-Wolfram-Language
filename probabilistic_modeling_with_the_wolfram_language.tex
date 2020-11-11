@@ -1569,7 +1569,7 @@ We further introduce a measurement process, which measures the distance between 
 
 Let's assume that the system is in state $i$ at $t_0$ and in the next time step $t_1$, it will transition to another state $j$, where $P_{ij}\neq 0$. It is also possible that the system remains in the same state at $t_1$ if $P_{ii}\neq 0$. At the beginning the first state is unknown and we start with a prior state estimate of $p(x_0)=\frac{1}{k}\sum_{i=1}^{k}\delta(x-i)$.\\
 
-We write first a function \texttt{GraphWorld}, which constructs a random graph world from a list of node names, which provide a textual label for each node, and the length of history of states. It returns key-value pairs with 3 pre-defined keys: a key \texttt{"graph"} with an associated \texttt{Graph} object, a key \texttt{"transition\_probabilities"} with the matrix $P_{ij}$, a key \texttt{history} with a sequence of states, which are generated from a random initial state, and a graphical representation of the state history with key \texttt{"timeline"}.
+We write first a function \texttt{GraphWorld}, which constructs a random graph world from a list of node names, which provide a textual label for each node, and the length of history of states. It returns key-value pairs with 4 pre-defined keys: a key \texttt{"graph"} with an associated \texttt{Graph} object, a key \texttt{"transition\_probabilities"} with the matrix $P_{ij}$, a key \texttt{history} with a sequence of states, which are generated from a random initial state, and a graphical representation of the state history with key \texttt{"timeline"}.
 
 \begin{mathematica}
 GraphWorld[nodeLabels_List, historyLength_Integer] := Module[
@@ -1733,7 +1733,19 @@ Modify the parameter of the last example e.g. the observer node or the number of
 \section{Particle Filter}
 \label{se:particle_filter}
 
-The Bayes filter can be easily and efficiently applied to all problems, where the state space is discrete and not too large. For continuous state spaces there exists closed-form solutions only for special cases like the Kalman filter for linear models with additive Gaussian noise. In the general non-linear case with arbitrary additive noise distributions, only approximate solutions are possible. 
+The Bayes filter can be easily and efficiently applied to all problems, where the state space is discrete and not too large. For continuous state spaces there exists closed-form solutions only for special cases like the Kalman filter for linear models with additive Gaussian noise. In the general non-linear case with arbitrary additive noise distributions, only approximate solutions are possible.
+
+\begin{example}[A Multi-modal Non-linear Time Series]
+A reference model \cite{klaas2012} 
+\begin{equation}
+\begin{aligned}
+x_t&=\frac{x_{t-1}}{2}+\frac{25 x_{t-1}}{1+x_{t-1}^2}+\cos(1.2 t)+\eta_t\\
+y_t&=\frac{x_{t-1}}{20}+\epsilon_t \\
+\end{aligned}
+\end{equation}
+with $\eta_t\sim \mathcal{N}(0,\sigma_x)$ and $\epsilon_t
+\sim \mathcal{N}(0,\sigma_y)$.
+\end{example} 
 
 \chapter{Probabilistic Models (Applications)}
 
