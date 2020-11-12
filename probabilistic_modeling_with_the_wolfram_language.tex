@@ -1733,7 +1733,24 @@ Modify the parameter of the last example e.g. the observer node or the number of
 \section{Particle Filter}
 \label{se:particle_filter}
 
-The Bayes filter can be easily and efficiently applied to all problems, where the state space is discrete and not too large. For continuous state spaces there exists closed-form solutions only for special cases like the Kalman filter for linear models with additive Gaussian noise. In the general non-linear case with arbitrary additive noise distributions, only approximate solutions are possible.
+The Bayes filter can be easily and efficiently applied to all problems, where the state space is discrete and not too large. For continuous state spaces there exists closed-form solutions only for special cases like the Kalman filter for linear models with additive Gaussian noise. In the general non-linear case with arbitrary additive noise distributions, only approximate solutions are possible.\\
+
+We represent the distribution $p(x_{t}\,\vert\, y_{t},y_{t-1},\ldots)$ by a set of $N$ particles with a weight $w^{(i)}_t$ and a state $x^{(i)}_t$ 
+\begin{equation}
+p(x_{t}\,\vert\, y_{t},y_{t-1},\ldots)=\sum_{i=1}^N w^{(i)}_t(y_{t},y_{t-1},\ldots) \,\delta\left(x_t - x^{(i)}_t(y_{t},y_{t-1},\ldots)\right)
+\end{equation}
+with $\sum_{i=1}^N w^{(i)}_t=1$. The density of particles in the state space is a measure for the probability of finding the system in a particular state.
+
+\begin{algorithm}
+\caption{Particle filter algorithm}
+\begin{algorithmic}[1]
+\State Sample a new particle $x^{(i)}_{t+1}$ from $p\left(x_{t+1}\,\vert\,x^{(i)}_{t}\right)$ for $i\in 1,2,\ldots,N$. 
+\State Set the new particle weight to $w^{(i)}_{t+1} = p\left(y_{t+1}\,\vert x^{(i)}_{t+1}\right)$ for $i\in 1,2,\ldots,N$.
+\State Resample the new particles based on their weights $w^{(i)}_{t+1}$. 
+\end{algorithmic}
+\end{algorithm}
+
+This algorithm generates a new set of particles at time $t+1$ from a given set of particles at time $t$. The Resampling step will either add the same particle multiple times if the weight is high or remove it completely if the weight is small. Therefore several copies of the same particle will be present if the corresponding state has a high probability.
 
 \begin{example}[A Multi-modal Non-linear Time Series]
 A reference model \cite{klaas2012} 
