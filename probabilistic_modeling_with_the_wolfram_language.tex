@@ -1745,23 +1745,42 @@ with $\sum_{i=1}^N w^{(i)}_t=1$. The density of particles in the state space is 
 \caption{Particle filter algorithm}
 \begin{algorithmic}[1]
 \State Sample a new particle $x^{(i)}_{t+1}$ from $p\left(x_{t+1}\,\vert\,x^{(i)}_{t}\right)$ for $i\in 1,2,\ldots,N$. 
-\State Set the new particle weight to $w^{(i)}_{t+1} = p\left(y_{t+1}\,\vert x^{(i)}_{t+1}\right)$ for $i\in 1,2,\ldots,N$.
-\State Resample the new particles based on their weights $w^{(i)}_{t+1}$. 
+\State Set the new particle weight to $w^{(i)}_{t+1} = p\left(y_{t+1}\,\vert\, x^{(i)}_{t+1}\right)$ for $i\in 1,2,\ldots,N$.
+\State Resample the new particles based on their weights $w^{(i)}_{t+1}$ with replacement. 
 \end{algorithmic}
 \end{algorithm}
 
-This algorithm generates a new set of particles at time $t+1$ from a given set of particles at time $t$. The Resampling step will either add the same particle multiple times if the weight is high or remove it completely if the weight is small. Therefore several copies of the same particle will be present if the corresponding state has a high probability.
+This algorithm generates a new set of particles at time $t+1$ from a given set of particles at time $t$ through sampling. It depends on the functional form of $p\left(x_{t+1}\,\vert\,x^{(i)}_{t}\right)$ if this first sampling step can be done directly or using a proposal distribution $q\left(x_{t+1}\,\vert\,x^{(i)}_{t}\right)$, which is easy to sample from. In the last case the particle filter algorithm has to modified to include an importance sampling step, which uses the proposal distribution for sampling and takes into account the difference between actual and proposal distribution by multiplying the weights with a factor 
+$p\left(x^{(i)}_{t+1}\,\vert\,x^{(i)}_{t}\right)/q\left(x^{(i)}_{t+1}\,\vert\,x^{(i)}_{t}\right)$.   
+
+\begin{algorithm}
+\caption{Particle filter algorithm with importance sampling}
+\begin{algorithmic}[1]
+\State Sample a new particle $x^{(i)}_{t+1}$ from $q\left(x_{t+1}\,\vert\,x^{(i)}_{t}\right)$ for $i\in 1,2,\ldots,N$.
+\State Set the new particle weight to $w^{(i)}_{t+1} = p\left(y_{t+1}\,\vert\, x^{(i)}_{t+1}\right)\frac{p\left(x^{(i)}_{t+1}\,\vert\,x^{(i)}_{t}\right)}{q\left(x^{(i)}_{t+1}\,\vert\,x^{(i)}_{t}\right)}$ for $i\in 1,2,\ldots,N$. 
+\State Resample the new particles based on their weights $w^{(i)}_{t+1}$ with replacement. 
+\end{algorithmic}
+\end{algorithm}   
+
+The Resampling step will either add the same particle multiple times if the weight is high or remove it completely if the weight is small. Therefore several copies of the same particle will be present if the corresponding state has a high probability.
 
 \begin{example}[A Multi-modal Non-linear Time Series]
-A reference model \cite{klaas2012} 
+We will demonstrate with the following model \cite{klaas2012} how the particle filter works
 \begin{equation}
 \begin{aligned}
 x_t&=\frac{x_{t-1}}{2}+\frac{25 x_{t-1}}{1+x_{t-1}^2}+\cos(1.2 t)+\eta_t\\
-y_t&=\frac{x_{t-1}}{20}+\epsilon_t \\
+y_t&=\frac{x_{t}}{20}+\epsilon_t \\
 \end{aligned}
 \end{equation}
-with $\eta_t\sim \mathcal{N}(0,\sigma_x)$ and $\epsilon_t
-\sim \mathcal{N}(0,\sigma_y)$.
+with the additive noise terms $\eta_t\sim \mathcal{N}(0,0.1)$ and $\epsilon_t
+\sim \mathcal{N}(0,0.5)$. The corresponding distributions are given by
+\begin{equation}
+\begin{aligned}
+p\left(x_{t+1}\,\vert\,x_{t}\right)&=\mathcal{N}\left(x_{t+1}-\frac{x_{t}}{2}-\frac{25 x_{t}}{1+x_{t}^2}-\cos(1.2 (t+1)), 0.1\right)\\
+p\left(y_{t+1}\,\vert\, x_{t+1}\right)&=\mathcal{N}\left(y_{t+1} -\frac{x_{t+1}}{20} , 0.5\right) \\
+\end{aligned}
+\end{equation}
+Because both distributions are Gaussian, importance sampling is not necessary here.
 \end{example} 
 
 \chapter{Probabilistic Models (Applications)}
