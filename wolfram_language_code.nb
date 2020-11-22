@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[   1752255,      33743]
-NotebookOptionsPosition[   1726665,      33305]
-NotebookOutlinePosition[   1727007,      33320]
-CellTagsIndexPosition[   1726964,      33317]
+NotebookDataLength[   1765588,      34054]
+NotebookOptionsPosition[   1739430,      33607]
+NotebookOutlinePosition[   1739772,      33622]
+CellTagsIndexPosition[   1739729,      33619]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -33301,6 +33301,308 @@ Projects\\\\Book\\\\Probabilistic Modeling with the Wolfram \
 Language\\\\images\\\\highlighted_graph_world.pdf\"\>"], "Output",
  CellChangeTimes->{3.8136975149319334`*^9, 3.813697725542204*^9},
  CellLabel->"Out[26]=",ExpressionUUID->"cf2d0419-d6d9-4182-b10d-089d7cd1f67d"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"Trajectory", "[", 
+    RowBox[{
+    "initialPosition_", ",", "initialSpeed_", ",", "initialTime_", ",", " ", 
+     "size_", ",", 
+     RowBox[{"boundaries_List:", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"+", "1"}], ",", 
+        RowBox[{"-", "1"}], ",", 
+        RowBox[{"+", "1"}], ",", 
+        RowBox[{"-", "1"}]}], "}"}]}]}], "]"}], ":=", 
+   RowBox[{"Module", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"trajectory", ",", "Propagate"}], "}"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"Propagate", "[", "state_", "]"}], ":=", 
+       RowBox[{"Module", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{
+          "collisionTimes", ",", "nextCollisionTime", ",", " ", "t", ",", " ",
+            "newState", ",", "\[IndentingNewLine]", "verticalWallCollision", 
+           ",", " ", "horizontalWallCollision"}], "}"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"collisionTimes", "=", 
+           RowBox[{"Association", "[", 
+            RowBox[{
+             RowBox[{"1", "\[Rule]", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"boundaries", "[", 
+                  RowBox[{"[", "1", "]"}], "]"}], "-", 
+                 RowBox[{
+                  RowBox[{"state", "[", "\"\<position\>\"", "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}]}], ")"}], "/", 
+               RowBox[{
+                RowBox[{"state", "[", "\"\<velocity\>\"", "]"}], "[", 
+                RowBox[{"[", "1", "]"}], "]"}]}]}], ",", 
+             RowBox[{"2", "\[Rule]", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"boundaries", "[", 
+                  RowBox[{"[", "2", "]"}], "]"}], "-", 
+                 RowBox[{
+                  RowBox[{"state", "[", "\"\<position\>\"", "]"}], "[", 
+                  RowBox[{"[", "1", "]"}], "]"}]}], ")"}], "/", 
+               RowBox[{
+                RowBox[{"state", "[", "\"\<velocity\>\"", "]"}], "[", 
+                RowBox[{"[", "1", "]"}], "]"}]}]}], ",", 
+             RowBox[{"3", "\[Rule]", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"boundaries", "[", 
+                  RowBox[{"[", "3", "]"}], "]"}], "-", 
+                 RowBox[{
+                  RowBox[{"state", "[", "\"\<position\>\"", "]"}], "[", 
+                  RowBox[{"[", "2", "]"}], "]"}]}], ")"}], "/", 
+               RowBox[{
+                RowBox[{"state", "[", "\"\<velocity\>\"", "]"}], "[", 
+                RowBox[{"[", "2", "]"}], "]"}]}]}], ",", 
+             RowBox[{"4", "\[Rule]", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"boundaries", "[", 
+                  RowBox[{"[", "4", "]"}], "]"}], "-", 
+                 RowBox[{
+                  RowBox[{"state", "[", "\"\<position\>\"", "]"}], "[", 
+                  RowBox[{"[", "2", "]"}], "]"}]}], ")"}], "/", 
+               RowBox[{
+                RowBox[{"state", "[", "\"\<velocity\>\"", "]"}], "[", 
+                RowBox[{"[", "2", "]"}], "]"}]}]}]}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"nextCollisionTime", "=", 
+           RowBox[{
+            RowBox[{"MinimalBy", "[", "Value", "]"}], "@", 
+            RowBox[{"Select", "[", 
+             RowBox[{"collisionTimes", ",", "Positive"}], "]"}]}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"t", " ", "=", " ", 
+           RowBox[{
+            RowBox[{"Values", "[", "nextCollisionTime", "]"}], "[", 
+            RowBox[{"[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"newState", " ", "=", " ", 
+           RowBox[{"Association", "[", 
+            RowBox[{
+             RowBox[{"\"\<time\>\"", "\[Rule]", 
+              RowBox[{
+               RowBox[{"state", "[", "\"\<time\>\"", "]"}], "+", "t"}]}], ",",
+              "\[IndentingNewLine]", 
+             RowBox[{"\"\<position\>\"", "\[Rule]", 
+              RowBox[{
+               RowBox[{"state", "[", "\"\<position\>\"", "]"}], "+", 
+               RowBox[{
+                RowBox[{"state", "[", "\"\<velocity\>\"", "]"}], "*", 
+                "t"}]}]}], ",", "\[IndentingNewLine]", 
+             RowBox[{"\"\<velocity\>\"", "\[Rule]", 
+              RowBox[{"state", "[", "\"\<velocity\>\"", "]"}]}]}], "]"}]}], 
+          ";", 
+          RowBox[{"verticalWallCollision", " ", "=", 
+           RowBox[{"Boole", "[", 
+            RowBox[{"IntersectingQ", "[", 
+             RowBox[{
+              RowBox[{"Keys", "[", "nextCollisionTime", "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"1", ",", "2"}], "}"}]}], "]"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"horizontalWallCollision", " ", "=", 
+           RowBox[{"Boole", "[", 
+            RowBox[{"IntersectingQ", "[", 
+             RowBox[{
+              RowBox[{"Keys", "[", "nextCollisionTime", "]"}], ",", 
+              RowBox[{"{", 
+               RowBox[{"3", ",", "4"}], "}"}]}], "]"}], "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"newState", "[", "\"\<velocity\>\"", "]"}], "=", " ", 
+           RowBox[{"{", 
+            RowBox[{
+             RowBox[{
+              RowBox[{
+               RowBox[{"newState", "[", "\"\<velocity\>\"", "]"}], "[", 
+               RowBox[{"[", "1", "]"}], "]"}], " ", "*", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"-", "1"}], ")"}], "^", "verticalWallCollision"}]}], 
+             ",", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"newState", "[", "\"\<velocity\>\"", "]"}], "[", 
+               RowBox[{"[", "2", "]"}], "]"}], " ", "*", 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{"-", "1"}], ")"}], "^", 
+               "horizontalWallCollision"}]}]}], "}"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"Return", "[", "newState", "]"}]}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"trajectory", "=", 
+       RowBox[{"NestList", "[", 
+        RowBox[{"Propagate", ",", 
+         RowBox[{"Association", "[", 
+          RowBox[{
+           RowBox[{"\"\<time\>\"", "\[Rule]", "initialTime"}], ",", 
+           RowBox[{"\"\<position\>\"", "\[Rule]", "initialPosition"}], ",", 
+           RowBox[{"\"\<velocity\>\"", "\[Rule]", "initialSpeed"}]}], "]"}], 
+         ",", "size"}], "]"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"Return", "[", "trajectory", "]"}]}]}], "]"}]}], "\n", 
+  "\n"}]], "Input",
+ CellChangeTimes->{{3.8147342555674977`*^9, 3.814734287707863*^9}, {
+   3.814734331876669*^9, 3.8147343413014803`*^9}, 3.8147344222865314`*^9, 
+   3.8147346969936523`*^9, {3.8147348345606785`*^9, 3.814734849507656*^9}, {
+   3.814735163995579*^9, 3.814735191020396*^9}, {3.814735289135927*^9, 
+   3.8147353326368046`*^9}, {3.814815383048091*^9, 3.8148153912092905`*^9}, {
+   3.8148154557563257`*^9, 3.8148155003547597`*^9}, {3.8148155351596956`*^9, 
+   3.8148155565088453`*^9}, 3.81481562491759*^9, 3.814815742915801*^9, {
+   3.8148158107475586`*^9, 3.8148158260044928`*^9}, {3.814815865044277*^9, 
+   3.814815887543952*^9}, {3.814815986626086*^9, 3.81481602636357*^9}, {
+   3.8148162120587525`*^9, 3.8148162982466435`*^9}, {3.814816335112029*^9, 
+   3.814816433116475*^9}, 3.814816471664196*^9, {3.814817337705509*^9, 
+   3.8148173484661818`*^9}, {3.8148174213948154`*^9, 
+   3.8148174219697037`*^9}, {3.814817554750063*^9, 3.8148175663690586`*^9}, {
+   3.8148177098083644`*^9, 3.814817739173709*^9}, {3.8148178026378145`*^9, 
+   3.8148179805346947`*^9}, {3.8149939114758806`*^9, 3.8149939677418284`*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"7c4f612d-ad9f-43c5-a964-c2bb7c67e447"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"trajectory", " ", "=", 
+   RowBox[{"Trajectory", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"0.1", ",", "0.4"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"0.1", ",", "0.2"}], "}"}], ",", "0", ",", "10", ",", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", 
+       RowBox[{"-", "1"}], ",", "1", ",", 
+       RowBox[{"-", "1"}]}], "}"}]}], "]"}]}], ";", 
+  RowBox[{"box", " ", "=", " ", 
+   RowBox[{"Polygon", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"1", ",", "1"}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"1", ",", 
+        RowBox[{"-", "1"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "1"}], ",", 
+        RowBox[{"-", "1"}]}], "}"}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"-", "1"}], ",", "1"}], "}"}]}], "}"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ball", " ", "=", " ", 
+   RowBox[{"Point", "[", 
+    RowBox[{
+     RowBox[{"trajectory", "[", 
+      RowBox[{"[", "1", "]"}], "]"}], "[", "\"\<position\>\"", "]"}], "]"}]}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"arrow", " ", "=", " ", 
+   RowBox[{"Arrow", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"trajectory", "[", 
+        RowBox[{"[", "1", "]"}], "]"}], "[", "\"\<position\>\"", "]"}], ",", 
+      RowBox[{
+       RowBox[{"trajectory", "[", 
+        RowBox[{"[", "2", "]"}], "]"}], "[", "\"\<position\>\"", "]"}]}], 
+     "}"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"track", " ", "=", " ", 
+   RowBox[{"Line", "[", 
+    RowBox[{"Map", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"#", "[", "\"\<position\>\"", "]"}], "&"}], ",", 
+      "trajectory"}], "]"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Graphics", "[", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"LightGray", ",", "box"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"Dashed", ",", "track"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"PointSize", "[", "Large", "]"}], ",", "Red", ",", "ball"}], 
+     "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"White", ",", "arrow"}], "}"}]}], "}"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.814994136870139*^9, 3.814994180947695*^9}, {
+  3.814994221133086*^9, 3.814994227983263*^9}, {3.814994354161208*^9, 
+  3.8149943768819857`*^9}, {3.8149944113046045`*^9, 3.814994431100424*^9}, {
+  3.8149944611961036`*^9, 3.8149945575694065`*^9}, {3.8149946025798445`*^9, 
+  3.8149946228321033`*^9}, {3.8149946735500937`*^9, 3.8149946761383343`*^9}, {
+  3.8149947850338173`*^9, 3.8149948201227856`*^9}, {3.814994946260753*^9, 
+  3.814994998079856*^9}, {3.8149950323486953`*^9, 3.8149950406371436`*^9}, {
+  3.814995083759358*^9, 3.8149951736651144`*^9}, {3.8149952351560974`*^9, 
+  3.8149952517811947`*^9}, {3.8149953355688114`*^9, 3.8149953432106905`*^9}, {
+  3.814995379196292*^9, 3.8149953907132998`*^9}},
+ CellLabel->"In[71]:=",ExpressionUUID->"6f6b6b07-a421-408d-9f68-3b92ac57af6a"],
+
+Cell[BoxData[
+ GraphicsBox[{
+   {GrayLevel[0.85], PolygonBox[{{1, 1}, {1, -1}, {-1, -1}, {-1, 1}}]}, 
+   {Dashing[{Small, Small}], 
+    LineBox[{{0.1, 0.4}, {0.4, 1.}, {1., -0.20000000000000018`}, {
+     0.6000000000000001, -1.}, {-0.3999999999999999, 
+     1.}, {-1., -0.20000000000000018`}, {-0.6000000000000001, -1.}, {
+     0.3999999999999999, 1.}, {1., -0.20000000000000018`}, {
+     0.6000000000000001, -1.}, {-0.3999999999999999, 1.}}]}, 
+   {RGBColor[1, 0, 0], PointSize[Large], PointBox[{0.1, 0.4}]}, 
+   {GrayLevel[1], ArrowBox[{{0.1, 0.4}, {0.4, 1.}}]}}]], "Output",
+ CellChangeTimes->{
+  3.814994229627928*^9, {3.8149943618632402`*^9, 3.8149943791140423`*^9}, 
+   3.8149945587119875`*^9, 3.8149946243706226`*^9, 3.814994677294343*^9, {
+   3.814994787600954*^9, 3.814994820921999*^9}, 3.814994999571289*^9, 
+   3.8149950416113453`*^9, {3.8149951454476833`*^9, 3.814995174512314*^9}, {
+   3.814995237957546*^9, 3.81499525270195*^9}, 3.814995344599477*^9, {
+   3.8149953822332296`*^9, 3.814995391854273*^9}},
+ CellLabel->"Out[75]=",ExpressionUUID->"db5ae6dd-5e42-44dc-b225-287a062e0f9e"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Export", "[", 
+  RowBox[{
+   RowBox[{"FileNameJoin", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+      "\"\<images/ball_trajectory.pdf\>\""}], "}"}], "]"}], ",", "%"}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.8149954329031286`*^9, 3.8149954368784323`*^9}},
+ CellLabel->"In[76]:=",ExpressionUUID->"79304932-03b5-491f-96c3-ee486e880835"],
+
+Cell[BoxData["\<\"C:\\\\Users\\\\gerha\\\\My \
+Projects\\\\Book\\\\Probabilistic Modeling with the Wolfram \
+Language\\\\images\\\\ball_trajectory.pdf\"\>"], "Output",
+ CellChangeTimes->{3.814995441024963*^9},
+ CellLabel->"Out[76]=",ExpressionUUID->"fa381cd9-e9ab-462f-9ad1-7469051c74b2"]
 }, Open  ]]
 },
 WindowSize->{758, 697},
@@ -33743,7 +34045,16 @@ Cell[1717634, 33126, 8242, 155, 280, "Output",ExpressionUUID->"454aa6b1-5e2c-416
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[1725913, 33286, 413, 10, 48, "Input",ExpressionUUID->"df2b2df2-96b7-4636-8d67-a536bf778f32"],
-Cell[1726329, 33298, 320, 4, 109, "Output",ExpressionUUID->"cf2d0419-d6d9-4182-b10d-089d7cd1f67d"]
+Cell[1726329, 33298, 320, 4, 52, "Output",ExpressionUUID->"cf2d0419-d6d9-4182-b10d-089d7cd1f67d"]
+}, Open  ]],
+Cell[1726664, 33305, 7884, 174, 485, "Input",ExpressionUUID->"7c4f612d-ad9f-43c5-a964-c2bb7c67e447"],
+Cell[CellGroupData[{
+Cell[1734573, 33483, 3006, 80, 124, "Input",ExpressionUUID->"6f6b6b07-a421-408d-9f68-3b92ac57af6a"],
+Cell[1737582, 33565, 1096, 18, 376, "Output",ExpressionUUID->"db5ae6dd-5e42-44dc-b225-287a062e0f9e"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1738715, 33588, 408, 10, 28, "Input",ExpressionUUID->"79304932-03b5-491f-96c3-ee486e880835"],
+Cell[1739126, 33600, 288, 4, 52, "Output",ExpressionUUID->"fa381cd9-e9ab-462f-9ad1-7469051c74b2"]
 }, Open  ]]
 }
 ]
