@@ -1830,7 +1830,9 @@ Trajectory[initialPosition_, initialSpeed_, initialTime_, numberOfCollisions_,
 \end{mathematica}
 The function can be used to generate a trajectory of the ball inside the box.
 \begin{mathematica}
-trajectory = Trajectory[{-0.5, -0.5}, {1/Pi, -0.5}, 0, 20, {1, -1, 1, -1}];
+boundaries = {1, -1, 1, -1};
+initialVelocity = {1/Pi, -0.5};
+trajectory = Trajectory[{-0.5, -0.5}, initialVelocity, 0, 20, boundaries];
 box = Polygon[{{1, 1}, {1, -1}, {-1, -1}, {-1, 1}}];
 ball = Point[trajectory[[1]]["position"]];
 arrow = Arrow[{trajectory[[1]]["position"], trajectory[[2]]["position"]}];
@@ -1847,7 +1849,8 @@ The result can be seen in the next figure, where the red point marks the initial
 Due to numerical inaccuracies several problems can occur. One problem are collision times, which are positive and very close to zero. Another problem is the detection of an edge collision, when the times hitting the two walls are very close to each other, but not equal. In these situations the velocity change is incorrectly calculated and the ball can escape the box.
 
 \begin{mathematica}
-trajectory = Trajectory[{0, 0}, {0.1, 0.2}, 0, 9, {0.5, -0.1, 1, -1}];
+boundaries = {0.5, -0.1, 1, -1};
+trajectory = Trajectory[{0, 0}, {0.1, 0.2}, 0, 9, boundaries];
 box = Polygon[{{0.5, 1}, {0.5, -1}, {-0.1, -1}, {-0.1, 1}}];
 ball = Point[trajectory[[1]]["position"]];
 arrow = Arrow[{trajectory[[1]]["position"], 
@@ -1860,7 +1863,33 @@ Graphics[{{LightGray, box}, {Dashed, track},
 
 \includegraphics[scale=0.5, center]{images/ball_escapes_box.pdf}
 
-We keep it as an exercise to figure out how to deal with these exceptional cases programmatically and want to apply the particle filter to this system.  
+We keep it as an exercise to figure out how to deal with these exceptional cases programmatically and want to apply the particle filter to this system. We generate a set of particles with random positions inside the box and assign a velocity vector to each particle, which has the same magnitude as the initial velocity of the ball, but a random direction.
+
+\begin{mathematica}
+numberOfParticles = 100;
+pos = Transpose[{RandomVariate[
+                    UniformDistribution[{boundaries[[1]], boundaries[[2]]}], 
+                    numberOfParticles], 
+                 RandomVariate[
+                    UniformDistribution[{boundaries[[3]], boundaries[[4]]}], 
+                    numberOfParticles]}];
+v0 = Sqrt[initialVelocity.initialVelocity];
+vel = Map[v0*{Cos[#], Sin[#]} &, 
+          RandomVariate[UniformDistribution[{0, 2*Pi}], numberOfParticles]];
+particles = MapThread[Association["time" -> 0, 
+                                  "position" -> #1,
+                                  "velocity" -> #2] &,
+                      {pos, vel}];
+points = Point[Map[#["position"] &, particles]];
+directions = Map[Line[{#["position"], #["position"] + #["velocity"]*0.1}] &,
+                 particles];
+Graphics[{{LightGray, box}, 
+          {PointSize[Large], Red, points},
+          {directions}}]
+\end{mathematica}
+
+\includegraphics[scale=0.5, center]{images/particles.pdf}
+  
 \end{example} 
 
 \chapter{Probabilistic Models (Applications)}
