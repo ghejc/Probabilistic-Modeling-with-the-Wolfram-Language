@@ -1733,7 +1733,7 @@ Modify the parameter of the last example e.g. the observer node or the number of
 \section{Particle Filter}
 \label{se:particle_filter}
 
-The Bayes filter can be easily and efficiently applied to all problems, where the state space is discrete and not too large. For continuous state spaces there exists closed-form solutions only for special cases like the Kalman filter for linear models with additive Gaussian noise. In the general non-linear case with arbitrary additive noise distributions, only approximate solutions are possible.\\
+The Bayes filter can be easily and efficiently applied to all problems, where the state space is discrete and not too large. For continuous state spaces there exist closed-form solutions only for special cases like the Kalman filter for linear models with additive Gaussian noise. In the general non-linear case with arbitrary additive noise distributions, only approximate solutions are possible.\\
 
 We represent the distribution $p(x_{t}\,\vert\, y_{t},y_{t-1},\ldots)$ by a set of $N$ particles with a weight $w^{(i)}_t$ and a state $x^{(i)}_t$ 
 \begin{equation}
@@ -1769,13 +1769,14 @@ To demonstrate how the particle filter works, we choose the following scenario:\
 
 we have a two-dimensional system consisting of a non-transparent box and a ball moving inside the box with a constant speed. When the ball hits a wall, there is a sound, which tells us that the ball is now at a specific wall. In this case we know one coordinate of the ball exactly. The ball starts a random initial position $(x_0,y_0)$ and with a random initial velocity $(v_x,v_y)$. The magnitude of the velocity $v=\sqrt{v_x^2+v_y^2}$ remains constant and is known, but the direction changes as soon as the ball hits a wall in such a way that one or both components of the velocity changes its sign.\\
 
-The system state at time $t$ is $(\vec{r},\vec{v})$, where $\vec{r}$ is the coordinate and $\vec{v}$ is the velocity of the ball. The initial state is specified by the arguments \texttt{initialTime}, \texttt{initialPosition} and \texttt{initialSpeed} and \texttt{numberOfCollisions} determines the length of the trajectory. The origin of the coordinate system is the center of the box. The default system boundaries are at $x=\pm 1$ and $y=\pm 1$.\\
+The system state at time $t$ is $(\vec{r},\vec{v})$, where $\vec{r}$ is the coordinate and $\vec{v}$ is the velocity of the ball. The initial state is specified by the arguments \texttt{initialTime}, \texttt{initialPosition} and \texttt{initialSpeed} and \texttt{finalTime} determines the length of the trajectory. The origin of the coordinate system is the center of the box. The default system boundaries are at $x=\pm 1$ and $y=\pm 1$.\\
 
 We implement a function \texttt{Trajectory}, which returns the trajectory of the ball. 
 \begin{mathematica}
-Trajectory[initialPosition_, initialSpeed_, initialTime_, numberOfCollisions_,
+Trajectory[initialPosition_, initialSpeed_, initialTime_, finalTime_,
    boundaries_List:{+1,-1,+1,-1}] := Module[
-   {trajectory, Propagate},
+   {trajectory, Propagate, lastState},
+
    (* The internal function gets the current state of the ball and returns the next
       state when the ball hits a wall. *) 
    Propagate[state_] := Module[
@@ -1792,20 +1793,24 @@ Trajectory[initialPosition_, initialSpeed_, initialTime_, numberOfCollisions_,
          2 -> (boundaries[[2]] - state["position"][[1]]) / state["velocity"][[1]],
          3 -> (boundaries[[3]] - state["position"][[2]]) / state["velocity"][[2]],
          4 -> (boundaries[[4]] - state["position"][[2]]) / state["velocity"][[2]]];
+
       (* The next collision time is the one, where the time when the ball hits
          a wall is non-zero and smaller than the others after removing the negative
          collision times. *) 
       nextCollisionTime = MinimalBy[Value] @ Select[collisionTimes, Positive];
       t = Values[nextCollisionTime][[1]];
+
       (* The next state of the ball is obtained by propagating the ball to the
          event of collision with the wall. *)
       newState = Association["time" -> state["time"] + t,
                              "position" -> state["position"] + state["velocity"]*t,
-                             "velocity" -> state["velocity"]];
+                             "velocity" -> state["velocity"],
+                             "wall" -> Keys[nextCollisionTime][[1]]];
       verticalWallCollision = Boole[IntersectingQ[Keys[nextCollisionTime],
                                                   {1, 2}]];
       horizontalWallCollision = Boole[IntersectingQ[Keys[nextCollisionTime],
                                                     {3, 4}]];
+
       (* The velocity change by bouncing back from the wall is calculated
          by changing the sign of the first velocity component if the collision
          happens with a vertical wall or of the second velocity component if the
@@ -1819,20 +1824,34 @@ Trajectory[initialPosition_, initialSpeed_, initialTime_, numberOfCollisions_,
                               newState["velocity"][[2]] *
                                        (-1)^horizontalWallCollision};
       Return[newState]];
+
    (* The trajectory is calculated by applying the function Propagate
-      several times starting with the initial state. *)
-   trajectory = NestList[Propagate, 
-                         Association["time" -> initialTime,
-                                     "position" -> initialPosition, 
-                                     "velocity" -> initialSpeed],
-                         numberOfCollisions];
+      several times starting with the initial state. The last state
+      is dropped, because it has a time greater than the final time. *)
+   trajectory = Drop[NestWhileList[Propagate, 
+                              Association["time" -> initialTime,
+                                          "position" -> initialPosition, 
+                                          "velocity" -> initialSpeed,
+                                          "wall" -> 0],
+                              #["time"] < finalTime &], -1];
+   lastState = Last[trajectory];
+
+   (* Adds the final state to the trajectory by propagating the last state
+      to the final time. *)
+   AppendTo[trajectory,
+            Association["time" -> lastTime,
+                        "position" -> lastState["position"] +
+                        lastState["velocity"] *
+                        (finalTime - lastState["time"]), 
+                        "velocity" -> lastState["velocity"],
+                        "wall" -> 0]; 
    Return[trajectory]]
 \end{mathematica}
 The function can be used to generate a trajectory of the ball inside the box.
 \begin{mathematica}
 boundaries = {1, -1, 1, -1};
 initialVelocity = {1/Pi, -0.5};
-trajectory = Trajectory[{-0.5, -0.5}, initialVelocity, 0, 20, boundaries];
+trajectory = Trajectory[{-0.5, -0.5}, initialVelocity, 0, 50, boundaries];
 box = Polygon[{{1, 1}, {1, -1}, {-1, -1}, {-1, 1}}];
 ball = Point[trajectory[[1]]["position"]];
 arrow = Arrow[{trajectory[[1]]["position"], trajectory[[2]]["position"]}];
@@ -1850,7 +1869,7 @@ Due to numerical inaccuracies several problems can occur. One problem are collis
 
 \begin{mathematica}
 boundaries = {0.5, -0.1, 1, -1};
-trajectory = Trajectory[{0, 0}, {0.1, 0.2}, 0, 9, boundaries];
+trajectory = Trajectory[{0, 0}, {0.1, 0.2}, 0, 40, boundaries];
 box = Polygon[{{0.5, 1}, {0.5, -1}, {-0.1, -1}, {-0.1, 1}}];
 ball = Point[trajectory[[1]]["position"]];
 arrow = Arrow[{trajectory[[1]]["position"], 
@@ -1867,12 +1886,18 @@ We keep it as an exercise to figure out how to deal with these exceptional cases
 
 \begin{mathematica}
 numberOfParticles = 100;
+
+(* The particle positions are uniformly distributed within the boundaries
+   of the box. *)
 pos = Transpose[{RandomVariate[
                     UniformDistribution[{boundaries[[1]], boundaries[[2]]}], 
                     numberOfParticles], 
                  RandomVariate[
                     UniformDistribution[{boundaries[[3]], boundaries[[4]]}], 
                     numberOfParticles]}];
+
+(* The particle moving directions are uniformly distributed, but the magnitude
+   of the velocity is always the same for each particle. *) 
 v0 = Sqrt[initialVelocity.initialVelocity];
 vel = Map[v0*{Cos[#], Sin[#]} &, 
           RandomVariate[UniformDistribution[{0, 2*Pi}], numberOfParticles]];
@@ -1880,16 +1905,69 @@ particles = MapThread[Association["time" -> 0,
                                   "position" -> #1,
                                   "velocity" -> #2] &,
                       {pos, vel}];
-points = Point[Map[#["position"] &, particles]];
-directions = Map[Line[{#["position"], #["position"] + #["velocity"]*0.1}] &,
-                 particles];
-Graphics[{{LightGray, box}, 
-          {PointSize[Large], Red, points},
-          {directions}}]
+ParticleFilterPlot[particles_] := Module[
+  {points, directions, box},
+  box = Polygon[{boundaries[[1]], boundaries[[3]]},
+                {boundaries[[1]], boundaries[[4]]},
+                {boundaries[[2]], boundaries[[3]]},
+                {boundaries[[2]], boundaries[[4]]}];
+  points = Point[Map[#["position"] &, particles]];
+  directions = Map[Line[{#["position"], #["position"] + #["velocity"]*0.1}] &, 
+                   particles];
+  Graphics[{{LightGray, box},
+            {PointSize[Large], Red, points}, 
+            directions}]
+]
+ParticleFilterPlot[particles, boundaries]
 \end{mathematica}
 
 \includegraphics[scale=0.5, center]{images/particles.pdf}
-  
+
+The variable \texttt{trajectory} contains the collision times, which are used to calculate the position of each particle at the instant when the ball hits the wall.
+The motion of each particle is deterministic, but we must add a certain degree of randomness to the state, otherwise the particle filter would not work properly.
+We use the function \texttt{Trajectory} to calculate the state at each collision time and then add a random deviation in the direction of the velocity. \\
+
+The particle weight is calculated from a decreasing function of the perpendicular distance of the particle to the wall. There are many possible choices, but in this example we use $\frac{1}{1+x^2}$. We have to normalize the weights before the resampling step is performed. \\
+
+\begin{mathematica}
+ParticleFilterUpdate[particleStates_, observation_, boundaries_] := Module[
+    {angles, velocities, distances, weights, dist, indices, particles},
+
+    (* Predict the state of the particles at the next measurement time. *)
+    particles = Map[Last[Trajectory[#["position"], #["velocity"],
+                               #["time"], observation["time"]]] &,
+                    particleStates];
+    angles = RandomVariate[NormalDistribution[0, 0.01], Length[particles]];
+    velocities = MapThread[{{Cos[#1], Sin[#1]},
+                            {-Sin[#1], Cos[#1]}}.#2["velocity"] &,
+                           {angles, particles}];
+    particles = MapThread[Association["time" -> #1["time"], 
+                                      "position" -> #1["position"],
+                                      "velocity" -> #2,
+                                      "wall" -> #1["wall"]] &,
+                          {particles, velocities}];
+
+    (* Calculate the particle weights based on the distance
+       of the particle to the wall, the ball has collided with. *)
+    distances = Map[#["position"][[If[observation["wall"] <= 2, 1, 2]]] -
+                    boundaries[[observation["wall"]]] &, particles];
+    weights = Map[1/(1 + #^2)&, distances];
+
+    (* Resample the particles according to their weight. *)
+    dist = EmpiricalDistribution[weights -> Range[1, Length[weights]]];
+    indices = RandomVariate[dist, Length[particles]];
+    particles = Map[particles[[#]] &, indices];
+    Return[particles];
+]
+
+ParticleFilterPlot[ParticleFilterUpdate[particles,
+                                        trajectory[[2]],
+                                        boundaries],
+                   boundaries]     
+\end{mathematica}
+
+\includegraphics[scale=0.5, center]{images/particles_after_first_update.pdf}
+
 \end{example} 
 
 \chapter{Probabilistic Models (Applications)}
