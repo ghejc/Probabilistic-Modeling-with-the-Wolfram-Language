@@ -1882,35 +1882,44 @@ Graphics[{{LightGray, box}, {Dashed, track},
 
 \includegraphics[scale=0.5, center]{images/ball_escapes_box.pdf}
 
-We keep it as an exercise to figure out how to deal with these exceptional cases programmatically and want to apply the particle filter to this system. We generate a set of particles with random positions inside the box and assign a velocity vector to each particle, which has the same magnitude as the initial velocity of the ball, but a random direction.
+We keep it as an exercise to figure out how to deal with these exceptional cases programmatically and want to apply the particle filter to this system. \\
+
+The function \texttt{ParticleFilterInit} generates a set of particles with random positions inside the box and assign a velocity vector to each particle, which has the same magnitude as the initial velocity of the ball, but a random direction.
 
 \begin{mathematica}
-numberOfParticles = 100;
+ParticleFilterInit[numberOfParticles_, velocity_, boundaries_] := Module[
+    {pos, v, vel, particles},
+    (* The particle positions are uniformly distributed within the boundaries
+       of the box. *)
+    pos = Transpose[{RandomVariate[
+                        UniformDistribution[{boundaries[[1]], boundaries[[2]]}], 
+                        numberOfParticles], 
+                     RandomVariate[
+                        UniformDistribution[{boundaries[[3]], boundaries[[4]]}], 
+                        numberOfParticles]}];
 
-(* The particle positions are uniformly distributed within the boundaries
-   of the box. *)
-pos = Transpose[{RandomVariate[
-                    UniformDistribution[{boundaries[[1]], boundaries[[2]]}], 
-                    numberOfParticles], 
-                 RandomVariate[
-                    UniformDistribution[{boundaries[[3]], boundaries[[4]]}], 
-                    numberOfParticles]}];
+    (* The particle moving directions are uniformly distributed, but the magnitude
+       of the velocity is always the same for each particle. *) 
+    v = Sqrt[velocity.velocity];
+    vel = Map[v * {Cos[#], Sin[#]} &, 
+              RandomVariate[UniformDistribution[{0, 2*Pi}], numberOfParticles]];
+    particles = MapThread[Association["time" -> 0, 
+                                      "position" -> #1,
+                                      "velocity" -> #2] &,
+                          {pos, vel}];
+    Return[particles];
+]
+\end{mathematica}
 
-(* The particle moving directions are uniformly distributed, but the magnitude
-   of the velocity is always the same for each particle. *) 
-v0 = Sqrt[initialVelocity.initialVelocity];
-vel = Map[v0*{Cos[#], Sin[#]} &, 
-          RandomVariate[UniformDistribution[{0, 2*Pi}], numberOfParticles]];
-particles = MapThread[Association["time" -> 0, 
-                                  "position" -> #1,
-                                  "velocity" -> #2] &,
-                      {pos, vel}];
-ParticleFilterPlot[particles_] := Module[
+Furthermore a function \texttt{ParticleFilterPlot} draws the particles inside the box and adds a short line to each particle to indicate the direction of motion.
+
+\begin{mathematica}
+ParticleFilterPlot[particles_, boundaries_] := Module[
   {points, directions, box},
-  box = Polygon[{boundaries[[1]], boundaries[[3]]},
-                {boundaries[[1]], boundaries[[4]]},
-                {boundaries[[2]], boundaries[[3]]},
-                {boundaries[[2]], boundaries[[4]]}];
+  box = Polygon[{{boundaries[[1]], boundaries[[3]]},
+                 {boundaries[[1]], boundaries[[4]]},
+                 {boundaries[[2]], boundaries[[4]]},
+                 {boundaries[[2]], boundaries[[3]]}}];
   points = Point[Map[#["position"] &, particles]];
   directions = Map[Line[{#["position"], #["position"] + #["velocity"]*0.1}] &, 
                    particles];
@@ -1918,6 +1927,8 @@ ParticleFilterPlot[particles_] := Module[
             {PointSize[Large], Red, points}, 
             directions}]
 ]
+
+particles = ParticleFilterInit[100, initialVelocity, boundaries];
 ParticleFilterPlot[particles, boundaries]
 \end{mathematica}
 
@@ -1960,10 +1971,10 @@ ParticleFilterUpdate[particleStates_, observation_, boundaries_] := Module[
     Return[particles];
 ]
 
-ParticleFilterPlot[ParticleFilterUpdate[particles,
-                                        trajectory[[2]],
-                                        boundaries],
-                   boundaries]     
+particles = ParticleFilterUpdate[particles,
+                                 trajectory[[2]],
+                                 boundaries];
+ParticleFilterPlot[particles, boundaries]     
 \end{mathematica}
 
 \includegraphics[scale=0.5, center]{images/particles_after_first_update.pdf}
