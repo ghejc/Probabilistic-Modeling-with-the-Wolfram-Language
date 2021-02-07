@@ -1914,7 +1914,7 @@ ParticleFilterInit[numberOfParticles_, velocity_, boundaries_] := Module[
 Furthermore a function \texttt{ParticleFilterPlot} draws the particles inside the box and adds a short line to each particle to indicate the direction of motion.
 
 \begin{mathematica}
-ParticleFilterPlot[particles_, boundaries_] := Module[
+ParticleFilterPlot[particles_, currentState_, boundaries_] := Module[
   {points, directions, box},
   box = Polygon[{{boundaries[[1]], boundaries[[3]]},
                  {boundaries[[1]], boundaries[[4]]},
@@ -1925,11 +1925,14 @@ ParticleFilterPlot[particles_, boundaries_] := Module[
                    particles];
   Graphics[{{LightGray, box},
             {PointSize[Large], Red, points}, 
-            directions}]
+            directions,
+            {PointSize[0.03], Blue, Point[{currentState["position"]}]},
+            Line[{currentState["position"], 
+                  currentState["position"] + currentState["velocity"]*0.1}]}]
 ]
 
-particles = ParticleFilterInit[100, initialVelocity, boundaries];
-ParticleFilterPlot[particles, boundaries]
+particles = ParticleFilterInit[1000, initialVelocity, boundaries];
+ParticleFilterPlot[particles, trajectory[[1]], boundaries]
 \end{mathematica}
 
 \includegraphics[scale=0.5, center]{images/particles.pdf}
@@ -1938,7 +1941,7 @@ The variable \texttt{trajectory} contains the collision times, which are used to
 The motion of each particle is deterministic, but we must add a certain degree of randomness to the state, otherwise the particle filter would not work properly.
 We use the function \texttt{Trajectory} to calculate the state at each collision time and then add a random deviation in the direction of the velocity. \\
 
-The particle weight is calculated from a decreasing function of the perpendicular distance of the particle to the wall. There are many possible choices, but in this example we use $\frac{1}{1+x^2}$. We have to normalize the weights before the resampling step is performed. \\
+The particle weight is calculated from a decreasing function of the perpendicular distance of the particle to the wall. There are many possible choices, but in this example we use $\frac{1}{1+1000x^2}$. We have to normalize the weights before the resampling step is performed. \\
 
 \begin{mathematica}
 ParticleFilterUpdate[particleStates_, observation_, boundaries_] := Module[
@@ -1948,7 +1951,7 @@ ParticleFilterUpdate[particleStates_, observation_, boundaries_] := Module[
     particles = Map[Last[Trajectory[#["position"], #["velocity"],
                                #["time"], observation["time"]]] &,
                     particleStates];
-    angles = RandomVariate[NormalDistribution[0, 0.01], Length[particles]];
+    angles = RandomVariate[NormalDistribution[0, 0.05], Length[particles]];
     velocities = MapThread[{{Cos[#1], Sin[#1]},
                             {-Sin[#1], Cos[#1]}}.#2["velocity"] &,
                            {angles, particles}];
@@ -1962,7 +1965,7 @@ ParticleFilterUpdate[particleStates_, observation_, boundaries_] := Module[
        of the particle to the wall, the ball has collided with. *)
     distances = Map[#["position"][[If[observation["wall"] <= 2, 1, 2]]] -
                     boundaries[[observation["wall"]]] &, particles];
-    weights = Map[1/(1 + #^2)&, distances];
+    weights = Map[1/(1 + 1000 * #^2)&, distances];
 
     (* Resample the particles according to their weight. *)
     dist = EmpiricalDistribution[weights -> Range[1, Length[weights]]];
@@ -1974,10 +1977,14 @@ ParticleFilterUpdate[particleStates_, observation_, boundaries_] := Module[
 particles = ParticleFilterUpdate[particles,
                                  trajectory[[2]],
                                  boundaries];
-ParticleFilterPlot[particles, boundaries]     
+ParticleFilterPlot[particles, trajectory[[2]], boundaries]     
 \end{mathematica}
 
 \includegraphics[scale=0.5, center]{images/particles_after_first_update.pdf}
+
+After 20 updates the particles are close to the actual position of the ball.
+
+\includegraphics[scale=0.5, center]{images/particles_after_20_updates.pdf}
 
 \end{example} 
 
