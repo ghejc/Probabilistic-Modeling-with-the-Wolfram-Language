@@ -1852,37 +1852,24 @@ The function can be used to generate a trajectory of the ball inside the box.
 boundaries = {1, -1, 1, -1};
 initialVelocity = {1/Pi, -0.5};
 trajectory = Trajectory[{-0.5, -0.5}, initialVelocity, 0, 50, boundaries];
-box = Polygon[{{1, 1}, {1, -1}, {-1, -1}, {-1, 1}}];
-ball = Point[trajectory[[1]]["position"]];
-arrow = Arrow[{trajectory[[1]]["position"], trajectory[[2]]["position"]}];
-track = Line[Map[#["position"] &, trajectory]];
-Graphics[{{LightGray, box},
-          {Dashed, track},
-          {PointSize[Large], Red, ball},
-          {White, arrow}}]
+TrajectoryPlot[trajectory_, boundaries_]:= Module{box, ball, arrow, track},
+    box = Polygon[{{boundaries[[1]], boundaries[[3]]},
+                   {boundaries[[1]], boundaries[[4]]},
+                   {boundaries[[2]], boundaries[[4]]},
+                   {boundaries[[2]], boundaries[[3]]}}];
+    ball = Point[trajectory[[1]]["position"]];
+    arrow = Arrow[{trajectory[[1]]["position"], trajectory[[2]]["position"]}];
+    track = Line[Map[#["position"] &, trajectory]];
+    Graphics[{{LightGray, box},
+              {Dashed, track},
+              {PointSize[Large], Red, ball},
+              {White, arrow}}]
+]
+TrajectoryPlot[trajectory, boundaries]
 \end{mathematica}
 The result can be seen in the next figure, where the red point marks the initial position, the white arrow the direction of movement and the dashed line the complete trajectory of the ball. 
 
 \includegraphics[scale=0.5, center]{images/ball_trajectory.pdf}
-
-Due to numerical inaccuracies several problems can occur. One problem are collision times, which are positive and very close to zero. Another problem is the detection of an edge collision, when the times hitting the two walls are very close to each other, but not equal. In these situations the velocity change is incorrectly calculated and the ball can escape the box.
-
-\begin{mathematica}
-boundaries = {0.5, -0.1, 1, -1};
-trajectory = Trajectory[{0, 0}, {0.1, 0.2}, 0, 40, boundaries];
-box = Polygon[{{0.5, 1}, {0.5, -1}, {-0.1, -1}, {-0.1, 1}}];
-ball = Point[trajectory[[1]]["position"]];
-arrow = Arrow[{trajectory[[1]]["position"], 
-               trajectory[[2]]["position"]}];
-track = Line[Map[#["position"] &, trajectory]];
-Graphics[{{LightGray, box}, {Dashed, track}, 
-          {PointSize[Large], Red, ball}, 
-          {White, arrow}}]
-\end{mathematica}
-
-\includegraphics[scale=0.5, center]{images/ball_escapes_box.pdf}
-
-We keep it as an exercise to figure out how to deal with these exceptional cases programmatically and want to apply the particle filter to this system. \\
 
 The function \texttt{ParticleFilterInit} generates a set of particles with random positions inside the box and assign a velocity vector to each particle, which has the same magnitude as the initial velocity of the ball, but a random direction.
 
@@ -1966,6 +1953,9 @@ ParticleFilterUpdate[particleStates_, observation_, boundaries_] := Module[
     distances = Map[#["position"][[If[observation["wall"] <= 2, 1, 2]]] -
                     boundaries[[observation["wall"]]] &, particles];
     weights = Map[1/(1 + 1000 * #^2)&, distances];
+    (* We do not need an explicit normalization step here, because
+       the function EmpiricalDistribution normalizes the weights
+       automatically. *) 
 
     (* Resample the particles according to their weight. *)
     dist = EmpiricalDistribution[weights -> Range[1, Length[weights]]];
@@ -1982,11 +1972,38 @@ ParticleFilterPlot[particles, trajectory[[2]], boundaries]
 
 \includegraphics[scale=0.5, center]{images/particles_after_first_update.pdf}
 
-After 20 updates the particles are close to the actual position of the ball.
+After 20 updates the particles are close to the actual position of the ball, but there is still a large spread in the distribution of particles. The observations provide only partial information about the ball state, which is not sufficient to determine the position and velocity completely. Therefore a large number of particles still move in the wrong directions. 
 
 \includegraphics[scale=0.5, center]{images/particles_after_20_updates.pdf}
 
-\end{example} 
+To get an estimate of the ball state, we average over all particles
+
+\begin{mathematica}
+Association["time" -> Mean[Map[#["time"] &, particles]], 
+            "position" -> Mean[Map[#["position"] &, particles]], 
+            "velocity" -> Mean[Map[#["velocity"] &, particles]]]
+\end{mathematica}
+
+
+\end{example}
+
+\begin{exercise}
+Due to numerical inaccuracies several problems can occur. One problem are collision times, which are positive and very close to zero. Another problem is the detection of an edge collision, when the times hitting the two walls are very close to each other, but not equal. In these situations the velocity change is incorrectly calculated and the ball can escape the box.
+
+\begin{mathematica}
+boundaries = {0.5, -0.1, 1, -1};
+trajectory = Trajectory[{0, 0}, {0.1, 0.2}, 0, 40, boundaries];
+TrajectoryPlot[trajectory, boundaries]
+\end{mathematica}
+
+\includegraphics[scale=0.5, center]{images/ball_escapes_box.pdf}
+
+Figure out how to deal with these exceptional cases programmatically.
+\end{exercise}
+
+\begin{exercise}
+  Assume that the sound when the ball hits the wall gives a rough measurement of velocity component normal to the wall. Modify the measurement update in such a way that the weight calculation includes a term, which measures the difference between this velocity component of the particles and the observation. Study the influence on the distribution of particles.    
+\end{exercise}
 
 \chapter{Probabilistic Models (Applications)}
 
