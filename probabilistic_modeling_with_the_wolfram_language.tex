@@ -1075,6 +1075,18 @@ The likelihood of a uniform distribution evaluated on the data samples $x_{1:N}$
 with $x_{min} = \text{min}(x_{1:N})$ and $x_{max} = \text{max}(x_{1:N})$. Show that eq. \ref{eq:uniform_likelihood} has a maximum at $\alpha = x_{min}$ and $\beta = x_{max}$.
 \end{exercise}
 
+\begin{remark}
+So far we applied the method to all available data. It is often better to use Maximum Likelihood on small batches of the data and update the parameters $\boldsymbol{\theta}$ iteratively by gradient descent
+\begin{equation}
+\boldsymbol{\theta}_{i+1} = \boldsymbol{\theta}_{i} - \frac{\lambda}{\mathcal{L}^{(i)}(\boldsymbol{\theta})} \frac{\partial \mathcal{L}^{(i)}(\boldsymbol{\theta})}{\partial \boldsymbol{\theta}}\vert_{\boldsymbol{\theta}=\boldsymbol{\theta}_{i}}
+\end{equation}
+where $\lambda$ is the small positive number so that $\mathcal{L}^{(i)}(\boldsymbol{\theta_{i}}) > \mathcal{L}^{(i)}(\boldsymbol{\theta_{i+1}})$ is guaranteed and $\mathcal{L}^{(i)}$ is the likelihood of the $i$-th batch given by
+\begin{equation}
+\log\left( \mathcal{L}^{(i)}(\boldsymbol{\theta})\right) = \sum_{k=1}^M \log\left(p\left(x_{k+iM}\,\vert\, \boldsymbol{\theta}\right)\right)
+\end{equation}
+where $M$ is the batch size and $i$ goes from $0$ to the integer part of $N/M$. The initial values of $\boldsymbol{\theta_{0}}$ have to chosen properly so that a global minimum is found.  
+\end{remark}
+
 \section{Sampling}
 In the previous sections we studied the reconstruction of a probability density from data. Here we investigate the inverse problem: the generation of data from a given probability density. This process is called sampling.
 
@@ -2004,6 +2016,63 @@ Figure out how to deal with these exceptional cases programmatically.
 \begin{exercise}
   Assume that the sound when the ball hits the wall gives a rough measurement of velocity component normal to the wall. Modify the measurement update in such a way that the weight calculation includes a term, which measures the difference between this velocity component of the particles and the observation. Study the influence on the distribution of particles.    
 \end{exercise}
+
+\section{Random Processes}
+Random processes have some similarity with time series, but without the association of time points with the random data. A random process $x_{1:n}$ is described by a functional relationship of the form
+\begin{equation}
+x_{n+1} = f\left(x_{n},z_{n}\right)
+\end{equation}
+where $z_{n}$ is a random sample from a distribution $p(z)$ and the probability density of $x_0$ is known.
+
+\begin{example}[One-dimensional Random Walk]
+In this example we analyze the one-dimensional motion of a particle under a random displacement, which is described by the following equation 
+\begin{equation}
+x_{n+1} = x_{n} + z_{n}
+\end{equation}
+where $x_n$ is the displacement of the particle after $n$ steps and $z_n$ is $+1$ with probability $\alpha$ and $-1$ with probability $1-\alpha$. The initial distribution $p\left(x_0\right)$ is $\delta\left(x_0\right)$, which means that the particle starts at position $0$ and then moves either to the right with probability $\alpha$ or to the left with probability $1-\alpha$. What is the probability density after $n+1$ steps?\\
+\begin{equation}
+p\left(x_{n+1}\right)=\int_{-\infty}^{+\infty}dx_{n}\int_{-\infty}^{+\infty}dz_{n}p\left(x_{n+1},x_{n},z_{n}\right) = \int_{-\infty}^{+\infty}dx_{n}\int_{-\infty}^{+\infty}dz_{n}p\left(x_{n+1}\vert\,x_{n},z_{n}\right)p\left(x_{n},z_{n}\right)
+\end{equation}
+Because $z_{n}$ cannot influence $x_{n}$ anymore, $p\left(x_{n},z_{n}\right)$ can be replaced by $p\left(x_{n}\right)p\left(z_{n}\right)$. Furthermore $x_{n+1}$ is completely determined given $x_{n}$ and $z_{n}$ and can be written as
+$p\left(x_{n+1}\vert\,x_{n},z_{n}\right)=\delta\left(x_{n+1}-x_{n}-z_{n}\right)$.
+Therefore the $z_{n}$ integral can be carried out with the result
+\begin{equation}
+p\left(x_{n+1}\right)= \int_{-\infty}^{+\infty}dx_{n}p\left(x_{n}\right)p\left(z_{n}=x_{n+1}-x_{n}\right)
+\end{equation}
+Using $p\left(z_{n}\right)=\alpha\delta(z_{n}-1)+(1-\alpha)\delta(z_{n}+1)$, the $x_{n}$ integral can be carried out too.
+\begin{equation}
+p\left(x_{n+1}\right)= \alpha p\left(x_{n}=x_{n+1}-1\right)+(1-\alpha) p\left(x_{n}=x_{n+1}+1\right)
+\end{equation}
+Using the equation $p\left(x_{n+1}\right)$ can be determined iteratively starting with the initial distribution $p\left(x_{0}\right)=\delta\left(x_{0}\right)$.
+
+The first three and the $n$-th iterations are shown below:
+  \begin{equation}
+  \begin{aligned}
+  p\left(x_{1}\right) &= \alpha \delta\left(x_{1}-1\right)+(1-\alpha) \delta\left(x_{1}+1\right)\\   p\left(x_{2}\right) &= \alpha^2 \delta\left(x_{2}-2\right)                       + 2 \alpha (1-\alpha) \delta\left(x_{2}\right) + (1-\alpha)^2 \delta\left(x_{2}+2\right)\\
+  p\left(x_{3}\right) &= \alpha^3 \delta\left(x_{3}-3\right)                       + 3 \alpha^2 (1-\alpha) \delta\left(x_{3}-1\right) \\
+  & + 3 \alpha (1-\alpha)^2 \delta\left(x_{3}+1\right) + (1-\alpha)^3 \delta\left(x_{3}+3\right)\\
+  \ldots & \\
+  p\left(x_{n}\right) &= \sum_{i=0}^{n}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i} \delta\left(x_{n}-n+2i\right)
+  \end{aligned}
+  \end{equation}
+The average displacement from the initial position after $n$ steps can be calculated by
+  \begin{equation}
+  \begin{aligned}
+  & \int_{-\infty}^{+\infty}dx_{n}\vert x_{n} \vert p\left(x_{n}\right) = \int_{0}^{+\infty}dx_{n} x_{n} \left(p\left(x_{n}\right) + p\left(-x_{n}\right)\right)\\
+&=\sum_{i=0}^{n}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i}\int_{0}^{+\infty}dx_{n} x_{n} \left(\delta\left(x_{n}-n+2i\right) + \delta\left(-x_{n}-n+2i\right)\right)\\
+&=\sum_{i=0}^{\frac{n}{2}}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i}\left(n-2i\right)+
+\sum_{i=\frac{n}{2}}^{n}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i}\left(2i-n\right)
+  \end{aligned}
+  \end{equation}
+The second sum can be simplified by replacing $i$ by $i+\frac{n}{2}$.
+  \begin{equation}
+  \begin{aligned}
+\sum_{i=0}^{\frac{n}{2}}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i}\left(n-2i\right)+
+\sum_{i=0}^{\frac{n}{2}}{{n}\choose{i+\frac{n}{2}}}\alpha^{\frac{n}{2}-i} (1-\alpha)^{i+\frac{n}{2}}\left(2i\right)
+  \end{aligned}
+  \end{equation}
+
+\end{example}
 
 \chapter{Probabilistic Models (Applications)}
 
