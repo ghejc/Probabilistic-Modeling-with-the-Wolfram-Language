@@ -2041,9 +2041,10 @@ p\left(x_{n+1}\right)= \int_{-\infty}^{+\infty}dx_{n}p\left(x_{n}\right)p\left(z
 \end{equation}
 Using $p\left(z_{n}\right)=\alpha\delta(z_{n}-1)+(1-\alpha)\delta(z_{n}+1)$, the $x_{n}$ integral can be carried out too.
 \begin{equation}
+\label{eq:randomwalk}
 p\left(x_{n+1}\right)= \alpha p\left(x_{n}=x_{n+1}-1\right)+(1-\alpha) p\left(x_{n}=x_{n+1}+1\right)
 \end{equation}
-Using the equation $p\left(x_{n+1}\right)$ can be determined iteratively starting with the initial distribution $p\left(x_{0}\right)=\delta\left(x_{0}\right)$.
+Using eq. \ref{eq:randomwalk} $p\left(x_{n+1}\right)$ can be determined iteratively starting with the initial distribution $p\left(x_{0}\right)=\delta\left(x_{0}\right)$.
 
 The first three and the $n$-th iterations are shown below:
   \begin{equation}
@@ -2055,24 +2056,25 @@ The first three and the $n$-th iterations are shown below:
   p\left(x_{n}\right) &= \sum_{i=0}^{n}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i} \delta\left(x_{n}-n+2i\right)
   \end{aligned}
   \end{equation}
-The average displacement from the initial position after $n$ steps can be calculated by
-  \begin{equation}
-  \begin{aligned}
-  & \int_{-\infty}^{+\infty}dx_{n}\vert x_{n} \vert p\left(x_{n}\right) = \int_{0}^{+\infty}dx_{n} x_{n} \left(p\left(x_{n}\right) + p\left(-x_{n}\right)\right)\\
-&=\sum_{i=0}^{n}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i}\int_{0}^{+\infty}dx_{n} x_{n} \left(\delta\left(x_{n}-n+2i\right) + \delta\left(-x_{n}-n+2i\right)\right)\\
-&=\sum_{i=0}^{\frac{n}{2}}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i}\left(n-2i\right)+
-\sum_{i=\frac{n}{2}}^{n}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i}\left(2i-n\right)
-  \end{aligned}
-  \end{equation}
-The second sum can be simplified by replacing $i$ by $i+\frac{n}{2}$.
-  \begin{equation}
-  \begin{aligned}
-\sum_{i=0}^{\frac{n}{2}}{{n}\choose{i}}\alpha^{n-i} (1-\alpha)^{i}\left(n-2i\right)+
-\sum_{i=0}^{\frac{n}{2}}{{n}\choose{i+\frac{n}{2}}}\alpha^{\frac{n}{2}-i} (1-\alpha)^{i+\frac{n}{2}}\left(2i\right)
-  \end{aligned}
-  \end{equation}
 
+If we assume that $n=2m$ is an even number, the coefficient of the term $\delta\left(x_{n}\right)$ tells us the probability to find the particle at its starting position after $n$ steps. In the limit $m\rightarrow\infty$, the probability goes to zero.\\
+
+We can check this with the following code, where we set $\alpha$ to $\frac{1}{2}$.
+
+\begin{mathematica}
+Limit[Binomial[2*m, m]/4^m, m -> Infinity]
+\end{mathematica}
+
+If $n$ is an odd number, it is impossible to find the particle at its starting position, because it requires the same number of steps to the right and left.\\
+
+The next figure shows the probability as a function of the index $i$ after $n$ steps (note that the displacement of the particle is $2i-n$). The maximum is always at displacement $0$, but becomes smaller for each increasing $n$.
+
+\includegraphics[scale=0.8,center]{images/displacement_after_n_steps.pdf}
+
+For large $n$ the displacement can be described by a Normal distribution $\mathcal{N}\left(0,\sigma^2\right)$,
+where $\sigma^2$ is proportional to the number of steps $n$.
 \end{example}
+
 
 \chapter{Probabilistic Models (Applications)}
 
