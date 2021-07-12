@@ -2074,11 +2074,16 @@ The next figure shows the probability as a function of the index $i$ after $n$ s
 For large $n$ the displacement can be described by a Normal distribution $\mathcal{N}\left(0,\sigma^2\right)$,
 where $\sigma^2$ is proportional to the number of steps $n$.\\
 
-In the Wolfram Language a random walk sequence can be generated with the function \texttt{RandomWalkProcess}. The output of an own implementation using \texttt{NestList} and \texttt{RandomChoice} is compared to the sequence generated with the internal function.
+In the Wolfram Language a random walk sequence generator can be implemented with the following function
+\begin{mathematica}
+RandomWalkSequence[alpha_, n_]:= NestList[# + RandomChoice[{alpha, 1 - alpha}->
+                                          {1, -1}] &, 0, n];
+\end{mathematica}
+Wolfram Language has already a built-in function \texttt{RandomWalkProcess} for that purpose.
 
 \begin{mathematica}
-data1 = RandomFunction[RandomWalkProcess[.5], {0, 1000}];
-data2 = NestList[# + RandomChoice[{1, -1}] &, 0, 1000];
+data1 = RandomFunction[RandomWalkProcess[0.5], {0, 1000}];
+data2 = RandomWalkSequence[0.5, 1000];
 ListLinePlot[{data1, data2}]
 \end{mathematica}
 
