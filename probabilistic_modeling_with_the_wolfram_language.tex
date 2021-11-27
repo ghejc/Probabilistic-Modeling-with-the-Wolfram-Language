@@ -524,8 +524,30 @@ The definition shows that in the case of discrete random variables, probability 
 \begin{remark}
 While eq. \ref{eq:discreteprobabilitydensity} is useful to express continuous and discrete probability densities in the same way, it has its limitations e.g. the logarithm or powers of $p(x)$ don't make sense due to the presence of Dirac delta-functions and are ill-defined. Only convolution 
 $\int_{-\infty}^{+\infty}\delta\left(x-y\right)\delta\left(y-z\right)dy=\delta\left(x-z\right)$
-is a valid operation.
+is a valid operation. The next example highlights some of the issues you have to deal with. 
 \end{remark}
+
+\begin{example}[Entropy]
+The entropy for a continuous random variable $x\sim p(x)$ (or differential entropy) is defined as
+  \begin{equation}
+  \label{eq:differential_entropy}
+    h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(p(x)\right)
+  \end{equation}
+If we insert eq. \ref{eq:discreteprobabilitydensity} in this expression, we get 
+  \begin{equation}
+   \begin{aligned}
+    h(x)&=-\sum_{i=-\infty}^{+\infty}\int_{-\infty}^{+\infty}P_i\delta\left(x-x_i\right)\log_{2}\left(p(x)\right)
+    =-\sum_{i=-\infty}^{+\infty}P_i\log_{2}\left(p(x_{i})\right)\\
+    &=-\sum_{i=-\infty}^{+\infty}P_i\log_{2}\left(P_i\delta(0)\right)
+    =-\sum_{i=-\infty}^{+\infty}P_i\log_{2}\left(P_i\right) - \log_{2}\left(\delta(0)\right)
+   \end{aligned}
+  \end{equation}
+The step, where we replaced $p(x_{i})$ by $P_i\delta(0)$ treated $\delta(x)$ as a function, which is zero for any non-zero argument, therefore the sum inside the logarithm is reduced to only one term.\\
+
+The last term $\log_{2}\left(\delta(0)\right)$ is divergent, but independent of the random variable $x$ and therefore plays no role, because entropy is anyhow defined up to an additive factor due to the fact that the choice of the base of the logarithm is arbitrary. One could also use the natural logarithm (preferred in physics) or any other base in the definition of the entropy. Base $2$ is the preferred choice in information theory. The difference between these definitions would only be a constant additive term, which can be discarded.\\
+
+So the conclusion is that in this case the result for the entropy of a discrete random variable comes out right if you renormalize the divergent term away (as the physicists would call it), but this does not work always.  
+\end{example}
 
 \begin{example}[The Binomial Distribution]
 The binomial distribution is one of the most important discrete probability densities. $x_k$ is e.g. the outcome of a sequence of $n$ coin flips with $k$ heads and $n-k$ tails. The probability of head in a coin flip is $p$, while the probability of tail is $1-p$.  
@@ -2025,6 +2047,7 @@ x_{n+1} = f\left(x_{n},z_{n}\right)
 where $z_{n}$ is a random sample from a distribution $p(z)$ and the probability density of $x_0$ is known.
 
 \begin{example}[One-dimensional Random Walk]
+\label{ex:randomwalk}
 In this example we analyze the one-dimensional motion of a particle under a random displacement, which is described by the following equation 
 \begin{equation}
 x_{n+1} = x_{n} + z_{n}
@@ -2079,7 +2102,8 @@ In the Wolfram Language a random walk sequence generator can be implemented with
 RandomWalkSequence[alpha_, n_]:= NestList[# + RandomChoice[{alpha, 1 - alpha}->
                                           {1, -1}] &, 0, n];
 \end{mathematica}
-Wolfram Language has already a built-in function \texttt{RandomWalkProcess} for that purpose.
+The function \texttt{RandomChoice} selects with probability \texttt{alpha} the value $+1$ and with probability \texttt{1-alpha} the value $-1$ and adds it to the last evaluation, which is performed iteratively \texttt{n} times using \texttt{NestList} starting with $0$.\\
+Wolfram Language has already a built-in functions \texttt{RandomWalkProcess} and \texttt{RandomFunction} for that purpose.
 
 \begin{mathematica}
 data1 = RandomFunction[RandomWalkProcess[0.5], {0, 1000}];
@@ -2091,11 +2115,45 @@ ListLinePlot[{data1, data2}]
 
 \end{example}
 
+\begin{example}[White Noise Process]
+Another important random process is White Noise. The sequence consists simply of samples from a Normal distribution. 
+\begin{equation}
+x_{n} \sim \mathcal{N}\left(0,\sigma^2\right)
+\end{equation}
+
+The built-in Wolfram Language function is \texttt{WhiteNoiseProcess}.
+
+\begin{mathematica}
+data = RandomFunction[WhiteNoiseProcess[], {0, 1000}];
+ListLinePlot[data]
+\end{mathematica}
+
+\includegraphics[scale=0.6,center]{images/white_noise_process.pdf}
+
+\end{example}
+
+\begin{exercise}
+Study the Wiener process, which is given by
+\begin{equation}
+x_{n+1} = x_{n} + z_{n}
+\end{equation}
+with $z_{n}\sim \mathcal{N}\left(\mu,\sigma^2\right)$.
+Use the function \texttt{WienerProcess} to generate paths starting at $x_{0} = 0$ and show that for non-zero $\mu$ the maximum of the distribution of endpoints after $n$ steps is shifted by a factor of $\mu$.
+\end{exercise}
+
+\begin{exercise}
+Revisit the Random Walk process using the equation
+\begin{equation}
+x_{n+1} = x_{n} + z_{n}
+\end{equation}
+with $z_{n}\sim \alpha\mathcal{N}\left(+1,\sigma^2\right) + \left(1-\alpha\right)\mathcal{N}\left(-1,\sigma^2\right)$.
+Show that the results from example \ref{ex:randomwalk} are reproduced in the limit $\sigma^2\rightarrow 0$.
+\end{exercise}
 
 \chapter{Probabilistic Models (Applications)}
 
 \begin{summary}
-  This chapter covers the whole range of probabilistic models from simple to complex ones. We show that the simple models can be used as building blocks for simulating real-world systems.
+  This chapter covers the whole range of probabilistic models from basic to real-world applications. We show that the simple models can be used as building blocks for creating gradually more complex systems, which can then serve as reusable components in an even larger simulation.
 \end{summary}
 
 \section{Poisson Clock}
@@ -2111,7 +2169,15 @@ A very simplified model of a clock is the Poisson clock, where the tick counts $
 \end{definition}
 However, this is not a good model of a real clock, because there is only one parameter $\nu$, which controls the clock rate, and the clock noise is completely determined by this choice. In a real clock model you can control the rate and the noise independently.
 
-Nevertheless, the Poisson clock is used very often for e.g. simulating the arrival of costumers in a shop or the number of decays of a radioactive material. It is also a building block of the Ptolemy II simulation framework \cite{ptolemy2003}. 
+Nevertheless, the Poisson clock is used very often for e.g. simulating the arrival of costumers in a shop or the number of decays of a radioactive material. It is also a building block of the Ptolemy II simulation framework \cite{ptolemy2003}.
+
+\section{Atomic Clock}
+We want to create a parametric generic model of an atomic clock, which is able to generate data indistinguishable from measurement data of a passive hydrogen maser if the parameters are chosen properly. The treatment is based on the article \textbf{A mathematical model for the atomic clock error in case of jumps} \cite{zucca2015}. An atomic clock is a frequency source with a nominal frequency $f_0$, typically 5 or 10MHz. The stability describes the ability of the clock to keep its frequency constant over time. So if we measure the actual frequency $f_{n}$ at some time $t_{n}$, we will observe a difference to this nominal frequency $\Delta f_{n} = f_{n} - f_0$. A good measure is the so-called fractional frequency difference $y_{n} = \frac{\Delta f_{n}}{f_0}$, which is a dimensionless quantity. 
+
+\begin{example}
+If we adjust the frequency of a passive hydrogen maser at the start of the measurement to the nominal frequency of 10MHz and measure the frequency again after 1day, we would observe a frequency offset e.g. 0.05$\mu$Hz. This corresponds to a fractional frequency difference of $5\times 10^{-15}$. If we repeat the measurement, the value would not be the same and therefore some kind of averaging is necessary to characterize the frequency instability of the clock.   
+\end{example}
+ 
 \section{Gaussian Lattice Model}
 The Gaussian Lattice Model is a variant of the famous Ising Model \cite{mussardo2010}. We want to study this model in the one-dimensional case, where it can be solved exactly.
 
