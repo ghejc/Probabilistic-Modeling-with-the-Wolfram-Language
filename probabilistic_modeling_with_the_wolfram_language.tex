@@ -533,6 +533,15 @@ The entropy for a continuous random variable $x\sim p(x)$ (or differential entro
   \label{eq:differential_entropy}
     h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(p(x)\right)
   \end{equation}
+From a physical perspective this definition has a flaw: a probability density $p(x)$ has a physical unit if $x$ has a physical unit. Taking the logarithm of non-dimensionless quantity is a forbidden operation. To avoid the problem, an arbitrary factor $\Lambda$ with the same unit as $p(x)$ has to be added.
+
+  \begin{equation}
+    h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(\frac{p(x)}{\Lambda}\right)=
+    -\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(p(x)\right) + \log_{2}\left(\Lambda\right)
+  \end{equation}
+  
+Also the choice of the base of the logarithm is arbitrary. One could also use the natural logarithm (preferred in physics) or any other base in the definition of the entropy. Base $2$ is the preferred choice in information theory. The difference is again an additive constant, which leads to the conclusion that differential entropy is only defined up to an additive constant.\\
+
 If we insert eq. \ref{eq:discreteprobabilitydensity} in this expression, we get 
   \begin{equation}
    \begin{aligned}
@@ -544,9 +553,9 @@ If we insert eq. \ref{eq:discreteprobabilitydensity} in this expression, we get
   \end{equation}
 The step, where we replaced $p(x_{i})$ by $P_i\delta(0)$ treated $\delta(x)$ as a function, which is zero for any non-zero argument, therefore the sum inside the logarithm is reduced to only one term.\\
 
-The last term $\log_{2}\left(\delta(0)\right)$ is divergent, but independent of the random variable $x$ and therefore plays no role, because entropy is anyhow defined up to an additive factor due to the fact that the choice of the base of the logarithm is arbitrary. One could also use the natural logarithm (preferred in physics) or any other base in the definition of the entropy. Base $2$ is the preferred choice in information theory. The difference between these definitions would only be a constant additive term, which can be discarded.\\
+The last term $\log_{2}\left(\delta(0)\right)$ is divergent, but independent of the random variable $x$ and therefore plays no role, because entropy is anyhow defined up to an additive factor due to the arguments presented above.\\
 
-So the conclusion is that in this case the result for the entropy of a discrete random variable comes out right if you renormalize the divergent term away (as the physicists would call it), but this does not work always.  
+So the conclusion is that in this case the result for the entropy of a discrete random variable comes out right if you renormalize the divergent term away (as the physicists would call it).  
 \end{example}
 
 \begin{example}[The Binomial Distribution]
