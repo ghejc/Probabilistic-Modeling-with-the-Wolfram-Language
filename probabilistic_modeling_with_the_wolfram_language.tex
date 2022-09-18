@@ -1290,6 +1290,18 @@ Show[{Histogram[data, 20, "PDF"],
 
  \includegraphics[scale=0.9, center]{images/rejection_sampling.pdf}
 
+The SemiCircle pdf describes the distribution of eigenvalues of an infinite symmetric random matrix with elements distributed according to a Gaussian probability density.
+
+\begin{mathematica}
+mat = ArrayReshape[RandomVariate[NormalDistribution[], 1000000], {1000, 1000}];
+eigenvals = Eigenvalues[Symmetrize[mat]];
+Show[Histogram[eigenvals/Max[Abs[eigenvals]], 20, "PDF"]]
+\end{mathematica} 
+
+ \includegraphics[scale=1.0, center]{images/semi_circle_distribution_from_eigenvalues.pdf}
+
+The corresponding function in the Wolfram Language is \texttt{WignerSemicircleDistribution}.
+
 \end{example} 
 
 \begin{example}[Sampling from a Gaussian Mixture Model]
@@ -2176,7 +2188,7 @@ A very simplified model of a clock is the Poisson clock, where the tick counts $
   \begin{equation}
     \mathcal{P}(x\,\vert\, \lambda\rightarrow\nu t)=\sum_{k=0}^{\infty}\frac{\nu^k t^k}{k!}\exp(-\nu t)\delta(x-k)
   \end{equation}
-  $\nu$ is the clock rate (number of ticks in a certain time interval) and $t$ is the elapsed time. Because the expectation value is $\mu=\lambda t$, the tick count is a measure of time.
+  $\nu$ is the clock rate (number of ticks in a certain time interval) and $t$ is the elapsed time. Because the expectation value is $\mu=\nu\ t$, the tick count is a measure of time.
 \end{definition}
 However, this is not a good model of a real clock, because there is only one parameter $\nu$, which controls the clock rate, and the clock noise is completely determined by this choice. In a real clock model you can control the rate and the noise independently.
 
@@ -2185,9 +2197,19 @@ Nevertheless, the Poisson clock is used very often for e.g. simulating the arriv
 \section{Atomic Clock}
 We want to create a parametric generic model of an atomic clock, which is able to generate data indistinguishable from measurement data of a passive hydrogen maser if the parameters are chosen properly. The treatment is based on the article \textbf{A mathematical model for the atomic clock error in case of jumps} \cite{zucca2015}. 
 
-An atomic clock is a frequency source, which provides typically the following two outputs: a sinusoidal signal with a nominal frequency of $f_0$ and one pulse per second signal, which marks the start of second with its rising edge. The 1pps signal is generated from the high-frequency signal by counting the cycles and outputting a pulse when the cycle count reaches $f_0$.  
+An atomic clock is a frequency source, which provides typically the following two outputs: a sinusoidal signal with a nominal frequency of $f_0$ and one pulse per second signal, which marks the start of second with its rising edge. The 1pps signal is generated from the high-frequency signal by counting the cycles and outputting a pulse when the cycle count reaches $f_0$. We focus on the high-frequency signal, which is characterized by its amplitude, the frequency deviation from the nominal frequency given by $y(t)=\frac{f(t)-f_0}{f_0}$ and phase time offset given by $x(t)=\frac{\phi(t)}{2\pi f_0}$. For simplicity we ignore amplitude variations and add the frequency drift or ageing $z(t)$ as a third parameter to describe the state of an atomic clock.  
 
-The starting point for our analysis are a set of parametric equations, which describe the phase of an atomic clock over time including noise sources and artifacts like phase and frequency jumps. The parameters makes it possible to fit the model to actual phase data from measurements with a real clock.
+The starting point for our analysis is a set of parametric equations, which describe the time evolution of the state $x(t)$, $y(t)$, $z(t)$ of an atomic clock including noise sources and artifacts like phase and frequency jumps. The parameters makes it possible to fit the model to actual phase data from measurements with a real clock.
+
+  \begin{equation}
+  \begin{aligned}
+  \frac{dx(t)}{dt} = & y + w_{1} + a_{1}n_{1}\\
+  \frac{dy(t)}{dt} = & z + w_{2} + a_{2}n_{2}\\
+  \frac{dz(t)}{dt} = & w_{3} + a_{3}n_{3}\\  
+  \end{aligned}
+  \end{equation}
+with $w_{i}\sim \mathcal{N}\left(\mu_{i},\sigma_{i}^2\right)$, 
+$n_{i}\sim \mathcal{P}\left(\lambda_{i}\right)$ and $a_{i}\sim \mathcal{N}\left(0,\sigma_{i}^2\right)$.
 
 One must consider that it is not possible to measure the phase of a single clock directly, because a phase comparison requires two inputs: the device under test and the reference clock. For simplicity, we assume that the contribution of the reference clock can be ignored, which is the good approximation for the phase data, we will use in this chapter and which comes from a frequency stability measurement between a passive hydrogen maser (the clock, which we are interested in) and an active hydrogen maser (the reference clock, which is more stable than its passive counter part). The measurements were conducted in a thermally-controlled environment, so that the effect of temperature-induced phase variations can be also neglected.  
 
