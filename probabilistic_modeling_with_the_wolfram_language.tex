@@ -989,6 +989,75 @@ Verify that $\hat{p}(x)$ given by eq. \ref{eq:probability_density_estimate} is n
   \end{equation}
 \end{exercise}
 
+\section{Kernel Density Estimation}
+For some applications a smooth version of a histogram is preferred, which can be constructed by assigning a Gaussian distribution $\mathcal{N}\left(x_i,\sigma^2\right)$ to each data point $x_i$ and summing up the area under the pdf in each bin from each contribution to yield the count value of the corresponding histogram. The result depends very much on the choice of $\sigma$. The histogram is exactly reproduced in the limit $\sigma\rightarrow\infty$.
+
+\begin{definition}[Binned Kernel Density Estimator]
+  \label{th:kde}
+  \index{binned kernel density estimator}
+  A binned KDE (Kernel Density Estimator) is defined by
+  \begin{equation}
+   \label{eq:binned_kde}
+    p_{bKDE}(b\,\vert\,\sigma^2,b_{1:M}) = \begin{cases} \sum_{i=1}^N \int_{b_j}^{b_{j+1}}dx \mathcal{N}\left(x\,\vert\,x_i,\sigma^2\right) & b\in [b_j, b_{j+1}] \\
+0 & otherwise \\
+\end{cases}
+  \end{equation}
+  where $b_j$ is an ordered sequence of $M$ bin values.
+\end{definition}
+
+A Wolfram Language implementation \texttt{BinnedKernelDensityEstimate} uses the fact that the integral over the normal distribution can be expressed as the difference of two error functions.
+  \begin{equation}
+    \int_{b_j}^{b_{j+1}}dx \mathcal{N}\left(x\,\vert\,x_i,\sigma^2\right) = \frac{1}{2}\left[\texttt{erf} \left(\frac{b_{j+1}-x_i}{\sqrt{2}\sigma}\right)-\texttt{erf} \left(\frac{b_j-x_i}{\sqrt{2}\sigma}\right)\right]
+  \end{equation}
+  
+The function returns a normalized count for each bin.
+  
+\begin{mathematica}
+BinnedKernelDensityEstimate[data_List, bins_List, bandwidth_Real] := Module[
+   {d, w, counts},
+   w = Sqrt[2] * bandwidth;
+   counts = Sum[MapThread[
+                Erf[(#2 - d)/w] - Erf[(#1 - d)/w] &, {bins[[;; -2]], bins[[2 ;;]]}],
+                {d, data}];
+   Return[counts / Apply[Plus, counts]]];
+   
+data = RandomVariate[NormalDistribution[], 100];
+h = HistogramList[data];
+counts1 = BinnedKernelDensityEstimate[data, h[[1]], 0.5];
+counts2 = h[[2]] / Apply[Plus, h[[2]]] // N;
+DiscretePlot[{counts1[[i]], counts2[[i]]}, {i, 1, Length[counts1]}, 
+             ExtentSize -> Full]
+\end{mathematica}
+
+A comparison with the function \texttt{HistogramList} shows a good agreement for the chosen bandwidth of 0.5.
+  
+ \includegraphics[scale=0.9, center]{images/binned_kernel_density_estimate.pdf}
+
+The integration over each bin in eq. \ref{eq:binned_kde} is useful to get directly a probability value, but it is not necessary. A meaningful kernel density estimation can be done using a Gaussian pdf as kernel and therefore yields a function instead of sequence of values.
+
+\begin{equation}
+\label{eq:gaussian_kde}
+    p_{KDE}(x\,\vert\,\sigma^2) = \frac{1}{N}\sum_{i=1}^N \mathcal{N}\left(x\,\vert\,x_i,\sigma^2\right)
+\end{equation}
+
+The Wolfram Language provides such a function under the name \texttt{SmoothKernelDistribution[data,bw,ker]} with the kernel argument \texttt{ker} set to \texttt{"Gaussian"}, which returns a probability distribution.
+
+\begin{mathematica}
+data = RandomVariate[NormalDistribution[], 100];
+dist = SmoothKernelDistribution[data, 0.5, "Gaussian"];
+h1 = HistogramList[RandomVariate[dist, 100]];
+(* Apply the binning of histogram 1 to histogram 2 *)
+h2 = HistogramList[data, {h1[[1]]}];
+counts1 = h1[[2]] / Apply[Plus, h1[[2]]] // N;
+counts2 = h2[[2]] / Apply[Plus, h2[[2]]] // N;
+DiscretePlot[{counts1[[i]], counts2[[i]]}, {i, 1, Length[counts1]},
+             ExtentSize -> Full]
+\end{mathematica}
+
+
+
+ \includegraphics[scale=0.9, center]{images/kernel_density_estimate.pdf}
+
 \section{Gaussian Mixture Model}
 Histograms are typically a coarse-grained representation of a probability density, which depends very much on the choice of binning. A better representation is a Gaussian Mixture Model (GMM). 
 
@@ -1300,8 +1369,7 @@ Show[Histogram[eigenvals/Max[Abs[eigenvals]], 20, "PDF"]]
 
  \includegraphics[scale=1.0, center]{images/semi_circle_distribution_from_eigenvalues.pdf}
 
-The corresponding function in the Wolfram Language is \texttt{WignerSemicircleDistribution}.
-
+The corresponding function in the Wolfram Language is \texttt{WignerSemicircleDistribution[a,r]}, which describes a semi circle of radius \texttt{r} centered at \texttt{a}.
 \end{example} 
 
 \begin{example}[Sampling from a Gaussian Mixture Model]
@@ -2221,6 +2289,9 @@ The Gaussian Lattice Model is a variant of the famous Ising Model \cite{mussardo
 
 \section{Random Matrices}
 A random matrix $m$ is $N\times N$ matrix with its elements $m_{ij}\sim p(x)$ \cite{livan2017}.
+We want to answer the questions how the spectral properties of the matrix like the distribution of eigenvalues in the limit $N\rightarrow\infty$ behaves. We have already seen an example for the case of a symmetric matrix $m$ with $m_{ij}\sim \mathcal{N}\left(0,1\right)$ and have found that the eigenvalues are distributed according to a SemiCircle pdf. We will now generalize the result by studying other distributions.
+
+  
 
 %---------------------------------------------------------------------------
 % Bibliography
