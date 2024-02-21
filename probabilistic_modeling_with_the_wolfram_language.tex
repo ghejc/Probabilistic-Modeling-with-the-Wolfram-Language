@@ -356,19 +356,40 @@ A joint probability density $p(\mathbf{x}\,\vert\, \mathbf{y},\boldsymbol{\theta
 p(x_{n}\,\vert\, \mathbf{y},\boldsymbol{\theta})}^{p(x_{3:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})}
 }_{p(x_{2:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})}
   \end{equation}
-This decomposition is not unique. Any permutations of $\mathbf{x}$ is possible here.\\
+This decomposition is not unique. Any permutations of $\mathbf{x}$ is possible here.
+
+  \begin{equation}
+  \label{eq:decomposition2}
+    p(x_{1:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})=p(x_1\,\vert\, \mathbf{y},\boldsymbol{\theta})p(x_2\,\vert\, x_1,\mathbf{y},\boldsymbol{\theta})p(x_3\,\vert\, x_1,x_2,\mathbf{y},\boldsymbol{\theta})\ldots p(x_{n}\,\vert\, x_{1:n-1},\mathbf{y},\boldsymbol{\theta})
+  \end{equation}
+
+\begin{remark}
+Both sides of eq. \ref{eq:decomposition2} are equivalent in terms of the number of states and therefore contain the same amount of information. Let's assume that each random variable $x_{i}$ with $i=1,2\ldots n$ can take $q$ values. Then the number of states of the rhs is $q^n - 1$, where the $-1$ comes from the normalization condition. Each univariate conditional probability density conrtibutes $q-1$ from the variable before the condition sign and $q^m$ from the $m$ variables after the condition sign. Therefore the number of states on the lhs is of the form of a geometric series $(q-1)\left(1+q+q^2+\ldots + q^{n-1}\right)$ with the sum $(q-1)\frac{q^n-1}{q-1}$, which is identical to the result of the rhs.
+\end{remark}
+
+\begin{exercise}
+	Show that in the general case where each random variable  $x_{i}$ can take values  $q_{i}$ the number of states of the rhs is $q_1 q_2\ldots q_n - 1$ and the lhs is $q_1 - 1 + (q_2 - 1)q_1 + (q_3 - 1)q_1 q_2 + \ldots (q_n - 1)q_1 q_2 \ldots q_{n-1}$ and that both sides are equal. 
+\end{exercise}
 
 \textit{The question is: what is the best choice for this decomposition?}\\
 
-There is no general answer here, but if you are able to exploit the conditional independence of random variables as often as possible by using
+There is no general answer here, but the strategy would be to exploit the conditional independence of random variables as often as possible by applying
   \begin{equation}
     p(x\,\vert\, y,\theta)=p(x\,\vert\, \theta)
   \end{equation}
-then the individual terms in the product will simplify significantly.
-The statement $x$ is conditionally independent from $y$ means that the functional form of the probability density of $x$ is the same regardless of the value of $y$.\\
+ The statement $x$ is conditionally independent from $y$ means that the functional form of the probability density of $x$ is the same regardless of the value of $y$. This requires additional or prior knowledge, which may or may not be available.  
+
+For example, using the Markov property that $x_i$ only depends on $x_{i-1}$ in eq. \ref{eq:decomposition2} simplifies the expression significantly to 
+
+  \begin{equation}
+	p(x_{1:n}\,\vert\, \mathbf{y},\boldsymbol{\theta})=p(x_1\,\vert\, \mathbf{y},\boldsymbol{\theta})p(x_2\,\vert\, x_1,\mathbf{y},\boldsymbol{\theta})p(x_3\,\vert\, x_2,\mathbf{y},\boldsymbol{\theta})\ldots p(x_{n}\,\vert\, x_{n-1},\mathbf{y},\boldsymbol{\theta}) 
+  \end{equation}
+
+The number of states is reduced to $(q-1)\left(1 + (n-1)q\right)$ and is therefore only quadratically in $q$ compared to $q^n$.
+\\
 
 \begin{remark}
-Expressions with a product of probability densities will occur very often and are subject to numerical underflow. It is therefore recommended to perform numerical evaluations always with the logarithm of a probability density. It does not matter if it is the natural logarithm (we use $\ln$ or $\log$ interchangeably) or the logarithm with base 2 or 10 (in this case we write explicitely $\log_2$ or $\log_{10})$. The crucial point is that a product of pdf's is converted into a sum of logarithms of pdf's.
+Expressions with a product of probability densities will occur very often and are subject to numerical underflow. It is therefore recommended to perform numerical evaluations always with the logarithm of a probability density. It does not matter if it is the natural logarithm (we use $\ln$ or $\log$ interchangeably) or the logarithm with base 2 or 10 (in this case we write explicitely $\log_2$ or $\log_{10})$. The crucial point is that a product of pdf's is converted into a sum of logarithms of pdf's, which is numerically more stable.
 \end{remark}
 
 \begin{example}[A Normal Distribution with an Uncertain Parameter]
@@ -646,6 +667,20 @@ TransformedDistribution[u + v,
                         {u \[Distributed] PoissonDistribution[\[Lambda]1],
                          v \[Distributed] PoissonDistribution[\[Lambda]2]}]
 \end{mathematica}
+
+A custom discrete probability function from a list of values $x_i$ with their associated probabilities $P_i$
+can be defined with \texttt{EmpiricalDistribution}.
+\begin{mathematica}
+values = {0, 1, 2, 3};
+probabilities = {0.2, 0.3, 0.3, 0.2};
+p = EmpiricalDistribution[probabilities -> values];
+\end{mathematica}
+\texttt{PDF[p,x]} returns \\
+
+\texttt{0.2 Boole[0 == x] + 0.3 Boole[1 == x] + 0.3 Boole[2 == x] + 
+ 0.2 Boole[3 == x]}\\
+
+where the \texttt{Boole} function is 1 if the argument is \texttt{True}, otherwise 0.
 
 \begin{exercise}
    Show that $z_n=\sum_{i=1}^{n}x_i$ is distributed as a Poisson-distribution $P\left(z_n\,\vert\,\sum_{i=0}^n\lambda_i\right)$ if $x_i\sim \mathcal{P}(x_i\,\vert \,\lambda_i)$. Proof this statement by induction using $z_n=z_{n-1}+x_n$. 
@@ -1085,8 +1120,32 @@ Plot[{PDF[dist, x], PDF[mixture, x]}, {x, -4, 4},
      PlotLegends -> Placed[{"Data", "GMM"}, Right] 
 \end{mathematica}
 
- \includegraphics[scale=0.9, center]{images/gaussian_mixture_model.pdf}   
+ \includegraphics[scale=0.9, center]{images/gaussian_mixture_model.pdf}
+ 
+\section{Mixture Density Networks} 
+An extension of Gaussian Mixture Models for conditional distribution estimation are given by Mixture Density Networks.
 
+\begin{definition}[Mixture Density Network]
+	\label{th:mixturedensitynetworks}
+	\index{gaussian mixture model}
+	A Mixture Density Network is defined by
+	\begin{equation}
+		p_{MDN}(\mathbf{x}\,\vert\,\boldsymbol{z}) = \sum_{i=1}^N \alpha_i(\boldsymbol{z}) \mathcal{N}\left(\mathbf{x}\,\vert\,\mu_i(\boldsymbol{z}),\sigma_i(\boldsymbol{z})\right)
+	\end{equation}
+	with $\sum_{i=1}^N \alpha_i(\boldsymbol{z})=1$.
+\end{definition}
+The parameters $\alpha_{1:N}$, $\mu_{1:N}$ and $\sigma_{1:N}$ are functions of $\boldsymbol{z}$ and are approximated by neural networks.
+
+For demonstrating the capabilities of this method, we take the following two-dimensional data. The density of points is the probability measure. 
+
+ \includegraphics[scale=0.9, center]{images/mixture_density_network_data.pdf}
+ 
+The corresponding histogram gives a rough approximation of the distribution described by these data.
+
+ \includegraphics[scale=0.9, center]{images/mixture_density_network_histogram.pdf}
+
+\section{Normalizing Flows}
+Normalizing flows are another way to construct a probability distribution from its samples. A Normalizing Flow is a mapping of a simple probability distribution e.g. a Normal distribution into a more complex distribution by a sequence of invertible transformations $f_i$. The complete transformation $f$ is given by $f_1 \circ f_2 \circ \ldots f_{N-1} \circ f_N$ and is also invertible, which means that $f^{-1}$ exists. For such a function to be useful, it must also be necessary to differentiate $f$ with respect ot its arguments.
  
 \section{Maximum Likelihood}
 If the physical process how data is generated is understood, the functional form of the probability density $p(\mathbf{x}\vert \boldsymbol{\theta})$ is typically known. In these cases the goal is to estimate the parameters $\boldsymbol{\theta}$ of a probability density from data.

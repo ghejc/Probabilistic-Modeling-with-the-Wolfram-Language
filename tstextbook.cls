@@ -77,7 +77,7 @@ contents={\includegraphics[width=\paperwidth,height=\paperheight]{cover}}}
     \begin{tikzpicture}[remember picture,overlay]
       % Background image
       \node[anchor=north west,inner sep=0pt] at (0,0)
-           {\includegraphics[width=\paperwidth]{background}};
+           {\includegraphics[width=\paperwidth]{images/background}};
       % Chapter heading
       \draw[anchor=west, inner sep=0pt] (-0.1cm,-1.5cm) node
            [black,
@@ -117,7 +117,7 @@ contents={\includegraphics[width=\paperwidth,height=\paperheight]{cover}}}
     \begin{tikzpicture}[remember picture,overlay]
       % Background image
       \node[anchor=north west,inner sep=0pt] at (0,0)
-           {\includegraphics[width=\paperwidth]{background}};
+           {\includegraphics[width=\paperwidth]{images/background}};
       % Chapter heading
       \draw[anchor=west,inner sep=0pt] (-0.1cm,-1.5cm) node
            [black,
