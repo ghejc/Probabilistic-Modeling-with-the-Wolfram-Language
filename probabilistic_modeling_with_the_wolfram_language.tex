@@ -788,6 +788,58 @@ This leads to the final result for $\sigma^2$.
   \end{equation}  
 \end{example}
 
+\begin{example}[The Central Limit Theorem]
+This theorem states that the mean $\mu$ of an independent random sample $x_1$,$x_2$,...$x_N$ with $x_i$ being distributed according to an arbitrary distribution $p(x)$ tends to a normal distribution in the limit $N\rightarrow\infty$. We choose for $p(x)$ the uniform distribution $\mathcal{U}\left(x\,\vert\,-1,+1\right)$, which has zero mean and $\sigma^2=\frac{1}{3}$ (see next exercise).
+	
+Starting point as usual is the joint probability density $p(\mu,x_1,x_2,\ldots,x_N)$, which we marginalize over $x_1$,$x_2$,...$x_N$ to get $p(\mu)$.
+\begin{equation}
+	p(\mu) = \int_{-\infty}^{+\infty}dx_1 \int_{-\infty}^{+\infty}dx_2\ldots \int_{-\infty}^{+\infty}dx_N p(\mu,x_1,x_2,\ldots,x_N)
+\end{equation}
+The expression can be further simplified
+\begin{equation}
+	p(\mu) = \int_{-\infty}^{+\infty}dx_1 \int_{-\infty}^{+\infty}dx_2\ldots \int_{-\infty}^{+\infty}dx_N p(\mu \,\vert\, x_1,x_2,\ldots,x_N)\prod_{i=1}^{N}p(x_i)
+\end{equation}
+Because $\mu$ is the sample mean, the conditional pdf $p(\mu \,\vert\, x_1,x_2,\ldots,x_N)$ can be replaced by $\delta\left(\mu - \frac{1}{N}(x_1+x_2+\ldots+x_N)\right)$. We also use the following integral representation of the delta function.
+\begin{equation}
+	\delta(x) = \frac{1}{2\pi}\int_{-\infty}^{+\infty}dk e^{ikx}
+\end{equation}
+Then the expression for $p(\mu)$ can be rewritten as
+\begin{equation}
+	p(\mu) = \frac{1}{2\pi}\int_{-\infty}^{+\infty}dk e^{ik\mu}\prod_{i=1}^{N} \int_{-\infty}^{+\infty}dx_i p(x_i) e^{-ik x_i/N}
+\end{equation}
+Now we use the fact that $p(x_i)$ is a uniform distribution in the interval $(-1,+1)$.
+\begin{equation}
+	p(\mu) = \frac{1}{2\pi}\int_{-\infty}^{+\infty}dk e^{ik\mu}\prod_{i=1}^{N} \frac{1}{2}\int_{-1}^{+1}dx_i e^{-ik x_i/N}
+\end{equation}
+The integration over the $N$ variables $x_i$ can now be carried out.
+  \begin{equation}
+	\begin{aligned}
+	p(\mu)& = \frac{1}{2\pi}\int_{-\infty}^{+\infty}dk e^{ik\mu} \left(\frac{-N}{2ik}\right)^N\left(e^{-ik/N} - e^{ik/N}\right)^N \\
+	&=\frac{1}{2\pi}\int_{-\infty}^{+\infty}dk e^{ik\mu} \left(\frac{N}{k}\sin(k/N)\right)^N
+	\end{aligned}
+\end{equation}
+For large $N$ the sine function can be expanded as $\sin(x)=x-\frac{x^3}{3!}+\ldots$ ignoring higher-order terms.
+  \begin{equation}
+	\begin{aligned}
+		p(\mu)& \approx \frac{1}{2\pi}\int_{-\infty}^{+\infty}dk e^{ik\mu} \left(1-\frac{(k/N)^2}{3!}\right)^N \\
+		&\approx \frac{1}{2\pi}\int_{-\infty}^{+\infty}dk e^{ik\mu} e^{-k^2/(3!N)}\\
+		&= \frac{1}{\sqrt{2\pi}}\mathcal{F}\{e^{-k^2/(3!N)}\}[\mu]
+	\end{aligned}
+\end{equation}
+using $\left(1+\frac{x}{N}\right)^N = e^x$ for $N\rightarrow\infty$ and the Fourier transform $\mathcal{F}$ in the last step.
+
+Using the Wolfram Language to solve the integral
+\begin{mathematica}
+1/Sqrt[2*Pi]*FourierTransform[Exp[-k**2/(Factorial[3]*N)], k, \[Mu]]
+\end{mathematica}
+gives
+\begin{equation}
+	p(\mu) \approx \sqrt{\frac{3N}{2\pi}}e^{-3N\mu^2/2}
+\end{equation}
+which is a normal distribution with $\mu'=0$ and $\sigma'^2=\frac{\sigma^2}{N}=\frac{1}{3N}$.
+	 	
+\end{example}
+
 \begin{exercise}
  Show that the mean and variance of a random variable $x$ distributed as a uniform distribution $\mathcal{U}\left(x\,\vert\,\alpha,\beta\right)$ is given by $\mu=\frac{\alpha+\beta}{2}$ and $\sigma^2=\frac{(\beta-\alpha)^2}{12}$.
 \end{exercise}
@@ -929,7 +981,7 @@ The function \texttt{Partition} decomposes the differences list into overlapping
 
 So a group of 88 people is needed to have a 50\% chance of having at least three persons with the same birthday.
 \end{example}
-
+	
 %---------------------------------------------------------------------------
 \chapter{Density Estimation and Random Data}
 
