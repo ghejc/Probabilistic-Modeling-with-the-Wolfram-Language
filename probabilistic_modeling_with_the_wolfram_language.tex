@@ -836,8 +836,23 @@ gives
 \begin{equation}
 	p(\mu) \approx \sqrt{\frac{3N}{2\pi}}e^{-3N\mu^2/2}
 \end{equation}
-which is a normal distribution with $\mu'=0$ and $\sigma'^2=\frac{\sigma^2}{N}=\frac{1}{3N}$.
-	 	
+which is a normal distribution with $\mu'=0$ and $\sigma'^2=\frac{\sigma^2}{N}=\frac{1}{3N}$.\\
+
+The following code generates $10^6$ uniformly distributed values, reshapes the array to a matrix and takes the mean over each column vector.
+The distribution of the mean values is compared to the expected Normal distribution.
+\begin{mathematica}
+NumPoints = 1000000;
+x = RandomVariate[UniformDistribution[{-1, 1}], NumPoints];
+x = ArrayReshape[x, {1000, 1000}];
+Show[Histogram[Mean[x], 20, "PDF"], 
+Plot[PDF[NormalDistribution[0, 1/Sqrt[3000]], u], {u, -0.05, 0.05}]]
+\end{mathematica}
+
+
+ \includegraphics[scale=1, center]{images/central_limit_theorem.pdf}
+
+The mean value distribution has the expected Gaussian shape.
+
 \end{example}
 
 \begin{exercise}
