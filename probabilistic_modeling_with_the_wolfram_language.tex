@@ -552,6 +552,7 @@ is a valid operation. The next example highlights some of the issues you have to
 The entropy for a continuous random variable $x\sim p(x)$ (or differential entropy) is defined as
   \begin{equation}
   \label{eq:differential_entropy}
+  \index{differential entropy}
     h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(p(x)\right)
   \end{equation}
 From a physical perspective this definition has a flaw: a probability density $p(x)$ has a physical unit if $x$ has a physical unit. Taking the logarithm of non-dimensionless quantity is a forbidden operation. To avoid the problem, an arbitrary factor $\Lambda$ with the same unit as $p(x)$ has to be added.
@@ -582,6 +583,7 @@ So the conclusion is that in this case the result for the entropy of a discrete 
 The next paragraphs will discuss important examples of discrete probability densities, which are encountered in many different contexts.
 
 \begin{example}[The Binomial Distribution]
+\index{binomial distribution}
 The binomial distribution is one of the most important discrete probability densities. $x_k$ is e.g. the outcome of a sequence of $n$ coin flips with $k$ heads and $n-k$ tails. The probability of head in a coin flip is $p$, while the probability of tail is $1-p$.  
   \begin{equation}
     \mathcal{B}(x\,\vert\,\ n,p)=\sum_{k=0}^n\left(\begin{array}{c}
@@ -602,6 +604,7 @@ DiscretePlot[Table[PDF[BinomialDistribution[100, p], k],
 \end{example}
 
 \begin{example}[The Multinomial Distribution]
+\index{multinomial distribution}
 The multinomial distribution $ \mathcal{M}(\mathbf{x}\,\vert\, n,\mathbf{p})$ is a generalization of the binomial distribution, where the number of possible outcomes is also a variable $m$.  
   \begin{equation}
     \mathcal{M}(x_{1:m}\,\vert\, n,p_{1:m})=\sum_{n_1=0}^n\sum_{n_2=0}^n\ldots \sum_{n_m=0}^n \frac{n!}{n_1!n_2!\ldots n_m!}p_1^{n_1}p_2^{n_2}\ldots p_m^{n_m}\prod_{i=1}^m\delta(x_i-x_{n_i})
@@ -620,6 +623,7 @@ GraphicsRow[Table[DiscretePlot3D[
 \end{example}
 
 \begin{example}[The Poisson Distribution]
+\index{poisson distribution}
 In the limit $n\rightarrow\infty$ and $\lambda=np$ remains finite, the binomial distribution becomes the Poisson distribution given by
   \begin{equation}
     \mathcal{P}(x\,\vert\,\lambda)=\sum_{k=0}^{\infty}\frac{\lambda^k}{k!}\exp(-\lambda)\delta(x-x_k)
@@ -789,6 +793,7 @@ This leads to the final result for $\sigma^2$.
 \end{example}
 
 \begin{example}[The Central Limit Theorem]
+\index{central limit theorem}
 This theorem states that the mean $\mu$ of an independent random sample $x_1$,$x_2$,...$x_N$ with $x_i$ being distributed according to an arbitrary distribution $p(x)$ tends to a normal distribution in the limit $N\rightarrow\infty$. We choose for $p(x)$ the uniform distribution $\mathcal{U}\left(x\,\vert\,-1,+1\right)$, which has zero mean and $\sigma^2=\frac{1}{3}$ (see next exercise).
 	
 Starting point as usual is the joint probability density $p(\mu,x_1,x_2,\ldots,x_N)$, which we marginalize over $x_1$,$x_2$,...$x_N$ to get $p(\mu)$.
@@ -864,6 +869,7 @@ The mean value distribution has the expected Gaussian shape.
 In this chapter we apply the learned concepts to some interesting examples by using both analytical and computational approaches to solve the problem.
 
 \begin{example}[The Monty Hall Problem]
+\index{monty hall problem}
 
 This is a famous and non-trivial example of a probabilistic problem, where intuition will give you the wrong result. The problem statement is as follows:\\
 
@@ -954,6 +960,7 @@ The probability of winning with 1000 samples is \texttt{0.32} in the case of sta
 \end{example}
 
 \begin{example}[The Birthday Problem]
+\index{birthday problem}
 The Birthday problem is another classic probabilistic example. Let's assume that each day of the year (we ignore leap years) is equally likely a birthday with probability $p=\frac{1}{365}$. What is the probability that in a group with $n$ distinct individuals (no twins) at least two persons have the same birthday?\\
 
 We want to solve this problem with a simulation and plot the probability as a function of the group size. \\
@@ -1006,6 +1013,7 @@ So a group of 88 people is needed to have a 50\% chance of having at least three
 
 \section{Histograms}
 \label{Histograms}
+\index{histogram}
 
 A histogram divides the support of a random variable $x$ into disjunct bins and counts the number of outcomes of $x$ in each bin. If $x\sim p(x)$, the normalized count in bin $[x_i,x_{i+1}]$ is given by
   \begin{equation}
@@ -1139,6 +1147,7 @@ The integration over each bin in eq. \ref{eq:binned_kde} is useful to get direct
 
 \begin{equation}
 \label{eq:gaussian_kde}
+\index{gaussian kde}
     p_{KDE}(x\,\vert\,\sigma^2) = \frac{1}{N}\sum_{i=1}^N \mathcal{N}\left(x\,\vert\,x_i,\sigma^2\right)
 \end{equation}
 
@@ -1194,7 +1203,7 @@ An extension of Gaussian Mixture Models for conditional distribution estimation 
 
 \begin{definition}[Mixture Density Network]
 	\label{th:mixturedensitynetworks}
-	\index{gaussian mixture model}
+	\index{mixture density networks}
 	A Mixture Density Network is defined by
 	\begin{equation}
 		p_{MDN}(\mathbf{x}\,\vert\,\boldsymbol{z}) = \sum_{i=1}^N \alpha_i(\boldsymbol{z}) \mathcal{N}\left(\mathbf{x}\,\vert\,\mu_i(\boldsymbol{z}),\sigma_i(\boldsymbol{z})\right)
@@ -1212,6 +1221,7 @@ The corresponding histogram gives a rough approximation of the distribution desc
  \includegraphics[scale=0.9, center]{images/mixture_density_network_histogram.pdf}
 
 \section{Normalizing Flows}
+\index{normalizing flows}
 Normalizing flows are another way to construct a probability distribution from its samples. A Normalizing Flow is a mapping of a simple probability distribution e.g. a Normal distribution into a more complex distribution by a sequence of invertible transformations $f_i$. The complete transformation $f$ is given by $f_1 \circ f_2 \circ \ldots f_{N-1} \circ f_N$ and is also invertible, which means that $f^{-1}$ exists. For such a function to be useful, it must also be necessary to differentiate $f$ with respect ot its arguments.
  
 \section{Maximum Likelihood}
@@ -1316,6 +1326,7 @@ where $M$ is the batch size and $i$ goes from $0$ to the integer part of $N/M$. 
 \end{remark}
 
 \section{Sampling}
+\index{sampling}
 In the previous sections we studied the reconstruction of a probability density from data. Here we investigate the inverse problem: the generation of data from a given probability density. This process is called sampling.
 
 It is usually quite easy to generate random numbers $r$ from a uniform distribution $\mathcal{U}(r\,\vert\,\alpha=0,\beta=1)$. Almost every programming language has a function for it (in the Wolfram Language the function is called \texttt{RandomReal}) . The goal is now to transform the sequence $r_{1:N}$ to a sequence $x_{1:}$ so that $x$ is distributed as $p(x)$.
@@ -1463,6 +1474,7 @@ Check for all $k$ the condition $r_k < \frac{p(x=x_k)}{p_{max}}$. If it is true,
 The rejection rate determines the efficiency of the algorithm.
 
 \begin{example}[Sampling from a SemiCircle Distribution]
+\index{semicircle distribution}
 We want to sample data from a semicircle distribution
 
 \begin{equation}
@@ -1611,6 +1623,7 @@ p(x,y\,\vert\,z)=\frac{p(x,y,z)}{p(z)}=\frac{p(z\,\vert\, x,y)p(x)p(y)}{p(z)}
 
 \begin{example}
 \label{ex:chain_graph}
+\index{chain graph}
 Show that the graph
  \includegraphics[scale=0.8, left]{images/graph_example.pdf}
  implies the independence of $x$ and $y$ given $z$.\\
@@ -1721,6 +1734,7 @@ and check under which conditions node $x$ and $y$ are independent when condition
 \end{exercise}
 
 \section{Time Series}
+\index{time series}
 We now want to apply graphical models to the analysis of time series data \cite{barber2010}. A time series can be represented by a sequence of random variables $x_{1:T}$, which are associated with a sequence of time points $t_{1:T}$. A time point can be e.g. 01 Jan 1970 00:00:00.000, which has a resolution of milliseconds, but depending on your application a higher resolution may be necessary such as nanoseconds and therefore more digits after decimal point. We also use the notation $x_t$, where $t$ stands for the index associated with current time $t$, and $x_{t-1}$ means the random variable at the previous time point and $x_{t+1}$ the random variable at the next future time point and so on.\\
 
 The Wolfram Language has the built-in symbol \texttt{TimeSeries} as a wrapper around a list of time-value pairs $\{t_{i},x_{i}\}$, where $x_{i}$ can be a scalar or an array and $t_{i}$ can be numeric or \texttt{AbsoluteTime} e.g. \texttt{AbsoluteTime["01 Jan 1900 00:00:00.000"]}, which returns the result \texttt{0} as the number of seconds since the beginning of January 1, 1900 in your local timezone. Local time has typically an offset to GMT in multiple of hours including daylight savings, which is given by \texttt{\$TimeZone}. Therefore the number of seconds returned by \texttt{AbsoluteTime} is the same on each computer in the world, where the code is executed.
@@ -1812,6 +1826,7 @@ It turns out that the prior state estimate $p(x_0)$ before any observations are 
 The Bayes filter framework is the conceptual basis of a large number of existing models like Kalman and Particle filters (see \ref{se:particle_filter}), Hidden Markov Models (see next example), Dynamic Bayesian Networks (basically the introduction to this chapter) and Markov Decision Processes with a wide range of applications.
 
 \begin{example}[Graph World]
+\index{graph world}
 We want to study a simple system called Graph World, which is a generalization of the Grid World system often used as an introductory example in reinforcement learning.\\
 
 The system consists of a finite number of states $1,2,\ldots,k$ and a $k\times k$ transition matrix $P_{ij}$, which describes the probabilities of a transition from state $i$ to state $j$. $P_{ij}$ is also an adjacency matrix with an associated graph structure, where the vertices are the system states and the directed edges with an assigned weight corresponding to the probability that a transition from a source to a target node happens (a probability $0$ means that such a transition never happens and therefore no edge is drawn in this case).\\
@@ -1983,7 +1998,7 @@ Modify the parameter of the last example e.g. the observer node or the number of
 
 \section{Particle Filter}
 \label{se:particle_filter}
-
+\index{particle filter}
 The Bayes filter can be easily and efficiently applied to all problems, where the state space is discrete and not too large. For continuous state spaces there exist closed-form solutions only for special cases like the Kalman filter for linear models with additive Gaussian noise. In the general non-linear case with arbitrary additive noise distributions, only approximate solutions are possible.\\
 
 We represent the distribution $p(x_{t}\,\vert\, y_{t},y_{t-1},\ldots)$ by a set of $N$ particles with a weight $w^{(i)}_t$ and a state $x^{(i)}_t$ 
@@ -2265,6 +2280,7 @@ where $z_{n}$ is a random sample from a distribution $p(z)$ and the probability 
 
 \begin{example}[One-dimensional Random Walk]
 \label{ex:randomwalk}
+\index{random walk}
 In this example we analyze the one-dimensional motion of a particle under a random displacement, which is described by the following equation 
 \begin{equation}
 x_{n+1} = x_{n} + z_{n}
