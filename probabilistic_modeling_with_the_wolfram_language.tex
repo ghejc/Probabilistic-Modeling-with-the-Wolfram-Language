@@ -45,6 +45,10 @@ Bendat and Piersol's \textbf{Random Data: Analysis and Measurement Procedures} \
 Simon Sirca's book \textbf{Probability for Physicists} \cite{sirca2016} is a good introduction with many examples from physics.
 \item
 Glen Cowan's book \textbf{Statistical Data Analysis} \cite{cowan1998} is a concise and well-written treatise targeting mainly readers of the particle physics community.   
+\item
+Etienne Bernard's book \textbf{Introduction in Machine Learning} \cite{bernard2023} introduces neural networks and machine learning from the perspective of the Wolfram language.   
+\item
+Christopher Bishop's book \textbf{Deep Learning} \cite{bishop2024} is a brilliant book, which covers the whole field of deep learning in a comprehensive self-contained manner and is therefore useful both for newcomers as well as for experienced readers. Especially the first two chapters about probabilities and standard distributions are a valuable addition to the material presented in this book. 
 \end{itemize}
 
 Some knowledge in Linear Algebra and Calculus is also required e.g. see Murray Spiegel's book \textbf{Schaum's Outline of Advanced Mathematics for Engineers and Scientists} \cite{spiegel2009} for an excellent coverage of all the mathematical methods and tools used by engineers and scientists. There is also another book by the same author completely dedicated to probability and statistics \cite{spiegel2012}, which consists of 897 fully solved problems and 20 online videos.\\
@@ -92,6 +96,7 @@ A random variable with a finite support $[a,b]$ can be described by a probabilit
 
 A probability density of two or more random variables is called a joint probability density e.g. $p(x,y)$ in the case of two random variables $x$ and $y$. The normalization condition is given by 
   \begin{equation}
+  	\index{joint probability density}
     \int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}p(x,y)dxdy=1
   \end{equation}
 Integrating only over one random variable e.g. $y$, the result is again a valid probability density $p(x)$. This operation is called marginalization. Therefore the simplest way to construct a joint (or multi-variate) probability density out of uni-variate probability densities is by multiplication e.g. $p(x,y)=p(x)p(y)$.
@@ -164,6 +169,7 @@ Plot[Table[PDF[NormalDistribution[0, \[Sigma]], x],
 \end{example}
 
 \begin{example}[The Multivariate Normal Distribution]
+\index{multivariate normal distribution}
   The multi-variate Normal (or Gauss) distribution
   $\mathcal{N}\left(\mathbf{x}\,\vert\,\boldsymbol{\mu},\boldsymbol{\Sigma}\right)$ has the functional form
   \begin{equation}
@@ -186,7 +192,7 @@ is the uni-variate Normal distribution $\mathcal{N}\left(x\,\vert\,\mu=0,\sigma^
 
 \begin{theorem}[Multivariate Normal Distribution under Affine Transformation]
   \label{th:multivariatenormaldistributionunderaffinetransformation}
-  \index{linear transformation}
+  \index{affine transformation}
 An important property of the multi-variate Normal distribution is that the result of an affine transformation $\mathbf{x}'=\mathrm{M}\mathbf{x}+\mathbf{b}$ with a $n\times n$ matrix $\mathrm{M}$ and a $n\times 1$ vector $\mathbf{b}$ is again a multi-variate Normal distribution   
   \begin{equation}
   \mathcal{N}\left(\mathbf{x}\,\vert\,\boldsymbol{\mu},\boldsymbol{\Sigma}\right)=
@@ -212,6 +218,7 @@ An important property of the multi-variate Normal distribution is that the resul
  \end{proof}
 
 \begin{example}[The Uniform Distribution]
+	\index{uniform distribution}
   The simplest probability density is the uniform distribution $\mathcal{U}(x\,\vert\,\alpha,\beta)$, which has the functional form
   \begin{equation}
     \frac{1}{\beta-\alpha}\Theta(\beta-x)\Theta(x-\alpha)
@@ -344,6 +351,7 @@ A conditional probability density $p(x\,\vert\, y,\theta)$ means a probability d
   \end{equation}
   Eliminating the joint probability density $p(x, y\,\vert\, \theta)$ leads to the Bayes rule
   \begin{equation}
+  	\index{bayes rule}
     p(x\,\vert\, y,\theta)=\frac{p(y\,\vert\, x,\theta)p(x\,\vert\, \theta)}{p(y\,\vert\, \theta)}
   \end{equation} 
 \end{definition}
@@ -549,17 +557,18 @@ is a valid operation. The next example highlights some of the issues you have to
 \end{remark}
 
 \begin{example}[Entropy]
+\index{entropy}
 The entropy for a continuous random variable $x\sim p(x)$ (or differential entropy) is defined as
   \begin{equation}
   \label{eq:differential_entropy}
   \index{differential entropy}
-    h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(p(x)\right)
+    h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(p(x)\right)dx
   \end{equation}
 From a physical perspective this definition has a flaw: a probability density $p(x)$ has a physical unit if $x$ has a physical unit. Taking the logarithm of non-dimensionless quantity is a forbidden operation. To avoid the problem, an arbitrary factor $\Lambda$ with the same unit as $p(x)$ has to be added.
 
   \begin{equation}
-    h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(\frac{p(x)}{\Lambda}\right)=
-    -\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(p(x)\right) + \log_{2}\left(\Lambda\right)
+    h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(\frac{p(x)}{\Lambda}\right)dx=
+    -\int_{-\infty}^{+\infty}p\left(x\right)\log_{2}\left(p(x)\right)dx + \log_{2}\left(\Lambda\right)
   \end{equation}
   
 Also the choice of the base of the logarithm is arbitrary. One could also use the natural logarithm (preferred in physics) or any other base in the definition of the entropy. Base $2$ is the preferred choice in information theory. The difference is again an additive constant, which leads to the conclusion that differential entropy is only defined up to an additive constant.\\
@@ -567,7 +576,7 @@ Also the choice of the base of the logarithm is arbitrary. One could also use th
 If we insert eq. \ref{eq:discreteprobabilitydensity} in this expression, we get 
   \begin{equation}
    \begin{aligned}
-    h(x)&=-\sum_{i=-\infty}^{+\infty}\int_{-\infty}^{+\infty}P_i\delta\left(x-x_i\right)\log_{2}\left(p(x)\right)
+    h(x)&=-\sum_{i=-\infty}^{+\infty}\int_{-\infty}^{+\infty}P_i\delta\left(x-x_i\right)\log_{2}\left(p(x)\right)dx
     =-\sum_{i=-\infty}^{+\infty}P_i\log_{2}\left(p(x_{i})\right)\\
     &=-\sum_{i=-\infty}^{+\infty}P_i\log_{2}\left(P_i\delta(0)\right)
     =-\sum_{i=-\infty}^{+\infty}P_i\log_{2}\left(P_i\right) - \log_{2}\left(\delta(0)\right)
@@ -579,6 +588,41 @@ The last term $\log_{2}\left(\delta(0)\right)$ is divergent, but independent of 
 
 So the conclusion is that in this case the result for the entropy of a discrete random variable comes out right if you renormalize the divergent term away (as the physicists would call it).  
 \end{example}
+
+\begin{example}[Boltzmann Distribution]
+\index{boltzmann distribution}
+Based on the definition of entropy from eq. \ref{eq:differential_entropy}, we will derive a continuous probability distribution, which is very important in physics: the Boltzmann distribution. It is the result of minimizing the entropy with respect to the probability density $p(x)$ by including the constraints $\int_{-\infty}^{+\infty} p(x)dx=1$ and $\int_{-\infty}^{+\infty}xp(x)dx=\mu$ via Lagrange multiplicators. 
+\begin{equation}
+h(x)=-\int_{-\infty}^{+\infty}p\left(x\right)\log\left(p(x)\right)dx + \alpha \left(\int_{-\infty}^{+\infty}p(x)dx - 1\right)dx + \beta \left(\int_{-\infty}^{+\infty}xp(x)dx - \mu\right)
+\end{equation}
+We bring every term under the integral.
+\begin{equation}
+h(x)=\int_{-\infty}^{+\infty}dx\left[-p\left(x\right)\log\left(p(x)\right) + \alpha \left( p(x) - \delta(x)\right) + \beta \left(xp(x) - \mu\delta(x)\right)\right]
+\end{equation}
+The minimum can be found by taking the derivative with respect to $p(x)$ of the expression under the integral, ignoring that $p(x)$ is a function of $x$ and not a variable and setting the integrand to zero.
+\begin{equation}
+	-\log\left(p(x)\right) - 1 + \alpha + \beta x = 0
+\end{equation}
+The solution is
+\begin{equation}
+    \label{eq:boltzmann_distribution}
+	p(x) = \exp\left(1 - \alpha - \beta x \right)
+\end{equation}
+The domain of $p(x)$ cannot be $-\infty,+\infty$, because the integrals would diverge, but any finite negative number as lower limit would work. In physics, $x$ would be the energy and $\beta$ the inverse temperature. If the lowest energy level would be $-\infty$, the physical system would be unstable.\\
+ 
+$\alpha$ and $\beta$ can be determined by using eq. \ref{eq:boltzmann_distribution} to solve the two constraints.
+\end{example}
+
+\begin{exercise}
+	Repeat the last example with three constraints
+	\begin{equation}
+		  \begin{aligned}
+h(x)&=-\int_{-\infty}^{+\infty}p\left(x\right)\log\left(p(x)\right)dx + \lambda_1 \left(\int_{-\infty}^{+\infty}p(x)dx - 1\right)dx\\
+& + \lambda_2 \left(\int_{-\infty}^{+\infty}xp(x)dx - \mu\right) + \lambda_3 \left(\int_{-\infty}^{+\infty}(x-\mu)^2 p(x)dx - \sigma^2\right)
+  	\end{aligned}
+	\end{equation}
+	and show that the solution is the Normal distribution.
+\end{exercise}
 
 The next paragraphs will discuss important examples of discrete probability densities, which are encountered in many different contexts.
 
@@ -1550,16 +1594,17 @@ Show[{Histogram[data, 20, "PDF"],
 \end{summary}
 
 \section{Graphical Models}
+\index{graphical model}
 
 Probabilistic models are described by a number of random variables $x_{1:n}$, a number of parameters $\theta_{1:m}$ and a joint probability density $p(x_{1:n}\,\vert\, \theta_{1:m})$. It is often favorable to introduce further hidden or latent variables $h_{1:k}$, which are not directly observable and therefore do not show up as inputs or outputs of the system, but are hidden inside the model.
 \begin{equation}
 p(x_{1:n}\,\vert\, \theta_{1:m})=\int_{-\infty}^{+\infty}dh_{1}\ldots \int_{-\infty}^{+\infty}dh_{k} p(x_{1:n},h_{1:k}\,\vert\, \theta_{1:m})
 \end{equation}
 These new variables $h_{1:k}$ encode some static or dynamic properties of the system state and often simplify the overall structure of the model by decoupling the outputs from the inputs, which reduces the dependencies between the random variables and parameters in the model. Dependency or causal relations can be very vividly expressed through a graph. Such a graph is also called a belief or Bayesian network \cite{barber2011} \cite{koller2009}.
-
 \begin{definition}[Belief Network]
   \label{th:beliefnetwork}
   \index{belief network}
+  \index{bayesian network}
   A belief network is a directed graph of random variables $x_{1:n}$, which represents a probability distribution of the form
   \begin{equation}
     p(x_{1:n})=\prod_{i=1}^{n}p\left(x_i\,\vert\, pa(x_i)\right)
@@ -1567,6 +1612,7 @@ These new variables $h_{1:k}$ encode some static or dynamic properties of the sy
   where $pa(x_i)$ are all random variables $x_j$ (parents), which are connected to the random variable $x_i$ (child) with a directed edge pointing from node $x_j$ to node $x_i$.
 \end{definition}
 
+\index{adjacency list}
 The following Wolfram Language code draws a graph with 3 random variables $x$, $y$, $z$ and one parameter $\theta$. The function \texttt{Graph} gets an adjacency list as the first argument, which contains a list of edges. The nodes or vertices are numbered from $1$ to $4$ and \texttt{i \textbackslash\lbrack DirectedEdge\rbrack \,j} means that there is a directed edge from node $i$ to $j$. This expresses a conditional dependence of node $j$ on node $i$. The other options are only necessary to customize the graphical representation.\\
 
 \begin{mathematica}
@@ -1606,6 +1652,7 @@ The graph does exactly that: it specifies conditional independence relations thr
 Using eq. \ref{eq:belief} it can be easily shown that $x$ and $y$ are independent.
 
 \begin{equation}
+	\index{independence relation}
 p(x,y\,\vert\,\theta)=\int_{-\infty}^{\infty}dz p(x,y,z\,\vert\,\theta)=\int_{-\infty}^{\infty}dz p(z\,\vert\, x,y,\theta)p(x)p(y) = p(x)p(y)
 \end{equation}
 This independence relation holds for any subgraph of the form
@@ -1648,6 +1695,7 @@ Show that the graph
 \end{exercise}
 
 \begin{example}[Conditional Independence Test]
+\index{conditional independence}
 We want to implement a function \texttt{IsConditionalIndependent}, which returns \texttt{True} if \texttt{sourceNode} is conditionally independent of \texttt{targetNode} given a list of \texttt{conditionalNodes} for \texttt{graph}, otherwise \texttt{False}.\\
 
 The implemented algorithm works as follows:\\
